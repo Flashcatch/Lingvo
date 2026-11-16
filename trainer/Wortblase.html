@@ -1,0 +1,1212 @@
+<title>Wortblase</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one working column; sticky header with the bubble's numbers, scrollable mode tabs, one active practice panel. */
+:root {
+  --bg: #EDF1F3;
+  --surface: #FFFFFF;
+  --surface-2: #F5F8F9;
+  --ink: #14212A;
+  --muted: #5A6A76;
+  --line: #D3DCE2;
+  --accent: #1D6A86;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DAEAF1;
+  --ok: #2B7A4B;
+  --ok-soft: #DDF0E4;
+  --bad: #B3261E;
+  --bad-soft: #F8E1DF;
+  --warn: #8F6200;
+  --der: #2F5FB3;
+  --die: #B23A48;
+  --das: #2E7D57;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E161C; --surface: #15212A; --surface-2: #1A2832; --ink: #E2EAEF; --muted: #8EA2AF;
+    --line: #26363F; --accent: #62B4D0; --accent-ink: #06222C; --accent-soft: #17323E;
+    --ok: #6CC48E; --ok-soft: #173426; --bad: #F2867E; --bad-soft: #3A1D1B; --warn: #E3B65B;
+    --der: #7FA7F0; --die: #F08A97; --das: #6FCB9A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E161C; --surface: #15212A; --surface-2: #1A2832; --ink: #E2EAEF; --muted: #8EA2AF;
+  --line: #26363F; --accent: #62B4D0; --accent-ink: #06222C; --accent-soft: #17323E;
+  --ok: #6CC48E; --ok-soft: #173426; --bad: #F2867E; --bad-soft: #3A1D1B; --warn: #E3B65B;
+  --der: #7FA7F0; --die: #F08A97; --das: #6FCB9A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-block: 12px 0; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.brand svg { flex: none; }
+.brand small { font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.chip { font-size: 12.5px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip b { color: var(--ink); font-weight: 600; }
+.chip.weak b { color: var(--bad); }
+nav.tabs { flex-basis: 100%; overflow-x: auto; display: flex; gap: 2px; scrollbar-width: none; margin-top: 4px; }
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs button { flex: none; border: 0; background: none; font: inherit; font-weight: 500; color: var(--muted); padding: 10px 12px; border-bottom: 2px solid transparent; cursor: pointer; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs button:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+main { padding-block: 20px 48px; }
+section.panel { display: grid; gap: 16px; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.lead { color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.grow { flex: 1 1 200px; min-width: 0; }
+.row.meta { flex-wrap: nowrap; }
+.row.meta .grow { flex-basis: 0; }
+.btn { font: inherit; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 9px 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.ghost { background: none; }
+.btn:disabled { opacity: .5; cursor: default; }
+.icon-btn { width: 36px; height: 36px; padding: 0; justify-content: center; flex: none; }
+.mic { width: 48px; height: 48px; border-radius: 50%; padding: 0; justify-content: center; flex: none; background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.mic.on { background: var(--bad); color: #fff; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 45%, transparent); } 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--bad) 0%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
+body.no-mic .mic { display: none; }
+body.no-say .say { display: none; }
+input[type=text], textarea, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+textarea { resize: vertical; min-height: 48px; width: 100%; }
+input[type=text] { width: 100%; }
+label.check { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 13.5px; cursor: pointer; }
+.note { font-size: 13.5px; color: var(--muted); }
+.note.warn { color: var(--warn); }
+.sentence { font-family: var(--font-display); font-weight: 500; font-size: clamp(22px, 4.6vw, 30px); line-height: 1.3; letter-spacing: -0.005em; text-wrap: balance; }
+.ru-big { font-size: 20px; font-weight: 500; }
+.result { border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; }
+.result.ok { background: var(--ok-soft); }
+.result.bad { background: var(--bad-soft); }
+.result .head { font-weight: 600; }
+.result.ok .head { color: var(--ok); }
+.result.bad .head { color: var(--bad); }
+mark.diff { background: none; color: var(--bad); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+mark.good { background: none; color: var(--ok); font-weight: 600; }
+.oob { text-decoration: underline wavy var(--warn); text-underline-offset: 4px; cursor: help; }
+.gloss { display: flex; flex-wrap: wrap; gap: 6px; }
+.gloss span { font-size: 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; }
+.gloss span i { font-style: normal; color: var(--muted); }
+.art { font-family: var(--font-mono); font-size: 0.86em; font-weight: 500; }
+.art.der { color: var(--der); } .art.die { color: var(--die); } .art.das { color: var(--das); }
+/* chat */
+.chat { display: grid; gap: 10px; max-height: 58vh; overflow-y: auto; padding: 4px 2px; }
+.msg { max-width: 88%; border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; min-width: 0; }
+.msg.bot { background: var(--surface-2); border: 1px solid var(--line); justify-self: start; }
+.msg.me { background: var(--accent-soft); justify-self: end; }
+.msg .de { font-size: 16.5px; overflow-wrap: anywhere; }
+.msg .tr { color: var(--muted); font-size: 14px; }
+.msg .fix { border-top: 1px dashed var(--line); padding-top: 6px; font-size: 14px; }
+.msg .fix b { color: var(--ok); }
+.msg .tools { display: flex; gap: 6px; align-items: center; }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
+.thinking { color: var(--muted); font-style: italic; }
+.composer { display: flex; gap: 8px; align-items: flex-end; }
+.composer textarea { flex: 1; }
+/* order */
+.tray { display: flex; flex-wrap: wrap; gap: 8px; min-height: 52px; padding: 10px; border-radius: 12px; border: 1px dashed var(--line); background: var(--surface-2); }
+.tok { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); cursor: pointer; }
+.tok:hover { border-color: var(--accent); }
+/* cards */
+.flash { text-align: center; padding-block: 18px; display: grid; gap: 8px; justify-items: center; }
+.flash .kind { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.choices .btn { justify-content: center; text-align: center; font-weight: 500; }
+.choices .btn.ok { background: var(--ok-soft); border-color: var(--ok); }
+.choices .btn.bad { background: var(--bad-soft); border-color: var(--bad); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13.5px; border: 0; background: var(--surface); color: var(--muted); padding: 7px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+/* dictionary */
+.filters { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 8px; }
+@media (max-width: 620px) { .filters { grid-template-columns: 1fr; } }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--surface-2); position: sticky; top: 0; }
+tr.off td:not(:first-child) { opacity: .45; }
+td.de { font-weight: 600; white-space: nowrap; }
+td.forms { font-family: var(--font-mono); font-size: 12px; color: var(--muted); max-width: 280px; }
+.bar { display: inline-flex; gap: 6px; font-variant-numeric: tabular-nums; font-size: 12.5px; white-space: nowrap; }
+.bar .r { color: var(--ok); } .bar .w { color: var(--bad); }
+.topic-row td { background: var(--surface-2); font-weight: 600; font-size: 13px; }
+.topic-row .linkish { margin-left: 8px; }
+.kbd { font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="var(--accent)" stroke-width="2.2"/><circle cx="9.5" cy="9.5" r="2.4" fill="var(--accent)" opacity=".55"/></svg>
+      Wortblase <small>немецкий внутри ваших слов</small>
+    </div>
+    <div class="chips">
+      <span class="chip">в пузыре: <b id="statWords">0</b></span>
+      <span class="chip weak">слабых: <b id="statWeak">0</b></span>
+      <span class="chip">сегодня: <b id="statToday">0</b></span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Режимы">
+      <button role="tab" data-tab="talk" aria-selected="true">Разговор</button>
+      <button role="tab" data-tab="fix" aria-selected="false">Найди ошибку</button>
+      <button role="tab" data-tab="order" aria-selected="false">Собери фразу</button>
+      <button role="tab" data-tab="trans" aria-selected="false">Перевод</button>
+      <button role="tab" data-tab="cards" aria-selected="false">Карточки</button>
+      <button role="tab" data-tab="dict" aria-selected="false">Словарь</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- TALK -->
+  <section class="panel" id="tab-talk">
+    <div>
+      <h2>Разговор</h2>
+      <p class="lead">Claude говорит с вами только словами из вашего пузыря. Нажмите микрофон, скажите фразу по-немецки, нажмите ещё раз — фраза отправится. Ошибки он исправит и объяснит по-русски.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <select id="talkTopic" class="grow" aria-label="Тема разговора"></select>
+        <button class="btn primary" id="talkStart">Начать разговор</button>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="optSpeak" checked> Озвучивать ответы</label>
+        <label class="check"><input type="checkbox" id="optShowRu"> Сразу показывать перевод</label>
+        <label class="check"><input type="checkbox" id="optAutoSend" checked> Отправлять после микрофона</label>
+        <label class="check say">Темп речи <input type="range" id="optRate" min="0.7" max="1.2" step="0.05" value="0.9" aria-label="Темп речи"></label>
+      </div>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="composer">
+        <button class="btn mic" id="talkMic" aria-label="Говорить">MIC</button>
+        <textarea id="talkInput" rows="2" placeholder="Schreib auf Deutsch… (Enter — отправить)"></textarea>
+        <button class="btn primary" id="talkSend">Отправить</button>
+      </div>
+      <p class="note" id="talkNote"></p>
+    </div>
+  </section>
+
+  <!-- FIX -->
+  <section class="panel" id="tab-fix" hidden>
+    <div>
+      <h2>Найди ошибку</h2>
+      <p class="lead">Предложение собрано из ваших слов, но грамматика может быть испорчена: артикль, падеж, окончание, порядок слов. Скажите или напишите правильный вариант. Если всё верно — «Ошибки нет».</p>
+    </div>
+    <div class="card">
+      <div class="row meta"><span class="note" id="fixMeta"></span><span class="grow"></span><button class="btn ghost icon-btn say" id="fixSay" aria-label="Прослушать">SAY</button></div>
+      <div class="sentence" id="fixSentence"></div>
+      <div class="composer">
+        <button class="btn mic" id="fixMic" aria-label="Говорить">MIC</button>
+        <input type="text" id="fixInput" placeholder="Правильное предложение…" autocomplete="off">
+      </div>
+      <div class="row">
+        <button class="btn primary" id="fixCheck">Проверить</button>
+        <button class="btn" id="fixNone">Ошибки нет</button>
+        <span class="grow"></span>
+        <button class="btn ghost" id="fixNext">Дальше <span class="kbd">Enter</span></button>
+      </div>
+      <div id="fixResult"></div>
+    </div>
+  </section>
+
+  <!-- ORDER -->
+  <section class="panel" id="tab-order" hidden>
+    <div>
+      <h2>Собери фразу</h2>
+      <p class="lead">Расставьте слова в правильном порядке. Следите за местом глагола, отделяемых приставок и инфинитива.</p>
+    </div>
+    <div class="card">
+      <div class="row meta"><span class="note" id="orderMeta"></span><span class="grow"></span><button class="btn ghost icon-btn say" id="orderSay" aria-label="Прослушать">SAY</button></div>
+      <div class="tray" id="orderAnswer" aria-label="Ваш ответ"></div>
+      <div class="tray" id="orderPool" aria-label="Слова"></div>
+      <div class="row">
+        <button class="btn primary" id="orderCheck">Проверить</button>
+        <button class="btn" id="orderReset">Сбросить</button>
+        <span class="grow"></span>
+        <button class="btn ghost" id="orderNext">Дальше</button>
+      </div>
+      <div id="orderResult"></div>
+    </div>
+  </section>
+
+  <!-- TRANSLATE -->
+  <section class="panel" id="tab-trans" hidden>
+    <div>
+      <h2>Перевод</h2>
+      <p class="lead">Claude придумывает русские фразы, которые можно перевести только вашими словами. Переводите вслух или письменно.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <select id="transTopic" class="grow" aria-label="Тема"></select>
+        <button class="btn primary" id="transNew">Новые фразы</button>
+      </div>
+      <div id="transBody"></div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="panel" id="tab-cards" hidden>
+    <div>
+      <h2>Карточки</h2>
+      <p class="lead">Слова, в которых вы ошибались, выпадают чаще. Существительные отвечайте с артиклем: <span class="art der">der</span>, <span class="art die">die</span>, <span class="art das">das</span>.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <div class="seg" role="group" aria-label="Направление">
+          <button id="cardModeSay" aria-pressed="true">Русский → немецкий</button>
+          <button id="cardModeHear" aria-pressed="false">На слух → русский</button>
+        </div>
+        <span class="grow"></span>
+        <label class="check"><input type="checkbox" id="cardWeakOnly"> Только слабые</label>
+      </div>
+      <div id="cardBody"></div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section class="panel" id="tab-dict" hidden>
+    <div>
+      <h2>Словарь пузыря</h2>
+      <p class="lead">Снимите галочку со слов, которых не было в ваших разделах Duolingo, — они исчезнут из всех упражнений и из разговора.</p>
+    </div>
+    <div class="filters">
+      <input type="text" id="dictSearch" placeholder="Поиск: Hund, собака, dog…" autocomplete="off">
+      <select id="dictSection" aria-label="Раздел"><option value="">Все разделы</option><option value="1">Раздел 1</option><option value="2">Раздел 2</option></select>
+      <select id="dictFilter" aria-label="Фильтр"><option value="">Все слова</option><option value="weak">Только слабые</option><option value="off">Убранные из пузыря</option></select>
+    </div>
+    <div class="row"><span class="note" id="dictCount"></span><span class="grow"></span><button class="btn ghost" id="resetProgress">Сбросить прогресс</button></div>
+    <div id="resetConfirm" hidden class="card"><div>Удалить всю статистику ответов? Список убранных слов сохранится.</div><div class="row"><button class="btn primary" id="resetYes">Да, сбросить</button><button class="btn" id="resetNo">Отмена</button></div></div>
+    <div class="tablewrap"><table><thead><tr><th>В пузыре</th><th>Немецкий</th><th>Русский</th><th>Формы</th><th>Ответы</th></tr></thead><tbody id="dictBody"></tbody></table></div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const DATA = {"topics":[[1,1,"Приветствия и вежливость","Greetings & politeness"],[1,2,"Местоимения, sein и haben","Pronouns, to be, to have"],[1,3,"Артикли","Articles"],[1,4,"Кафе: еда и напитки","Café: food & drinks"],[1,5,"Семья и люди","Family & people"],[1,6,"Животные","Animals"],[1,7,"Числа","Numbers"],[1,8,"Город и направления","City & directions"],[1,9,"Путешествия и транспорт","Travel & transport"],[1,10,"Одежда и цвета","Clothes & colors"],[1,11,"Вопросы","Questions"],[2,12,"Время и распорядок","Time & schedule"],[2,13,"Распорядок дня","Daily routine"],[2,14,"Дом и квартира","Home"],[2,15,"Работа и профессии","Work & professions"],[2,16,"Школа, учёба, языки","School & languages"],[2,17,"Хобби и свободное время","Hobbies & free time"],[2,18,"Погода и времена года","Weather & seasons"],[2,19,"Здоровье и тело","Health & body"],[2,20,"Покупки","Shopping"],[2,21,"Модальные глаголы","Modal verbs"],[2,22,"Предлоги и связки","Prepositions & connectors"]],"words":[[1,1,1,"phr","hallo","привет","hello",null,["hallo"],null,null],[2,1,1,"phr","tschüss","пока","bye",null,["tschüss"],null,null],[3,1,1,"phr","danke","спасибо","thank you",null,["danke"],null,null],[4,1,1,"phr","bitte","пожалуйста","please / you're welcome",null,["bitte"],null,null],[5,1,1,"phr","ja","да","yes",null,["ja"],null,null],[6,1,1,"phr","nein","нет","no",null,["nein"],null,null],[7,1,1,"phr","Entschuldigung","извините","excuse me / sorry",null,["Entschuldigung"],null,null],[8,1,1,"phr","Willkommen","добро пожаловать","welcome",null,["Willkommen"],null,null],[9,1,1,"phr","auf Wiedersehen","до свидания","goodbye",null,["auf Wiedersehen"],null,null],[10,1,1,"phr","bis später","до скорого","see you later",null,["bis später"],null,null],[11,1,1,"phr","bis morgen","до завтра","see you tomorrow",null,["bis morgen"],null,null],[12,1,1,"phr","wie geht's","как дела","how are you",null,["wie geht's"],null,null],[13,1,1,"phr","genau","точно","exactly",null,["genau"],null,null],[14,1,1,"phr","okay","хорошо, окей","okay",null,["okay"],null,null],[15,1,1,"adj","gut","хороший","good",null,["gut","gute","guten","guter","gutes","gutem"],null,null],[16,1,1,"adj","schlecht","плохой","bad",null,["schlecht","schlechte","schlechten","schlechter","schlechtes","schlechtem"],null,null],[17,1,1,"n","Morgen","утро","morning","Morgen",["Morgen"],null,null],[18,1,1,"m","Tag","день","day","Tage",["Tag","Tage"],null,null],[19,1,1,"m","Abend","вечер","evening","Abende",["Abend","Abende"],null,null],[20,1,1,"f","Nacht","ночь","night","Nächte",["Nacht","Nächte"],null,null],[21,1,1,"m","Herr","господин","Mr. / gentleman","Herren",["Herr","Herren"],null,null],[22,1,1,"f","Frau","госпожа; женщина; жена","Mrs. / woman / wife","Frauen",["Frau","Frauen"],null,null],[23,1,1,"m","Name","имя","name","Namen",["Name","Namen"],null,null],[24,1,1,"v","heißen","зваться","to be called",null,["heiße","heißen","heißt"],["heiße","heißt","heißt","heißen","heißt","heißen"],null],[25,1,1,"v","kommen","приходить, приезжать","to come",null,["komme","kommen","kommst","kommt"],["komme","kommst","kommt","kommen","kommt","kommen"],null],[26,1,1,"v","wohnen","жить (проживать)","to live (reside)",null,["wohne","wohnen","wohnst","wohnt"],["wohne","wohnst","wohnt","wohnen","wohnt","wohnen"],null],[27,1,1,"prep","aus","из","from / out of",null,["aus"],null,null],[28,1,1,"prep","in","в","in",null,["in"],null,null],[29,1,1,"conj","und","и","and",null,["und"],null,null],[30,1,1,"conj","oder","или","or",null,["oder"],null,null],[31,1,1,"conj","aber","но","but",null,["aber"],null,null],[32,1,1,"adv","auch","тоже","also, too",null,["auch"],null,null],[33,1,1,"adv","sehr","очень","very",null,["sehr"],null,null],[34,1,1,"part","nicht","не","not",null,["nicht"],null,null],[35,1,1,"adv","gern","охотно, с удовольствием","gladly, like to",null,["gern"],null,null],[36,1,1,"adv","hier","здесь","here",null,["hier"],null,null],[37,1,1,"adv","da","там, тут","there",null,["da"],null,null],[38,1,1,"adv","dort","там","there",null,["dort"],null,null],[39,1,2,"pron","ich","я","I",null,["ich","mich","mir"],null,null],[40,1,2,"pron","du","ты","you (informal)",null,["du","dich","dir"],null,null],[41,1,2,"pron","er","он","he / it",null,["er","ihn","ihm"],null,null],[42,1,2,"pron","sie","она / они","she / they",null,["sie","ihr"],null,null],[43,1,2,"pron","es","оно","it",null,["es"],null,null],[44,1,2,"pron","wir","мы","we",null,["wir","uns"],null,null],[45,1,2,"pron","ihr","вы (мн.)","you (plural)",null,["ihr","euch"],null,null],[46,1,2,"pron","Sie","Вы","you (formal)",null,["Sie","Ihnen"],null,null],[47,1,2,"pron","man","(безличн.) «говорят, нужно»","one, people",null,["man"],null,null],[48,1,2,"v","sein","быть","to be",null,["bin","bist","ist","seid","sind"],["bin","bist","ist","sind","seid","sind"],null],[49,1,2,"v","haben","иметь","to have",null,["habe","haben","habt","hast","hat"],["habe","hast","hat","haben","habt","haben"],null],[50,1,2,"pron","mein","мой","my",null,["mein","meine","meinen","meinem","meiner","meines"],null,null],[51,1,2,"pron","dein","твой","your",null,["dein","deine","deinen","deinem","deiner"],null,null],[52,1,2,"pron","sein","его","his",null,["sein","seine","seinen","seinem","seiner"],null,null],[53,1,2,"pron","unser","наш","our",null,["unser","unsere","unseren","unserem"],null,null],[54,1,2,"pron","euer","ваш","your (pl.)",null,["euer","eure","euren","eurem"],null,null],[55,1,2,"pron","Ihr","Ваш","your (formal)",null,["Ihr","Ihre","Ihren","Ihrem"],null,null],[56,1,2,"pron","dieser","этот","this",null,["dieser","diese","dieses","diesen","diesem"],null,null],[57,1,2,"pron","alle","все","all, everyone",null,["alle"],null,null],[58,1,2,"pron","alles","всё","everything",null,["alles"],null,null],[59,1,2,"pron","etwas","что-то","something",null,["etwas"],null,null],[60,1,2,"pron","nichts","ничего","nothing",null,["nichts"],null,null],[61,1,2,"pron","jemand","кто-то","somebody",null,["jemand"],null,null],[62,1,2,"pron","niemand","никто","nobody",null,["niemand"],null,null],[63,1,3,"art","der","определённый артикль м. р.","the (m.)",null,["der"],null,null],[64,1,3,"art","die","определённый артикль ж. р. и мн. ч.","the (f., pl.)",null,["die"],null,null],[65,1,3,"art","das","определённый артикль ср. р.; это","the (n.) / that",null,["das"],null,null],[66,1,3,"art","den","артикль (вин. м. р.; дат. мн.)","the (acc. m. / dat. pl.)",null,["den"],null,null],[67,1,3,"art","dem","артикль (дат. м./ср. р.)","the (dat. m./n.)",null,["dem"],null,null],[68,1,3,"art","des","артикль (род. п.)","the (gen. m./n.)",null,["des"],null,null],[69,1,3,"art","ein","неопределённый артикль м./ср. р.","a (m./n.)",null,["ein"],null,null],[70,1,3,"art","eine","неопределённый артикль ж. р.","a (f.)",null,["eine"],null,null],[71,1,3,"art","einen","неопр. артикль (вин. м. р.)","a (acc. m.)",null,["einen"],null,null],[72,1,3,"art","einem","неопр. артикль (дат. м./ср. р.)","a (dat. m./n.)",null,["einem"],null,null],[73,1,3,"art","einer","неопр. артикль (дат. ж. р.)","a (dat. f.)",null,["einer"],null,null],[74,1,3,"art","kein","никакой, не (отрицание сущ.)","no, not a",null,["kein","keine","keinen","keinem","keiner"],null,null],[75,1,4,"m","Kaffee","кофе","coffee","Kaffees",["Kaffee","Kaffees"],null,null],[76,1,4,"m","Tee","чай","tea","Tees",["Tee","Tees"],null,null],[77,1,4,"n","Wasser","вода","water",null,["Wasser"],null,null],[78,1,4,"f","Milch","молоко","milk",null,["Milch"],null,null],[79,1,4,"m","Saft","сок","juice","Säfte",["Saft","Säfte"],null,null],[80,1,4,"n","Bier","пиво","beer","Biere",["Bier","Biere"],null,null],[81,1,4,"m","Wein","вино","wine","Weine",["Wein","Weine"],null,null],[82,1,4,"n","Brot","хлеб","bread","Brote",["Brot","Brote"],null,null],[83,1,4,"n","Brötchen","булочка","bread roll","Brötchen",["Brötchen"],null,null],[84,1,4,"m","Käse","сыр","cheese",null,["Käse"],null,null],[85,1,4,"m","Apfel","яблоко","apple","Äpfel",["Apfel","Äpfel"],null,null],[86,1,4,"n","Ei","яйцо","egg","Eier",["Ei","Eier"],null,null],[87,1,4,"m","Kuchen","пирог, торт","cake","Kuchen",["Kuchen"],null,null],[88,1,4,"m","Zucker","сахар","sugar",null,["Zucker"],null,null],[89,1,4,"m","Salat","салат","salad","Salate",["Salat","Salate"],null,null],[90,1,4,"f","Suppe","суп","soup","Suppen",["Suppe","Suppen"],null,null],[91,1,4,"f","Pizza","пицца","pizza","Pizzas",["Pizza","Pizzas"],null,null],[92,1,4,"pl","Nudeln","макароны","pasta, noodles","Nudeln",["Nudeln"],null,null],[93,1,4,"m","Reis","рис","rice",null,["Reis"],null,null],[94,1,4,"n","Fleisch","мясо","meat",null,["Fleisch"],null,null],[95,1,4,"m","Fisch","рыба","fish","Fische",["Fisch","Fische"],null,null],[96,1,4,"f","Wurst","колбаса, сосиска","sausage","Würste",["Wurst","Würste"],null,null],[97,1,4,"n","Hähnchen","курица (блюдо)","chicken (food)","Hähnchen",["Hähnchen"],null,null],[98,1,4,"n","Gemüse","овощи","vegetables",null,["Gemüse"],null,null],[99,1,4,"n","Obst","фрукты","fruit",null,["Obst"],null,null],[100,1,4,"f","Banane","банан","banana","Bananen",["Banane","Bananen"],null,null],[101,1,4,"f","Orange","апельсин","orange","Orangen",["Orange","Orangen"],null,null],[102,1,4,"f","Tomate","помидор","tomato","Tomaten",["Tomate","Tomaten"],null,null],[103,1,4,"f","Kartoffel","картофель","potato","Kartoffeln",["Kartoffel","Kartoffeln"],null,null],[104,1,4,"f","Butter","масло (сливочное)","butter",null,["Butter"],null,null],[105,1,4,"n","Sandwich","сэндвич","sandwich","Sandwiches",["Sandwich","Sandwiches"],null,null],[106,1,4,"f","Schokolade","шоколад","chocolate","Schokoladen",["Schokolade","Schokoladen"],null,null],[107,1,4,"n","Eis","мороженое; лёд","ice cream / ice",null,["Eis"],null,null],[108,1,4,"n","Salz","соль","salt",null,["Salz"],null,null],[109,1,4,"m","Pfeffer","перец","pepper",null,["Pfeffer"],null,null],[110,1,4,"f","Erdbeere","клубника","strawberry","Erdbeeren",["Erdbeere","Erdbeeren"],null,null],[111,1,4,"f","Zitrone","лимон","lemon","Zitronen",["Zitrone","Zitronen"],null,null],[112,1,4,"n","Essen","еда","food / meal",null,["Essen"],null,null],[113,1,4,"n","Getränk","напиток","drink","Getränke",["Getränk","Getränke"],null,null],[114,1,4,"n","Frühstück","завтрак","breakfast","Frühstücke",["Frühstück","Frühstücke"],null,null],[115,1,4,"n","Mittagessen","обед","lunch","Mittagessen",["Mittagessen"],null,null],[116,1,4,"n","Abendessen","ужин","dinner","Abendessen",["Abendessen"],null,null],[117,1,4,"m","Hunger","голод","hunger",null,["Hunger"],null,null],[118,1,4,"m","Durst","жажда","thirst",null,["Durst"],null,null],[119,1,4,"n","Glas","стакан, бокал","glass","Gläser",["Glas","Gläser"],null,null],[120,1,4,"f","Tasse","чашка","cup","Tassen",["Tasse","Tassen"],null,null],[121,1,4,"f","Flasche","бутылка","bottle","Flaschen",["Flasche","Flaschen"],null,null],[122,1,4,"m","Teller","тарелка","plate","Teller",["Teller"],null,null],[123,1,4,"m","Löffel","ложка","spoon","Löffel",["Löffel"],null,null],[124,1,4,"f","Gabel","вилка","fork","Gabeln",["Gabel","Gabeln"],null,null],[125,1,4,"n","Messer","нож","knife","Messer",["Messer"],null,null],[126,1,4,"f","Speisekarte","меню","menu","Speisekarten",["Speisekarte","Speisekarten"],null,null],[127,1,4,"f","Rechnung","счёт","bill, check","Rechnungen",["Rechnung","Rechnungen"],null,null],[128,1,4,"m","Kellner","официант","waiter","Kellner",["Kellner"],null,null],[129,1,4,"f","Kellnerin","официантка","waitress","Kellnerinnen",["Kellnerin","Kellnerinnen"],null,null],[130,1,4,"n","Café","кафе","café","Cafés",["Café","Cafés"],null,null],[131,1,4,"n","Restaurant","ресторан","restaurant","Restaurants",["Restaurant","Restaurants"],null,null],[132,1,4,"v","essen","есть","to eat",null,["esse","essen","esst","isst"],["esse","isst","isst","essen","esst","essen"],null],[133,1,4,"v","trinken","пить","to drink",null,["trinke","trinken","trinkst","trinkt"],["trinke","trinkst","trinkt","trinken","trinkt","trinken"],null],[134,1,4,"v","möchten","хотел бы","would like",null,["möchte","möchten","möchtest","möchtet"],["möchte","möchtest","möchte","möchten","möchtet","möchten"],null],[135,1,4,"v","nehmen","брать","to take, to have (order)",null,["nehme","nehmen","nehmt","nimmst","nimmt"],["nehme","nimmst","nimmt","nehmen","nehmt","nehmen"],null],[136,1,4,"v","bezahlen","платить","to pay",null,["bezahle","bezahlen","bezahlst","bezahlt"],["bezahle","bezahlst","bezahlt","bezahlen","bezahlt","bezahlen"],null],[137,1,4,"v","kosten","стоить","to cost",null,["koste","kosten","kostest","kostet"],["koste","kostest","kostet","kosten","kostet","kosten"],null],[138,1,4,"v","bestellen","заказывать","to order",null,["bestelle","bestellen","bestellst","bestellt"],["bestelle","bestellst","bestellt","bestellen","bestellt","bestellen"],null],[139,1,4,"v","kochen","готовить","to cook",null,["koche","kochen","kochst","kocht"],["koche","kochst","kocht","kochen","kocht","kochen"],null],[140,1,4,"v","backen","печь","to bake",null,["backe","backen","backst","backt"],["backe","backst","backt","backen","backt","backen"],null],[141,1,4,"adj","lecker","вкусный","tasty",null,["lecker","leckere","leckeren","leckerer","leckeres","leckerem"],null,null],[142,1,4,"adj","süß","сладкий; милый","sweet / cute",null,["süß","süße","süßen","süßer","süßes","süßem"],null,null],[143,1,4,"adj","salzig","солёный","salty",null,["salzig","salzige","salzigen","salziger","salziges","salzigem"],null,null],[144,1,4,"adj","frisch","свежий","fresh",null,["frisch","frische","frischen","frischer","frisches","frischem"],null,null],[145,1,4,"adj","warm","тёплый","warm",null,["warm","warme","warmen","warmer","warmes","warmem"],null,null],[146,1,4,"adj","kalt","холодный","cold",null,["kalt","kalte","kalten","kalter","kaltes","kaltem"],null,null],[147,1,4,"adj","heiß","горячий, жаркий","hot",null,["heiß","heiße","heißen","heißer","heißes","heißem"],null,null],[148,1,4,"adj","vegetarisch","вегетарианский","vegetarian",null,["vegetarisch","vegetarische","vegetarischen","vegetarischer","vegetarisches","vegetarischem"],null,null],[149,1,4,"m","Euro","евро","euro","Euro",["Euro"],null,null],[150,1,4,"m","Cent","цент","cent","Cent",["Cent"],null,null],[151,1,5,"f","Familie","семья","family","Familien",["Familie","Familien"],null,null],[152,1,5,"f","Mutter","мать","mother","Mütter",["Mutter","Mütter"],null,null],[153,1,5,"m","Vater","отец","father","Väter",["Vater","Väter"],null,null],[154,1,5,"pl","Eltern","родители","parents","Eltern",["Eltern"],null,null],[155,1,5,"m","Bruder","брат","brother","Brüder",["Bruder","Brüder"],null,null],[156,1,5,"f","Schwester","сестра","sister","Schwestern",["Schwester","Schwestern"],null,null],[157,1,5,"pl","Geschwister","братья и сёстры","siblings","Geschwister",["Geschwister"],null,null],[158,1,5,"m","Sohn","сын","son","Söhne",["Sohn","Söhne"],null,null],[159,1,5,"f","Tochter","дочь","daughter","Töchter",["Tochter","Töchter"],null,null],[160,1,5,"n","Kind","ребёнок","child","Kinder",["Kind","Kinder"],null,null],[161,1,5,"n","Baby","малыш","baby","Babys",["Baby","Babys"],null,null],[162,1,5,"f","Oma","бабушка","grandma","Omas",["Oma","Omas"],null,null],[163,1,5,"m","Opa","дедушка","grandpa","Opas",["Opa","Opas"],null,null],[164,1,5,"f","Großmutter","бабушка","grandmother","Großmütter",["Großmutter","Großmütter"],null,null],[165,1,5,"m","Großvater","дедушка","grandfather","Großväter",["Großvater","Großväter"],null,null],[166,1,5,"pl","Großeltern","бабушка и дедушка","grandparents","Großeltern",["Großeltern"],null,null],[167,1,5,"m","Onkel","дядя","uncle","Onkel",["Onkel"],null,null],[168,1,5,"f","Tante","тётя","aunt","Tanten",["Tante","Tanten"],null,null],[169,1,5,"m","Cousin","двоюродный брат","cousin (m.)","Cousins",["Cousin","Cousins"],null,null],[170,1,5,"f","Cousine","двоюродная сестра","cousin (f.)","Cousinen",["Cousine","Cousinen"],null,null],[171,1,5,"f","Mama","мама","mom","Mamas",["Mama","Mamas"],null,null],[172,1,5,"m","Papa","папа","dad","Papas",["Papa","Papas"],null,null],[173,1,5,"m","Mann","мужчина; муж","man / husband","Männer",["Mann","Männer"],null,null],[174,1,5,"m","Junge","мальчик","boy","Jungen",["Junge","Jungen"],null,null],[175,1,5,"n","Mädchen","девочка","girl","Mädchen",["Mädchen"],null,null],[176,1,5,"m","Freund","друг; парень","friend / boyfriend","Freunde",["Freund","Freunde"],null,null],[177,1,5,"f","Freundin","подруга; девушка","friend (f.) / girlfriend","Freundinnen",["Freundin","Freundinnen"],null,null],[178,1,5,"m","Partner","партнёр","partner","Partner",["Partner"],null,null],[179,1,5,"f","Partnerin","партнёрша","partner (f.)","Partnerinnen",["Partnerin","Partnerinnen"],null,null],[180,1,5,"m","Mensch","человек","person, human","Menschen",["Mensch","Menschen"],null,null],[181,1,5,"pl","Leute","люди","people","Leute",["Leute"],null,null],[182,1,5,"m","Nachbar","сосед","neighbor","Nachbarn",["Nachbar","Nachbarn"],null,null],[183,1,5,"f","Nachbarin","соседка","neighbor (f.)","Nachbarinnen",["Nachbarin","Nachbarinnen"],null,null],[184,1,5,"n","Jahr","год","year","Jahre",["Jahr","Jahre"],null,null],[185,1,5,"v","lieben","любить","to love",null,["liebe","lieben","liebst","liebt"],["liebe","liebst","liebt","lieben","liebt","lieben"],null],[186,1,5,"v","heiraten","жениться, выходить замуж","to marry",null,["heirate","heiraten","heiratest","heiratet"],["heirate","heiratest","heiratet","heiraten","heiratet","heiraten"],null],[187,1,5,"v","leben","жить","to live",null,["lebe","leben","lebst","lebt"],["lebe","lebst","lebt","leben","lebt","leben"],null],[188,1,5,"adj","alt","старый","old",null,["alt","alte","alten","alter","altes","altem"],null,null],[189,1,5,"adj","jung","молодой","young",null,["jung","junge","jungen","junger","junges","jungem"],null,null],[190,1,5,"adj","groß","большой, высокий","big, tall",null,["groß","große","großen","großer","großes","großem"],null,null],[191,1,5,"adj","klein","маленький","small, short",null,["klein","kleine","kleinen","kleiner","kleines","kleinem"],null,null],[192,1,5,"adj","verheiratet","женатый, замужем","married",null,["verheiratet","verheiratete","verheirateten","verheirateter","verheiratetes","verheiratetem"],null,null],[193,1,5,"adj","ledig","холост, не замужем","single",null,["ledig","ledige","ledigen","lediger","lediges","ledigem"],null,null],[194,1,5,"adj","nett","милый, приятный","nice",null,["nett","nette","netten","netter","nettes","nettem"],null,null],[195,1,5,"adj","freundlich","дружелюбный","friendly",null,["freundlich","freundliche","freundlichen","freundlicher","freundliches","freundlichem"],null,null],[196,1,5,"adj","lustig","весёлый, смешной","funny",null,["lustig","lustige","lustigen","lustiger","lustiges","lustigem"],null,null],[197,1,5,"adj","ernst","серьёзный","serious",null,["ernst","ernste","ernsten","ernster","ernstes","ernstem"],null,null],[198,1,5,"adj","intelligent","умный","intelligent",null,["intelligent","intelligente","intelligenten","intelligenter","intelligentes","intelligentem"],null,null],[199,1,5,"adj","schön","красивый, прекрасный","beautiful, nice",null,["schön","schöne","schönen","schöner","schönes","schönem"],null,null],[200,1,5,"adj","hübsch","симпатичный","pretty",null,["hübsch","hübsche","hübschen","hübscher","hübsches","hübschem"],null,null],[201,1,5,"adj","glücklich","счастливый","happy",null,["glücklich","glückliche","glücklichen","glücklicher","glückliches","glücklichem"],null,null],[202,1,5,"adj","traurig","грустный","sad",null,["traurig","traurige","traurigen","trauriger","trauriges","traurigem"],null,null],[203,1,5,"adj","froh","радостный","glad",null,["froh","frohe","frohen","froher","frohes","frohem"],null,null],[204,1,5,"adj","müde","уставший","tired",null,["müde","müden","müder","müdes","müdem"],null,null],[205,1,5,"adv","zusammen","вместе","together",null,["zusammen"],null,null],[206,1,5,"adv","allein","один, одна","alone",null,["allein"],null,null],[207,1,6,"n","Tier","животное","animal","Tiere",["Tier","Tiere"],null,null],[208,1,6,"m","Hund","собака","dog","Hunde",["Hund","Hunde"],null,null],[209,1,6,"f","Katze","кошка","cat","Katzen",["Katze","Katzen"],null,null],[210,1,6,"f","Ente","утка","duck","Enten",["Ente","Enten"],null,null],[211,1,6,"n","Pferd","лошадь","horse","Pferde",["Pferd","Pferde"],null,null],[212,1,6,"f","Maus","мышь","mouse","Mäuse",["Maus","Mäuse"],null,null],[213,1,6,"m","Vogel","птица","bird","Vögel",["Vogel","Vögel"],null,null],[214,1,6,"m","Bär","медведь","bear","Bären",["Bär","Bären"],null,null],[215,1,6,"m","Elefant","слон","elephant","Elefanten",["Elefant","Elefanten"],null,null],[216,1,6,"f","Kuh","корова","cow","Kühe",["Kuh","Kühe"],null,null],[217,1,6,"n","Schwein","свинья","pig","Schweine",["Schwein","Schweine"],null,null],[218,1,6,"n","Huhn","курица","hen","Hühner",["Huhn","Hühner"],null,null],[219,1,6,"m","Löwe","лев","lion","Löwen",["Löwe","Löwen"],null,null],[220,1,6,"m","Affe","обезьяна","monkey","Affen",["Affe","Affen"],null,null],[221,1,6,"f","Spinne","паук","spider","Spinnen",["Spinne","Spinnen"],null,null],[222,1,6,"f","Schildkröte","черепаха","turtle","Schildkröten",["Schildkröte","Schildkröten"],null,null],[223,1,6,"f","Schlange","змея","snake","Schlangen",["Schlange","Schlangen"],null,null],[224,1,6,"n","Kaninchen","кролик","rabbit","Kaninchen",["Kaninchen"],null,null],[225,1,6,"m","Tiger","тигр","tiger","Tiger",["Tiger"],null,null],[226,1,6,"m","Pinguin","пингвин","penguin","Pinguine",["Pinguin","Pinguine"],null,null],[227,1,6,"m","Zoo","зоопарк","zoo","Zoos",["Zoo","Zoos"],null,null],[228,1,7,"num","null","ноль","zero",null,["null"],null,null],[229,1,7,"num","eins","один","one",null,["eins"],null,null],[230,1,7,"num","zwei","два","two",null,["zwei"],null,null],[231,1,7,"num","drei","три","three",null,["drei"],null,null],[232,1,7,"num","vier","четыре","four",null,["vier"],null,null],[233,1,7,"num","fünf","пять","five",null,["fünf"],null,null],[234,1,7,"num","sechs","шесть","six",null,["sechs"],null,null],[235,1,7,"num","sieben","семь","seven",null,["sieben"],null,null],[236,1,7,"num","acht","восемь","eight",null,["acht"],null,null],[237,1,7,"num","neun","девять","nine",null,["neun"],null,null],[238,1,7,"num","zehn","десять","ten",null,["zehn"],null,null],[239,1,7,"num","elf","одиннадцать","eleven",null,["elf"],null,null],[240,1,7,"num","zwölf","двенадцать","twelve",null,["zwölf"],null,null],[241,1,7,"num","dreizehn","тринадцать","thirteen",null,["dreizehn"],null,null],[242,1,7,"num","vierzehn","четырнадцать","fourteen",null,["vierzehn"],null,null],[243,1,7,"num","fünfzehn","пятнадцать","fifteen",null,["fünfzehn"],null,null],[244,1,7,"num","sechzehn","шестнадцать","sixteen",null,["sechzehn"],null,null],[245,1,7,"num","siebzehn","семнадцать","seventeen",null,["siebzehn"],null,null],[246,1,7,"num","achtzehn","восемнадцать","eighteen",null,["achtzehn"],null,null],[247,1,7,"num","neunzehn","девятнадцать","nineteen",null,["neunzehn"],null,null],[248,1,7,"num","zwanzig","двадцать","twenty",null,["zwanzig"],null,null],[249,1,7,"num","einundzwanzig","двадцать один","twenty-one",null,["einundzwanzig"],null,null],[250,1,7,"num","dreißig","тридцать","thirty",null,["dreißig"],null,null],[251,1,7,"num","vierzig","сорок","forty",null,["vierzig"],null,null],[252,1,7,"num","fünfzig","пятьдесят","fifty",null,["fünfzig"],null,null],[253,1,7,"num","sechzig","шестьдесят","sixty",null,["sechzig"],null,null],[254,1,7,"num","siebzig","семьдесят","seventy",null,["siebzig"],null,null],[255,1,7,"num","achtzig","восемьдесят","eighty",null,["achtzig"],null,null],[256,1,7,"num","neunzig","девяносто","ninety",null,["neunzig"],null,null],[257,1,7,"num","hundert","сто","hundred",null,["hundert"],null,null],[258,1,7,"num","tausend","тысяча","thousand",null,["tausend"],null,null],[259,1,7,"f","Zahl","число","number","Zahlen",["Zahl","Zahlen"],null,null],[260,1,7,"f","Nummer","номер","number (phone, room)","Nummern",["Nummer","Nummern"],null,null],[261,1,7,"num","erste","первый","first",null,["erste","erster","ersten"],null,null],[262,1,7,"num","zweite","второй","second",null,["zweite"],null,null],[263,1,7,"num","dritte","третий","third",null,["dritte"],null,null],[264,1,7,"adv","viel","много","much, many",null,["viel","viele"],null,null],[265,1,7,"adv","wenig","мало","little, few",null,["wenig","wenige"],null,null],[266,1,7,"adv","mehr","больше","more",null,["mehr"],null,null],[267,1,7,"adj","halb","половина, пол-","half",null,["halb","halbe","halben","halber","halbes","halbem"],null,null],[268,1,8,"f","Stadt","город","city","Städte",["Stadt","Städte"],null,null],[269,1,8,"n","Dorf","деревня","village","Dörfer",["Dorf","Dörfer"],null,null],[270,1,8,"f","Straße","улица","street","Straßen",["Straße","Straßen"],null,null],[271,1,8,"n","Haus","дом","house","Häuser",["Haus","Häuser"],null,null],[272,1,8,"f","Wohnung","квартира","apartment","Wohnungen",["Wohnung","Wohnungen"],null,null],[273,1,8,"m","Bahnhof","вокзал","train station","Bahnhöfe",["Bahnhof","Bahnhöfe"],null,null],[274,1,8,"n","Hotel","отель","hotel","Hotels",["Hotel","Hotels"],null,null],[275,1,8,"n","Museum","музей","museum","Museen",["Museum","Museen"],null,null],[276,1,8,"m","Park","парк","park","Parks",["Park","Parks"],null,null],[277,1,8,"m","Supermarkt","супермаркет","supermarket","Supermärkte",["Supermarkt","Supermärkte"],null,null],[278,1,8,"f","Bank","банк","bank","Banken",["Bank","Banken"],null,null],[279,1,8,"f","Kirche","церковь","church","Kirchen",["Kirche","Kirchen"],null,null],[280,1,8,"f","Schule","школа","school","Schulen",["Schule","Schulen"],null,null],[281,1,8,"f","Universität","университет","university","Universitäten",["Universität","Universitäten"],null,null],[282,1,8,"n","Büro","офис","office","Büros",["Büro","Büros"],null,null],[283,1,8,"f","Apotheke","аптека","pharmacy","Apotheken",["Apotheke","Apotheken"],null,null],[284,1,8,"n","Krankenhaus","больница","hospital","Krankenhäuser",["Krankenhaus","Krankenhäuser"],null,null],[285,1,8,"n","Kino","кинотеатр","cinema","Kinos",["Kino","Kinos"],null,null],[286,1,8,"n","Theater","театр","theater","Theater",["Theater"],null,null],[287,1,8,"f","Bäckerei","пекарня","bakery","Bäckereien",["Bäckerei","Bäckereien"],null,null],[288,1,8,"m","Markt","рынок","market","Märkte",["Markt","Märkte"],null,null],[289,1,8,"m","Platz","площадь; место","square / seat / room","Plätze",["Platz","Plätze"],null,null],[290,1,8,"f","Brücke","мост","bridge","Brücken",["Brücke","Brücken"],null,null],[291,1,8,"n","Zentrum","центр","center","Zentren",["Zentrum","Zentren"],null,null],[292,1,8,"f","Bibliothek","библиотека","library","Bibliotheken",["Bibliothek","Bibliotheken"],null,null],[293,1,8,"f","Polizei","полиция","police",null,["Polizei"],null,null],[294,1,8,"f","Post","почта","post office / mail",null,["Post"],null,null],[295,1,8,"f","Toilette","туалет","toilet","Toiletten",["Toilette","Toiletten"],null,null],[296,1,8,"f","Ecke","угол","corner","Ecken",["Ecke","Ecken"],null,null],[297,1,8,"f","Nähe","близость (in der Nähe — рядом)","vicinity",null,["Nähe"],null,null],[298,1,8,"n","Land","страна","country","Länder",["Land","Länder"],null,null],[299,1,8,"name","Deutschland","Германия","Germany",null,["Deutschland"],null,null],[300,1,8,"name","Österreich","Австрия","Austria",null,["Österreich"],null,null],[301,1,8,"name","die Schweiz","Швейцария","Switzerland",null,["die Schweiz"],null,null],[302,1,8,"name","Berlin","Берлин","Berlin",null,["Berlin"],null,null],[303,1,8,"name","Hamburg","Гамбург","Hamburg",null,["Hamburg"],null,null],[304,1,8,"name","München","Мюнхен","Munich",null,["München"],null,null],[305,1,8,"name","Wien","Вена","Vienna",null,["Wien"],null,null],[306,1,8,"name","Europa","Европа","Europe",null,["Europa"],null,null],[307,1,8,"name","Amerika","Америка","America",null,["Amerika"],null,null],[308,1,8,"adj","deutsch","немецкий","German",null,["deutsch","deutsche","deutschen","deutscher","deutsches","deutschem"],null,null],[309,1,8,"adv","links","налево, слева","left",null,["links"],null,null],[310,1,8,"adv","rechts","направо, справа","right",null,["rechts"],null,null],[311,1,8,"adv","geradeaus","прямо","straight ahead",null,["geradeaus"],null,null],[312,1,8,"adj","nah","близкий","near",null,["nah","nahe","nahen","naher","nahes","nahem"],null,null],[313,1,8,"adj","weit","далёкий","far",null,["weit","weite","weiten","weiter","weites","weitem"],null,null],[314,1,8,"adv","oben","наверху","upstairs, above",null,["oben"],null,null],[315,1,8,"adv","unten","внизу","downstairs, below",null,["unten"],null,null],[316,1,8,"adv","draußen","снаружи, на улице","outside",null,["draußen"],null,null],[317,1,8,"adv","drinnen","внутри","inside",null,["drinnen"],null,null],[318,1,8,"v","gehen","идти","to go (on foot)",null,["gehe","gehen","gehst","geht"],["gehe","gehst","geht","gehen","geht","gehen"],null],[319,1,8,"v","finden","находить; считать","to find / to think",null,["finde","finden","findest","findet"],["finde","findest","findet","finden","findet","finden"],null],[320,1,8,"v","suchen","искать","to look for",null,["suche","suchen","suchst","sucht"],["suche","suchst","sucht","suchen","sucht","suchen"],null],[321,1,8,"v","zeigen","показывать","to show",null,["zeige","zeigen","zeigst","zeigt"],["zeige","zeigst","zeigt","zeigen","zeigt","zeigen"],null],[322,1,8,"v","besuchen","посещать","to visit",null,["besuche","besuchen","besuchst","besucht"],["besuche","besuchst","besucht","besuchen","besucht","besuchen"],null],[323,1,9,"m","Zug","поезд","train","Züge",["Zug","Züge"],null,null],[324,1,9,"m","Bus","автобус","bus","Busse",["Bus","Busse"],null,null],[325,1,9,"n","Auto","машина","car","Autos",["Auto","Autos"],null,null],[326,1,9,"n","Taxi","такси","taxi","Taxis",["Taxi","Taxis"],null,null],[327,1,9,"n","Fahrrad","велосипед","bicycle","Fahrräder",["Fahrrad","Fahrräder"],null,null],[328,1,9,"n","Flugzeug","самолёт","airplane","Flugzeuge",["Flugzeug","Flugzeuge"],null,null],[329,1,9,"m","Flughafen","аэропорт","airport","Flughäfen",["Flughafen","Flughäfen"],null,null],[330,1,9,"f","U-Bahn","метро","subway","U-Bahnen",["U-Bahn","U-Bahnen"],null,null],[331,1,9,"f","Haltestelle","остановка","stop (bus, tram)","Haltestellen",["Haltestelle","Haltestellen"],null,null],[332,1,9,"n","Gleis","путь (платформа)","platform, track","Gleise",["Gleis","Gleise"],null,null],[333,1,9,"n","Ticket","билет","ticket","Tickets",["Ticket","Tickets"],null,null],[334,1,9,"f","Fahrkarte","проездной билет","ticket (transport)","Fahrkarten",["Fahrkarte","Fahrkarten"],null,null],[335,1,9,"f","Karte","карта; билет","map / card / ticket","Karten",["Karte","Karten"],null,null],[336,1,9,"m","Koffer","чемодан","suitcase","Koffer",["Koffer"],null,null],[337,1,9,"m","Pass","паспорт","passport","Pässe",["Pass","Pässe"],null,null],[338,1,9,"n","Gepäck","багаж","luggage",null,["Gepäck"],null,null],[339,1,9,"f","Reise","поездка, путешествие","trip","Reisen",["Reise","Reisen"],null,null],[340,1,9,"m","Urlaub","отпуск","vacation","Urlaube",["Urlaub","Urlaube"],null,null],[341,1,9,"n","Zimmer","комната, номер","room","Zimmer",["Zimmer"],null,null],[342,1,9,"m","Schlüssel","ключ","key","Schlüssel",["Schlüssel"],null,null],[343,1,9,"m","Strand","пляж","beach","Strände",["Strand","Strände"],null,null],[344,1,9,"n","Meer","море","sea","Meere",["Meer","Meere"],null,null],[345,1,9,"m","Berg","гора","mountain","Berge",["Berg","Berge"],null,null],[346,1,9,"m","See","озеро","lake","Seen",["See","Seen"],null,null],[347,1,9,"m","Fluss","река","river","Flüsse",["Fluss","Flüsse"],null,null],[348,1,9,"m","Wald","лес","forest","Wälder",["Wald","Wälder"],null,null],[349,1,9,"f","Insel","остров","island","Inseln",["Insel","Inseln"],null,null],[350,1,9,"m","Tourist","турист","tourist","Touristen",["Tourist","Touristen"],null,null],[351,1,9,"f","Touristin","туристка","tourist (f.)","Touristinnen",["Touristin","Touristinnen"],null,null],[352,1,9,"v","fahren","ехать","to drive, to go (by vehicle)",null,["fahre","fahren","fahrt","fährst","fährt"],["fahre","fährst","fährt","fahren","fahrt","fahren"],null],[353,1,9,"v","fliegen","лететь","to fly",null,["fliege","fliegen","fliegst","fliegt"],["fliege","fliegst","fliegt","fliegen","fliegt","fliegen"],null],[354,1,9,"v","reisen","путешествовать","to travel",null,["reise","reisen","reist"],["reise","reist","reist","reisen","reist","reisen"],null],[355,1,9,"vs","ankommen","прибывать","to arrive",null,["komme an","kommen an","kommst an","kommt an"],["komme an","kommst an","kommt an","kommen an","kommt an","kommen an"],"an"],[356,1,9,"vs","abfahren","отправляться","to depart",null,["fahre ab","fahren ab","fahrt ab","fährst ab","fährt ab"],["fahre ab","fährst ab","fährt ab","fahren ab","fahrt ab","fahren ab"],"ab"],[357,1,9,"v","warten","ждать","to wait",null,["warte","warten","wartest","wartet"],["warte","wartest","wartet","warten","wartet","warten"],null],[358,1,9,"v","bleiben","оставаться","to stay",null,["bleibe","bleiben","bleibst","bleibt"],["bleibe","bleibst","bleibt","bleiben","bleibt","bleiben"],null],[359,1,9,"v","brauchen","нуждаться, нужно","to need",null,["brauche","brauchen","brauchst","braucht"],["brauche","brauchst","braucht","brauchen","braucht","brauchen"],null],[360,1,9,"adj","pünktlich","пунктуальный, вовремя","on time",null,["pünktlich","pünktliche","pünktlichen","pünktlicher","pünktliches","pünktlichem"],null,null],[361,1,9,"adj","spät","поздний","late",null,["spät","späte","späten","später","spätes","spätem"],null,null],[362,1,9,"adj","früh","ранний","early",null,["früh","frühe","frühen","früher","frühes","frühem"],null,null],[363,1,9,"adj","schnell","быстрый","fast",null,["schnell","schnelle","schnellen","schneller","schnelles","schnellem"],null,null],[364,1,9,"adj","langsam","медленный","slow",null,["langsam","langsame","langsamen","langsamer","langsames","langsamem"],null,null],[365,1,10,"f","Kleidung","одежда","clothing",null,["Kleidung"],null,null],[366,1,10,"n","Hemd","рубашка","shirt","Hemden",["Hemd","Hemden"],null,null],[367,1,10,"f","Hose","брюки","pants","Hosen",["Hose","Hosen"],null,null],[368,1,10,"n","Kleid","платье","dress","Kleider",["Kleid","Kleider"],null,null],[369,1,10,"m","Rock","юбка","skirt","Röcke",["Rock","Röcke"],null,null],[370,1,10,"f","Jacke","куртка","jacket","Jacken",["Jacke","Jacken"],null,null],[371,1,10,"m","Mantel","пальто","coat","Mäntel",["Mantel","Mäntel"],null,null],[372,1,10,"m","Schuh","ботинок, туфля","shoe","Schuhe",["Schuh","Schuhe"],null,null],[373,1,10,"f","Socke","носок","sock","Socken",["Socke","Socken"],null,null],[374,1,10,"m","Hut","шляпа","hat","Hüte",["Hut","Hüte"],null,null],[375,1,10,"f","Mütze","шапка","cap, beanie","Mützen",["Mütze","Mützen"],null,null],[376,1,10,"n","T-Shirt","футболка","T-shirt","T-Shirts",["T-Shirt","T-Shirts"],null,null],[377,1,10,"m","Pullover","свитер","sweater","Pullover",["Pullover"],null,null],[378,1,10,"f","Jeans","джинсы","jeans","Jeans",["Jeans"],null,null],[379,1,10,"f","Tasche","сумка; карман","bag / pocket","Taschen",["Tasche","Taschen"],null,null],[380,1,10,"f","Brille","очки","glasses","Brillen",["Brille","Brillen"],null,null],[381,1,10,"f","Uhr","часы; час (время)","watch, clock / o'clock","Uhren",["Uhr","Uhren"],null,null],[382,1,10,"m","Regenschirm","зонт","umbrella","Regenschirme",["Regenschirm","Regenschirme"],null,null],[383,1,10,"f","Farbe","цвет","color","Farben",["Farbe","Farben"],null,null],[384,1,10,"v","tragen","носить","to wear / to carry",null,["trage","tragen","tragt","trägst","trägt"],["trage","trägst","trägt","tragen","tragt","tragen"],null],[385,1,10,"vs","anziehen","надевать","to put on",null,["ziehe an","ziehen an","ziehst an","zieht an"],["ziehe an","ziehst an","zieht an","ziehen an","zieht an","ziehen an"],"an"],[386,1,10,"v","kaufen","покупать","to buy",null,["kaufe","kaufen","kaufst","kauft"],["kaufe","kaufst","kauft","kaufen","kauft","kaufen"],null],[387,1,10,"adj","rot","красный","red",null,["rot","rote","roten","roter","rotes","rotem"],null,null],[388,1,10,"adj","blau","синий","blue",null,["blau","blaue","blauen","blauer","blaues","blauem"],null,null],[389,1,10,"adj","grün","зелёный","green",null,["grün","grüne","grünen","grüner","grünes","grünem"],null,null],[390,1,10,"adj","gelb","жёлтый","yellow",null,["gelb","gelbe","gelben","gelber","gelbes","gelbem"],null,null],[391,1,10,"adj","schwarz","чёрный","black",null,["schwarz","schwarze","schwarzen","schwarzer","schwarzes","schwarzem"],null,null],[392,1,10,"adj","weiß","белый","white",null,["weiß","weiße","weißen","weißer","weißes","weißem"],null,null],[393,1,10,"adj","grau","серый","gray",null,["grau","graue","grauen","grauer","graues","grauem"],null,null],[394,1,10,"adj","braun","коричневый","brown",null,["braun","braune","braunen","brauner","braunes","braunem"],null,null],[395,1,10,"adj","rosa","розовый","pink",null,["rosa"],null,null],[396,1,10,"adj","lila","фиолетовый","purple",null,["lila"],null,null],[397,1,10,"adj","orange","оранжевый","orange",null,["orange"],null,null],[398,1,10,"adj","bunt","разноцветный","colorful",null,["bunt","bunte","bunten","bunter","buntes","buntem"],null,null],[399,1,10,"adj","neu","новый","new",null,["neu","neue","neuen","neuer","neues","neuem"],null,null],[400,1,10,"adj","hässlich","некрасивый","ugly",null,["hässlich","hässliche","hässlichen","hässlicher","hässliches","hässlichem"],null,null],[401,1,10,"adj","teuer","дорогой","expensive",null,["teuer","teure","teuren","teurer","teures","teurem"],null,null],[402,1,10,"adj","billig","дешёвый","cheap",null,["billig","billige","billigen","billiger","billiges","billigem"],null,null],[403,1,10,"adj","günstig","недорогой, выгодный","inexpensive",null,["günstig","günstige","günstigen","günstiger","günstiges","günstigem"],null,null],[404,1,10,"adj","lang","длинный","long",null,["lang","lange","langen","langer","langes","langem"],null,null],[405,1,10,"adj","kurz","короткий","short",null,["kurz","kurze","kurzen","kurzer","kurzes","kurzem"],null,null],[406,1,10,"adj","eng","узкий, тесный","tight",null,["eng","enge","engen","enger","enges","engem"],null,null],[407,1,10,"adj","bequem","удобный","comfortable",null,["bequem","bequeme","bequemen","bequemer","bequemes","bequemem"],null,null],[408,1,11,"q","was","что","what",null,["was"],null,null],[409,1,11,"q","wer","кто","who",null,["wer","wen","wem"],null,null],[410,1,11,"q","wo","где","where",null,["wo"],null,null],[411,1,11,"q","woher","откуда","where from",null,["woher"],null,null],[412,1,11,"q","wohin","куда","where to",null,["wohin"],null,null],[413,1,11,"q","wie","как","how",null,["wie"],null,null],[414,1,11,"q","wann","когда","when",null,["wann"],null,null],[415,1,11,"q","warum","почему","why",null,["warum"],null,null],[416,1,11,"q","wie viel","сколько","how much",null,["wie viel"],null,null],[417,1,11,"q","wie viele","сколько (исчисл.)","how many",null,["wie viele"],null,null],[418,1,11,"q","welcher","какой, который","which",null,["welcher","welche","welches","welchen"],null,null],[419,1,11,"f","Frage","вопрос","question","Fragen",["Frage","Fragen"],null,null],[420,1,11,"f","Antwort","ответ","answer","Antworten",["Antwort","Antworten"],null,null],[421,1,11,"v","fragen","спрашивать","to ask",null,["frage","fragen","fragst","fragt"],["frage","fragst","fragt","fragen","fragt","fragen"],null],[422,1,11,"v","antworten","отвечать","to answer",null,["antworte","antworten","antwortest","antwortet"],["antworte","antwortest","antwortet","antworten","antwortet","antworten"],null],[423,2,12,"f","Zeit","время","time","Zeiten",["Zeit","Zeiten"],null,null],[424,2,12,"f","Stunde","час; урок","hour / lesson","Stunden",["Stunde","Stunden"],null,null],[425,2,12,"f","Minute","минута","minute","Minuten",["Minute","Minuten"],null,null],[426,2,12,"f","Sekunde","секунда","second","Sekunden",["Sekunde","Sekunden"],null,null],[427,2,12,"f","Woche","неделя","week","Wochen",["Woche","Wochen"],null,null],[428,2,12,"m","Monat","месяц","month","Monate",["Monat","Monate"],null,null],[429,2,12,"n","Wochenende","выходные","weekend","Wochenenden",["Wochenende","Wochenenden"],null,null],[430,2,12,"m","Vormittag","первая половина дня","late morning","Vormittage",["Vormittag","Vormittage"],null,null],[431,2,12,"m","Mittag","полдень","noon","Mittage",["Mittag","Mittage"],null,null],[432,2,12,"m","Nachmittag","вторая половина дня","afternoon","Nachmittage",["Nachmittag","Nachmittage"],null,null],[433,2,12,"m","Montag","понедельник","Monday","Montage",["Montag","Montage"],null,null],[434,2,12,"m","Dienstag","вторник","Tuesday","Dienstage",["Dienstag","Dienstage"],null,null],[435,2,12,"m","Mittwoch","среда","Wednesday","Mittwoche",["Mittwoch","Mittwoche"],null,null],[436,2,12,"m","Donnerstag","четверг","Thursday","Donnerstage",["Donnerstag","Donnerstage"],null,null],[437,2,12,"m","Freitag","пятница","Friday","Freitage",["Freitag","Freitage"],null,null],[438,2,12,"m","Samstag","суббота","Saturday","Samstage",["Samstag","Samstage"],null,null],[439,2,12,"m","Sonntag","воскресенье","Sunday","Sonntage",["Sonntag","Sonntage"],null,null],[440,2,12,"m","Januar","январь","January",null,["Januar"],null,null],[441,2,12,"m","Februar","февраль","February",null,["Februar"],null,null],[442,2,12,"m","März","март","March",null,["März"],null,null],[443,2,12,"m","April","апрель","April",null,["April"],null,null],[444,2,12,"m","Mai","май","May",null,["Mai"],null,null],[445,2,12,"m","Juni","июнь","June",null,["Juni"],null,null],[446,2,12,"m","Juli","июль","July",null,["Juli"],null,null],[447,2,12,"m","August","август","August",null,["August"],null,null],[448,2,12,"m","September","сентябрь","September",null,["September"],null,null],[449,2,12,"m","Oktober","октябрь","October",null,["Oktober"],null,null],[450,2,12,"m","November","ноябрь","November",null,["November"],null,null],[451,2,12,"m","Dezember","декабрь","December",null,["Dezember"],null,null],[452,2,12,"adv","heute","сегодня","today",null,["heute"],null,null],[453,2,12,"adv","morgen","завтра","tomorrow",null,["morgen"],null,null],[454,2,12,"adv","gestern","вчера","yesterday",null,["gestern"],null,null],[455,2,12,"adv","jetzt","сейчас","now",null,["jetzt"],null,null],[456,2,12,"adv","später","позже","later",null,["später"],null,null],[457,2,12,"adv","bald","скоро","soon",null,["bald"],null,null],[458,2,12,"adv","immer","всегда","always",null,["immer"],null,null],[459,2,12,"adv","oft","часто","often",null,["oft"],null,null],[460,2,12,"adv","manchmal","иногда","sometimes",null,["manchmal"],null,null],[461,2,12,"adv","selten","редко","rarely",null,["selten"],null,null],[462,2,12,"adv","nie","никогда","never",null,["nie"],null,null],[463,2,12,"adv","jeden Tag","каждый день","every day",null,["jeden Tag"],null,null],[464,2,12,"adv","morgens","по утрам","in the mornings",null,["morgens"],null,null],[465,2,12,"adv","abends","по вечерам","in the evenings",null,["abends"],null,null],[466,2,12,"adv","zuerst","сначала","first",null,["zuerst"],null,null],[467,2,12,"adv","dann","потом","then",null,["dann"],null,null],[468,2,12,"adv","danach","после этого","afterwards",null,["danach"],null,null],[469,2,12,"adv","schon","уже","already",null,["schon"],null,null],[470,2,12,"adv","noch","ещё","still, yet",null,["noch"],null,null],[471,2,12,"prep","um","в (о времени)","at (time) / around",null,["um"],null,null],[472,2,12,"prep","vor","перед; до; назад","before / in front of / ago",null,["vor"],null,null],[473,2,12,"prep","nach","после; в (город, страну)","after / to (cities, countries)",null,["nach"],null,null],[474,2,12,"n","Viertel","четверть","quarter","Viertel",["Viertel"],null,null],[475,2,12,"v","beginnen","начинать","to begin",null,["beginne","beginnen","beginnst","beginnt"],["beginne","beginnst","beginnt","beginnen","beginnt","beginnen"],null],[476,2,12,"vs","anfangen","начинать","to start",null,["fange an","fangen an","fangt an","fängst an","fängt an"],["fange an","fängst an","fängt an","fangen an","fangt an","fangen an"],"an"],[477,2,12,"v","dauern","длиться","to last",null,["dauere","dauern","dauerst","dauert"],["dauere","dauerst","dauert","dauern","dauert","dauern"],null],[478,2,12,"m","Termin","встреча, запись (к врачу)","appointment","Termine",["Termin","Termine"],null,null],[479,2,13,"vs","aufstehen","вставать","to get up",null,["stehe auf","stehen auf","stehst auf","steht auf"],["stehe auf","stehst auf","steht auf","stehen auf","steht auf","stehen auf"],"auf"],[480,2,13,"v","duschen","принимать душ","to shower",null,["dusche","duschen","duschst","duscht"],["dusche","duschst","duscht","duschen","duscht","duschen"],null],[481,2,13,"v","frühstücken","завтракать","to have breakfast",null,["frühstücke","frühstücken","frühstückst","frühstückt"],["frühstücke","frühstückst","frühstückt","frühstücken","frühstückt","frühstücken"],null],[482,2,13,"vs","einkaufen","делать покупки","to shop",null,["kaufe ein","kaufen ein","kaufst ein","kauft ein"],["kaufe ein","kaufst ein","kauft ein","kaufen ein","kauft ein","kaufen ein"],"ein"],[483,2,13,"vs","anrufen","звонить","to call",null,["rufe an","rufen an","rufst an","ruft an"],["rufe an","rufst an","ruft an","rufen an","ruft an","rufen an"],"an"],[484,2,13,"vs","fernsehen","смотреть телевизор","to watch TV",null,["sehe fern","sehen fern","seht fern","siehst fern","sieht fern"],["sehe fern","siehst fern","sieht fern","sehen fern","seht fern","sehen fern"],"fern"],[485,2,13,"vs","aufräumen","убираться","to tidy up",null,["räume auf","räumen auf","räumst auf","räumt auf"],["räume auf","räumst auf","räumt auf","räumen auf","räumt auf","räumen auf"],"auf"],[486,2,13,"v","putzen","чистить, убирать","to clean",null,["putze","putzen","putzt"],["putze","putzt","putzt","putzen","putzt","putzen"],null],[487,2,13,"v","waschen","мыть, стирать","to wash",null,["wasche","waschen","wascht","wäschst","wäscht"],["wasche","wäschst","wäscht","waschen","wascht","waschen"],null],[488,2,13,"v","schlafen","спать","to sleep",null,["schlafe","schlafen","schlaft","schläfst","schläft"],["schlafe","schläfst","schläft","schlafen","schlaft","schlafen"],null],[489,2,13,"v","machen","делать","to do, to make",null,["mache","machen","machst","macht"],["mache","machst","macht","machen","macht","machen"],null],[490,2,13,"vs","mitkommen","идти вместе","to come along",null,["komme mit","kommen mit","kommst mit","kommt mit"],["komme mit","kommst mit","kommt mit","kommen mit","kommt mit","kommen mit"],"mit"],[491,2,13,"vs","aufmachen","открывать","to open",null,["mache auf","machen auf","machst auf","macht auf"],["mache auf","machst auf","macht auf","machen auf","macht auf","machen auf"],"auf"],[492,2,13,"vs","zumachen","закрывать","to close",null,["mache zu","machen zu","machst zu","macht zu"],["mache zu","machst zu","macht zu","machen zu","macht zu","machen zu"],"zu"],[493,2,13,"v","öffnen","открывать","to open",null,["öffne","öffnen","öffnest","öffnet"],["öffne","öffnest","öffnet","öffnen","öffnet","öffnen"],null],[494,2,13,"v","schließen","закрывать","to close",null,["schließe","schließen","schließt"],["schließe","schließt","schließt","schließen","schließt","schließen"],null],[495,2,13,"f","Dusche","душ","shower","Duschen",["Dusche","Duschen"],null,null],[496,2,13,"n","Bett","кровать","bed","Betten",["Bett","Betten"],null,null],[497,2,13,"m","Wecker","будильник","alarm clock","Wecker",["Wecker"],null,null],[498,2,13,"m","Feierabend","конец рабочего дня","end of workday","Feierabende",["Feierabend","Feierabende"],null,null],[499,2,13,"f","Pause","перерыв","break","Pausen",["Pause","Pausen"],null,null],[500,2,14,"f","Küche","кухня","kitchen","Küchen",["Küche","Küchen"],null,null],[501,2,14,"n","Bad","ванная","bathroom","Bäder",["Bad","Bäder"],null,null],[502,2,14,"n","Badezimmer","ванная комната","bathroom","Badezimmer",["Badezimmer"],null,null],[503,2,14,"n","Schlafzimmer","спальня","bedroom","Schlafzimmer",["Schlafzimmer"],null,null],[504,2,14,"n","Wohnzimmer","гостиная","living room","Wohnzimmer",["Wohnzimmer"],null,null],[505,2,14,"m","Garten","сад","garden","Gärten",["Garten","Gärten"],null,null],[506,2,14,"m","Balkon","балкон","balcony","Balkone",["Balkon","Balkone"],null,null],[507,2,14,"f","Tür","дверь","door","Türen",["Tür","Türen"],null,null],[508,2,14,"n","Fenster","окно","window","Fenster",["Fenster"],null,null],[509,2,14,"m","Tisch","стол","table","Tische",["Tisch","Tische"],null,null],[510,2,14,"m","Stuhl","стул","chair","Stühle",["Stuhl","Stühle"],null,null],[511,2,14,"n","Sofa","диван","sofa","Sofas",["Sofa","Sofas"],null,null],[512,2,14,"f","Lampe","лампа","lamp","Lampen",["Lampe","Lampen"],null,null],[513,2,14,"m","Schrank","шкаф","closet, cabinet","Schränke",["Schrank","Schränke"],null,null],[514,2,14,"m","Kühlschrank","холодильник","fridge","Kühlschränke",["Kühlschrank","Kühlschränke"],null,null],[515,2,14,"f","Wand","стена","wall","Wände",["Wand","Wände"],null,null],[516,2,14,"m","Boden","пол","floor","Böden",["Boden","Böden"],null,null],[517,2,14,"f","Treppe","лестница","stairs","Treppen",["Treppe","Treppen"],null,null],[518,2,14,"f","Miete","аренда, квартплата","rent","Mieten",["Miete","Mieten"],null,null],[519,2,14,"n","Bild","картина, изображение","picture","Bilder",["Bild","Bilder"],null,null],[520,2,14,"m","Teppich","ковёр","carpet","Teppiche",["Teppich","Teppiche"],null,null],[521,2,14,"v","sitzen","сидеть","to sit",null,["sitze","sitzen","sitzt"],["sitze","sitzt","sitzt","sitzen","sitzt","sitzen"],null],[522,2,14,"v","stehen","стоять","to stand",null,["stehe","stehen","stehst","steht"],["stehe","stehst","steht","stehen","steht","stehen"],null],[523,2,14,"v","liegen","лежать","to lie",null,["liege","liegen","liegst","liegt"],["liege","liegst","liegt","liegen","liegt","liegen"],null],[524,2,14,"v","legen","класть","to lay, to put",null,["lege","legen","legst","legt"],["lege","legst","legt","legen","legt","legen"],null],[525,2,14,"v","stellen","ставить","to put (upright)",null,["stelle","stellen","stellst","stellt"],["stelle","stellst","stellt","stellen","stellt","stellen"],null],[526,2,14,"v","hängen","висеть, вешать","to hang",null,["hänge","hängen","hängst","hängt"],["hänge","hängst","hängt","hängen","hängt","hängen"],null],[527,2,14,"v","mieten","снимать (жильё)","to rent",null,["miete","mieten","mietest","mietet"],["miete","mietest","mietet","mieten","mietet","mieten"],null],[528,2,14,"adj","sauber","чистый","clean",null,["sauber","saubere","sauberen","sauberer","sauberes","sauberem"],null,null],[529,2,14,"adj","schmutzig","грязный","dirty",null,["schmutzig","schmutzige","schmutzigen","schmutziger","schmutziges","schmutzigem"],null,null],[530,2,14,"adj","hell","светлый","bright",null,["hell","helle","hellen","heller","helles","hellem"],null,null],[531,2,14,"adj","dunkel","тёмный","dark",null,["dunkel","dunkle","dunklen","dunkler","dunkles","dunklem"],null,null],[532,2,14,"adj","gemütlich","уютный","cozy",null,["gemütlich","gemütliche","gemütlichen","gemütlicher","gemütliches","gemütlichem"],null,null],[533,2,14,"adj","ruhig","тихий, спокойный","quiet, calm",null,["ruhig","ruhige","ruhigen","ruhiger","ruhiges","ruhigem"],null,null],[534,2,14,"adj","laut","громкий","loud",null,["laut","laute","lauten","lauter","lautes","lautem"],null,null],[535,2,14,"adj","leise","тихий (о звуке)","quiet",null,["leise","leisen","leiser","leises","leisem"],null,null],[536,2,14,"adj","leer","пустой","empty",null,["leer","leere","leeren","leerer","leeres","leerem"],null,null],[537,2,14,"adj","voll","полный","full",null,["voll","volle","vollen","voller","volles","vollem"],null,null],[538,2,15,"f","Arbeit","работа","work","Arbeiten",["Arbeit","Arbeiten"],null,null],[539,2,15,"m","Beruf","профессия","profession","Berufe",["Beruf","Berufe"],null,null],[540,2,15,"m","Job","работа (подработка)","job","Jobs",["Job","Jobs"],null,null],[541,2,15,"m","Lehrer","учитель","teacher","Lehrer",["Lehrer"],null,null],[542,2,15,"f","Lehrerin","учительница","teacher (f.)","Lehrerinnen",["Lehrerin","Lehrerinnen"],null,null],[543,2,15,"m","Arzt","врач","doctor","Ärzte",["Arzt","Ärzte"],null,null],[544,2,15,"f","Ärztin","врач (ж.)","doctor (f.)","Ärztinnen",["Ärztin","Ärztinnen"],null,null],[545,2,15,"m","Student","студент","student","Studenten",["Student","Studenten"],null,null],[546,2,15,"f","Studentin","студентка","student (f.)","Studentinnen",["Studentin","Studentinnen"],null,null],[547,2,15,"m","Ingenieur","инженер","engineer","Ingenieure",["Ingenieur","Ingenieure"],null,null],[548,2,15,"f","Ingenieurin","инженер (ж.)","engineer (f.)","Ingenieurinnen",["Ingenieurin","Ingenieurinnen"],null,null],[549,2,15,"m","Koch","повар","cook","Köche",["Koch","Köche"],null,null],[550,2,15,"f","Köchin","повариха","cook (f.)","Köchinnen",["Köchin","Köchinnen"],null,null],[551,2,15,"m","Polizist","полицейский","police officer","Polizisten",["Polizist","Polizisten"],null,null],[552,2,15,"f","Polizistin","полицейская","police officer (f.)","Polizistinnen",["Polizistin","Polizistinnen"],null,null],[553,2,15,"m","Verkäufer","продавец","salesperson","Verkäufer",["Verkäufer"],null,null],[554,2,15,"f","Verkäuferin","продавщица","saleswoman","Verkäuferinnen",["Verkäuferin","Verkäuferinnen"],null,null],[555,2,15,"m","Krankenpfleger","медбрат","nurse (m.)","Krankenpfleger",["Krankenpfleger"],null,null],[556,2,15,"f","Krankenpflegerin","медсестра","nurse (f.)","Krankenpflegerinnen",["Krankenpflegerin","Krankenpflegerinnen"],null,null],[557,2,15,"m","Chef","начальник","boss","Chefs",["Chef","Chefs"],null,null],[558,2,15,"f","Chefin","начальница","boss (f.)","Chefinnen",["Chefin","Chefinnen"],null,null],[559,2,15,"m","Kollege","коллега","colleague","Kollegen",["Kollege","Kollegen"],null,null],[560,2,15,"f","Kollegin","коллега (ж.)","colleague (f.)","Kolleginnen",["Kollegin","Kolleginnen"],null,null],[561,2,15,"f","Firma","фирма","company","Firmen",["Firma","Firmen"],null,null],[562,2,15,"m","Computer","компьютер","computer","Computer",["Computer"],null,null],[563,2,15,"n","Telefon","телефон","telephone","Telefone",["Telefon","Telefone"],null,null],[564,2,15,"n","Handy","мобильный телефон","cell phone","Handys",["Handy","Handys"],null,null],[565,2,15,"f","E-Mail","электронное письмо","email","E-Mails",["E-Mail","E-Mails"],null,null],[566,2,15,"m","Brief","письмо","letter","Briefe",["Brief","Briefe"],null,null],[567,2,15,"f","Zeitung","газета","newspaper","Zeitungen",["Zeitung","Zeitungen"],null,null],[568,2,15,"n","Geld","деньги","money",null,["Geld"],null,null],[569,2,15,"v","arbeiten","работать","to work",null,["arbeite","arbeiten","arbeitest","arbeitet"],["arbeite","arbeitest","arbeitet","arbeiten","arbeitet","arbeiten"],null],[570,2,15,"v","verdienen","зарабатывать","to earn",null,["verdiene","verdienen","verdienst","verdient"],["verdiene","verdienst","verdient","verdienen","verdient","verdienen"],null],[571,2,15,"v","schreiben","писать","to write",null,["schreibe","schreiben","schreibst","schreibt"],["schreibe","schreibst","schreibt","schreiben","schreibt","schreiben"],null],[572,2,15,"v","lesen","читать","to read",null,["lese","lesen","lest","liest"],["lese","liest","liest","lesen","lest","lesen"],null],[573,2,15,"v","helfen","помогать","to help",null,["helfe","helfen","helft","hilfst","hilft"],["helfe","hilfst","hilft","helfen","helft","helfen"],null],[574,2,15,"v","treffen","встречать","to meet",null,["treffe","treffen","trefft","triffst","trifft"],["treffe","triffst","trifft","treffen","trefft","treffen"],null],[575,2,15,"adj","beschäftigt","занятый","busy",null,["beschäftigt","beschäftigte","beschäftigten","beschäftigter","beschäftigtes","beschäftigtem"],null,null],[576,2,15,"adj","wichtig","важный","important",null,["wichtig","wichtige","wichtigen","wichtiger","wichtiges","wichtigem"],null,null],[577,2,15,"adj","fertig","готовый, законченный","done, ready",null,["fertig","fertige","fertigen","fertiger","fertiges","fertigem"],null,null],[578,2,15,"adj","frei","свободный","free",null,["frei","freie","freien","freier","freies","freiem"],null,null],[579,2,16,"f","Klasse","класс","class / grade","Klassen",["Klasse","Klassen"],null,null],[580,2,16,"m","Schüler","ученик","pupil","Schüler",["Schüler"],null,null],[581,2,16,"f","Schülerin","ученица","pupil (f.)","Schülerinnen",["Schülerin","Schülerinnen"],null,null],[582,2,16,"pl","Hausaufgaben","домашнее задание","homework","Hausaufgaben",["Hausaufgaben"],null,null],[583,2,16,"f","Prüfung","экзамен","exam","Prüfungen",["Prüfung","Prüfungen"],null,null],[584,2,16,"f","Sprache","язык","language","Sprachen",["Sprache","Sprachen"],null,null],[585,2,16,"n","Deutsch","немецкий язык","German (language)",null,["Deutsch"],null,null],[586,2,16,"n","Englisch","английский язык","English",null,["Englisch"],null,null],[587,2,16,"n","Spanisch","испанский язык","Spanish",null,["Spanisch"],null,null],[588,2,16,"n","Französisch","французский язык","French",null,["Französisch"],null,null],[589,2,16,"n","Wort","слово","word","Wörter",["Wort","Wörter"],null,null],[590,2,16,"m","Satz","предложение","sentence","Sätze",["Satz","Sätze"],null,null],[591,2,16,"n","Buch","книга","book","Bücher",["Buch","Bücher"],null,null],[592,2,16,"n","Heft","тетрадь","notebook","Hefte",["Heft","Hefte"],null,null],[593,2,16,"m","Stift","ручка, карандаш","pen, pencil","Stifte",["Stift","Stifte"],null,null],[594,2,16,"n","Papier","бумага","paper","Papiere",["Papier","Papiere"],null,null],[595,2,16,"f","Mathe","математика","math",null,["Mathe"],null,null],[596,2,16,"m","Kurs","курс","course","Kurse",["Kurs","Kurse"],null,null],[597,2,16,"f","Lektion","урок","lesson","Lektionen",["Lektion","Lektionen"],null,null],[598,2,16,"v","lernen","учить, учиться","to learn",null,["lerne","lernen","lernst","lernt"],["lerne","lernst","lernt","lernen","lernt","lernen"],null],[599,2,16,"v","studieren","учиться в вузе","to study (at univ.)",null,["studiere","studieren","studierst","studiert"],["studiere","studierst","studiert","studieren","studiert","studieren"],null],[600,2,16,"v","verstehen","понимать","to understand",null,["verstehe","verstehen","verstehst","versteht"],["verstehe","verstehst","versteht","verstehen","versteht","verstehen"],null],[601,2,16,"v","sprechen","говорить","to speak",null,["spreche","sprechen","sprecht","sprichst","spricht"],["spreche","sprichst","spricht","sprechen","sprecht","sprechen"],null],[602,2,16,"v","sagen","сказать, говорить","to say",null,["sage","sagen","sagst","sagt"],["sage","sagst","sagt","sagen","sagt","sagen"],null],[603,2,16,"v","wiederholen","повторять","to repeat",null,["wiederhole","wiederholen","wiederholst","wiederholt"],["wiederhole","wiederholst","wiederholt","wiederholen","wiederholt","wiederholen"],null],[604,2,16,"v","erklären","объяснять","to explain",null,["erkläre","erklären","erklärst","erklärt"],["erkläre","erklärst","erklärt","erklären","erklärt","erklären"],null],[605,2,16,"v","wissen","знать","to know (a fact)",null,["weiß","weißt","wissen","wisst"],["weiß","weißt","weiß","wissen","wisst","wissen"],null],[606,2,16,"v","kennen","знать (быть знакомым)","to know (be familiar)",null,["kenne","kennen","kennst","kennt"],["kenne","kennst","kennt","kennen","kennt","kennen"],null],[607,2,16,"v","denken","думать","to think",null,["denke","denken","denkst","denkt"],["denke","denkst","denkt","denken","denkt","denken"],null],[608,2,16,"v","glauben","верить, полагать","to believe, to think",null,["glaube","glauben","glaubst","glaubt"],["glaube","glaubst","glaubt","glauben","glaubt","glauben"],null],[609,2,16,"adj","richtig","правильный","correct",null,["richtig","richtige","richtigen","richtiger","richtiges","richtigem"],null,null],[610,2,16,"adj","falsch","неправильный","wrong",null,["falsch","falsche","falschen","falscher","falsches","falschem"],null,null],[611,2,16,"adj","einfach","простой","easy, simple",null,["einfach","einfache","einfachen","einfacher","einfaches","einfachem"],null,null],[612,2,16,"adj","schwer","трудный; тяжёлый","difficult / heavy",null,["schwer","schwere","schweren","schwerer","schweres","schwerem"],null,null],[613,2,16,"adj","leicht","лёгкий","easy / light",null,["leicht","leichte","leichten","leichter","leichtes","leichtem"],null,null],[614,2,16,"adj","interessant","интересный","interesting",null,["interessant","interessante","interessanten","interessanter","interessantes","interessantem"],null,null],[615,2,16,"adj","langweilig","скучный","boring",null,["langweilig","langweilige","langweiligen","langweiliger","langweiliges","langweiligem"],null,null],[616,2,17,"n","Hobby","хобби","hobby","Hobbys",["Hobby","Hobbys"],null,null],[617,2,17,"f","Freizeit","свободное время","free time",null,["Freizeit"],null,null],[618,2,17,"m","Sport","спорт","sport",null,["Sport"],null,null],[619,2,17,"m","Fußball","футбол; мяч","soccer / soccer ball","Fußbälle",["Fußball","Fußbälle"],null,null],[620,2,17,"n","Tennis","теннис","tennis",null,["Tennis"],null,null],[621,2,17,"f","Musik","музыка","music",null,["Musik"],null,null],[622,2,17,"m","Film","фильм","movie","Filme",["Film","Filme"],null,null],[623,2,17,"n","Spiel","игра","game","Spiele",["Spiel","Spiele"],null,null],[624,2,17,"n","Videospiel","видеоигра","video game","Videospiele",["Videospiel","Videospiele"],null,null],[625,2,17,"n","Konzert","концерт","concert","Konzerte",["Konzert","Konzerte"],null,null],[626,2,17,"f","Party","вечеринка","party","Partys",["Party","Partys"],null,null],[627,2,17,"f","Gitarre","гитара","guitar","Gitarren",["Gitarre","Gitarren"],null,null],[628,2,17,"n","Klavier","пианино","piano","Klaviere",["Klavier","Klaviere"],null,null],[629,2,17,"n","Lied","песня","song","Lieder",["Lied","Lieder"],null,null],[630,2,17,"n","Foto","фотография","photo","Fotos",["Foto","Fotos"],null,null],[631,2,17,"m","Fernseher","телевизор","TV set","Fernseher",["Fernseher"],null,null],[632,2,17,"v","spielen","играть","to play",null,["spiele","spielen","spielst","spielt"],["spiele","spielst","spielt","spielen","spielt","spielen"],null],[633,2,17,"v","schwimmen","плавать","to swim",null,["schwimme","schwimmen","schwimmst","schwimmt"],["schwimme","schwimmst","schwimmt","schwimmen","schwimmt","schwimmen"],null],[634,2,17,"v","tanzen","танцевать","to dance",null,["tanze","tanzen","tanzt"],["tanze","tanzt","tanzt","tanzen","tanzt","tanzen"],null],[635,2,17,"v","singen","петь","to sing",null,["singe","singen","singst","singt"],["singe","singst","singt","singen","singt","singen"],null],[636,2,17,"v","laufen","бегать; идти","to run, to walk",null,["laufe","laufen","lauft","läufst","läuft"],["laufe","läufst","läuft","laufen","lauft","laufen"],null],[637,2,17,"v","joggen","бегать трусцой","to jog",null,["jogge","joggen","joggst","joggt"],["jogge","joggst","joggt","joggen","joggt","joggen"],null],[638,2,17,"v","wandern","ходить в походы","to hike",null,["wandere","wandern","wanderst","wandert"],["wandere","wanderst","wandert","wandern","wandert","wandern"],null],[639,2,17,"v","malen","рисовать красками","to paint",null,["male","malen","malst","malt"],["male","malst","malt","malen","malt","malen"],null],[640,2,17,"v","fotografieren","фотографировать","to take photos",null,["fotografiere","fotografieren","fotografierst","fotografiert"],["fotografiere","fotografierst","fotografiert","fotografieren","fotografiert","fotografieren"],null],[641,2,17,"v","hören","слышать, слушать","to hear, to listen",null,["höre","hören","hörst","hört"],["höre","hörst","hört","hören","hört","hören"],null],[642,2,17,"v","sehen","видеть","to see",null,["sehe","sehen","seht","siehst","sieht"],["sehe","siehst","sieht","sehen","seht","sehen"],null],[643,2,17,"v","mögen","любить, нравиться","to like",null,["mag","magst","mögen","mögt"],["mag","magst","mag","mögen","mögt","mögen"],null],[644,2,17,"v","gefallen","нравиться","to please (like)",null,["gefalle","gefallen","gefallt","gefällst","gefällt"],["gefalle","gefällst","gefällt","gefallen","gefallt","gefallen"],null],[645,2,17,"v","feiern","праздновать","to celebrate",null,["feiere","feiern","feierst","feiert"],["feiere","feierst","feiert","feiern","feiert","feiern"],null],[646,2,17,"vs","einladen","приглашать","to invite",null,["lade ein","laden ein","ladet ein","lädst ein","lädt ein"],["lade ein","lädst ein","lädt ein","laden ein","ladet ein","laden ein"],"ein"],[647,2,17,"m","Geburtstag","день рождения","birthday","Geburtstage",["Geburtstag","Geburtstage"],null,null],[648,2,17,"n","Geschenk","подарок","gift","Geschenke",["Geschenk","Geschenke"],null,null],[649,2,17,"phr","Herzlichen Glückwunsch","поздравляю","congratulations",null,["Herzlichen Glückwunsch"],null,null],[650,2,17,"adj","toll","отличный","great",null,["toll","tolle","tollen","toller","tolles","tollem"],null,null],[651,2,17,"adj","super","супер","super",null,["super"],null,null],[652,2,17,"adj","cool","классный","cool",null,["cool","coole","coolen","cooler","cooles","coolem"],null,null],[653,2,17,"adj","perfekt","идеальный","perfect",null,["perfekt","perfekte","perfekten","perfekter","perfektes","perfektem"],null,null],[654,2,17,"adv","lieber","лучше, охотнее","rather, prefer",null,["lieber"],null,null],[655,2,17,"adv","am liebsten","больше всего (люблю)","most of all (like)",null,["am liebsten"],null,null],[656,2,18,"n","Wetter","погода","weather",null,["Wetter"],null,null],[657,2,18,"f","Sonne","солнце","sun","Sonnen",["Sonne","Sonnen"],null,null],[658,2,18,"m","Regen","дождь","rain",null,["Regen"],null,null],[659,2,18,"m","Schnee","снег","snow",null,["Schnee"],null,null],[660,2,18,"m","Wind","ветер","wind","Winde",["Wind","Winde"],null,null],[661,2,18,"f","Wolke","облако","cloud","Wolken",["Wolke","Wolken"],null,null],[662,2,18,"m","Himmel","небо","sky",null,["Himmel"],null,null],[663,2,18,"n","Grad","градус","degree","Grad",["Grad"],null,null],[664,2,18,"f","Jahreszeit","время года","season","Jahreszeiten",["Jahreszeit","Jahreszeiten"],null,null],[665,2,18,"m","Frühling","весна","spring","Frühlinge",["Frühling","Frühlinge"],null,null],[666,2,18,"m","Sommer","лето","summer","Sommer",["Sommer"],null,null],[667,2,18,"m","Herbst","осень","autumn","Herbste",["Herbst","Herbste"],null,null],[668,2,18,"m","Winter","зима","winter","Winter",["Winter"],null,null],[669,2,18,"v","regnen","идёт дождь","to rain",null,["regnet"],["regnet"],null],[670,2,18,"v","schneien","идёт снег","to snow",null,["schneit"],["schneit"],null],[671,2,18,"v","scheinen","светить","to shine",null,["scheine","scheinen","scheinst","scheint"],["scheine","scheinst","scheint","scheinen","scheint","scheinen"],null],[672,2,18,"adj","sonnig","солнечный","sunny",null,["sonnig","sonnige","sonnigen","sonniger","sonniges","sonnigem"],null,null],[673,2,18,"adj","windig","ветреный","windy",null,["windig","windige","windigen","windiger","windiges","windigem"],null,null],[674,2,18,"adj","bewölkt","облачный","cloudy",null,["bewölkt","bewölkte","bewölkten","bewölkter","bewölktes","bewölktem"],null,null],[675,2,18,"adj","nass","мокрый","wet",null,["nass","nasse","nassen","nasser","nasses","nassem"],null,null],[676,2,18,"adj","trocken","сухой","dry",null,["trocken","trockene","trockenen","trockener","trockenes","trockenem"],null,null],[677,2,19,"m","Körper","тело","body","Körper",["Körper"],null,null],[678,2,19,"m","Kopf","голова","head","Köpfe",["Kopf","Köpfe"],null,null],[679,2,19,"f","Hand","рука (кисть)","hand","Hände",["Hand","Hände"],null,null],[680,2,19,"m","Fuß","нога (ступня)","foot","Füße",["Fuß","Füße"],null,null],[681,2,19,"n","Bein","нога","leg","Beine",["Bein","Beine"],null,null],[682,2,19,"m","Arm","рука","arm","Arme",["Arm","Arme"],null,null],[683,2,19,"n","Auge","глаз","eye","Augen",["Auge","Augen"],null,null],[684,2,19,"n","Ohr","ухо","ear","Ohren",["Ohr","Ohren"],null,null],[685,2,19,"f","Nase","нос","nose","Nasen",["Nase","Nasen"],null,null],[686,2,19,"m","Mund","рот","mouth","Münder",["Mund","Münder"],null,null],[687,2,19,"m","Zahn","зуб","tooth","Zähne",["Zahn","Zähne"],null,null],[688,2,19,"m","Bauch","живот","belly","Bäuche",["Bauch","Bäuche"],null,null],[689,2,19,"m","Rücken","спина","back","Rücken",["Rücken"],null,null],[690,2,19,"pl","Haare","волосы","hair","Haare",["Haare"],null,null],[691,2,19,"pl","Schmerzen","боль","pain","Schmerzen",["Schmerzen"],null,null],[692,2,19,"n","Medikament","лекарство","medicine","Medikamente",["Medikament","Medikamente"],null,null],[693,2,19,"f","Tablette","таблетка","pill","Tabletten",["Tablette","Tabletten"],null,null],[694,2,19,"n","Fieber","температура, жар","fever",null,["Fieber"],null,null],[695,2,19,"f","Erkältung","простуда","cold","Erkältungen",["Erkältung","Erkältungen"],null,null],[696,2,19,"vs","wehtun","болеть","to hurt",null,["tue weh","tun weh","tust weh","tut weh"],["tue weh","tust weh","tut weh","tun weh","tut weh","tun weh"],"weh"],[697,2,19,"v","fühlen","чувствовать","to feel",null,["fühle","fühlen","fühlst","fühlt"],["fühle","fühlst","fühlt","fühlen","fühlt","fühlen"],null],[698,2,19,"vs","sich ausruhen","отдыхать","to rest",null,["ruhe mich aus","ruhen sich aus","ruhen uns aus","ruhst dich aus","ruht euch aus","ruht sich aus"],["ruhe mich aus","ruhst dich aus","ruht sich aus","ruhen uns aus","ruht euch aus","ruhen sich aus"],"aus"],[699,2,19,"adj","krank","больной","sick",null,["krank","kranke","kranken","kranker","krankes","krankem"],null,null],[700,2,19,"adj","gesund","здоровый","healthy",null,["gesund","gesunde","gesunden","gesunder","gesundes","gesundem"],null,null],[701,2,19,"adj","stark","сильный","strong",null,["stark","starke","starken","starker","starkes","starkem"],null,null],[702,2,19,"adj","schwach","слабый","weak",null,["schwach","schwache","schwachen","schwacher","schwaches","schwachem"],null,null],[703,2,19,"adj","fit","в форме","fit",null,["fit"],null,null],[704,2,20,"n","Geschäft","магазин; дело","shop / business","Geschäfte",["Geschäft","Geschäfte"],null,null],[705,2,20,"m","Laden","лавка, магазин","store","Läden",["Laden","Läden"],null,null],[706,2,20,"m","Preis","цена","price","Preise",["Preis","Preise"],null,null],[707,2,20,"f","Kasse","касса","checkout","Kassen",["Kasse","Kassen"],null,null],[708,2,20,"f","Größe","размер","size","Größen",["Größe","Größen"],null,null],[709,2,20,"n","Angebot","предложение, акция","offer","Angebote",["Angebot","Angebote"],null,null],[710,2,20,"v","verkaufen","продавать","to sell",null,["verkaufe","verkaufen","verkaufst","verkauft"],["verkaufe","verkaufst","verkauft","verkaufen","verkauft","verkaufen"],null],[711,2,20,"v","passen","подходить (по размеру)","to fit",null,["passe","passen","passt"],["passe","passt","passt","passen","passt","passen"],null],[712,2,20,"v","geben","давать","to give",null,["gebe","geben","gebt","gibst","gibt"],["gebe","gibst","gibt","geben","gebt","geben"],null],[713,2,20,"v","bringen","приносить","to bring",null,["bringe","bringen","bringst","bringt"],["bringe","bringst","bringt","bringen","bringt","bringen"],null],[714,2,20,"v","holen","приносить, забирать","to fetch",null,["hole","holen","holst","holt"],["hole","holst","holt","holen","holt","holen"],null],[715,2,20,"adv","bar","наличными","in cash",null,["bar"],null,null],[716,2,20,"adv","zu","слишком; закрыто","too / closed",null,["zu"],null,null],[717,2,20,"adv","genug","достаточно","enough",null,["genug"],null,null],[718,2,21,"v","können","мочь, уметь","can",null,["kann","kannst","können","könnt"],["kann","kannst","kann","können","könnt","können"],null],[719,2,21,"v","müssen","должен","must, have to",null,["muss","musst","müssen","müsst"],["muss","musst","muss","müssen","müsst","müssen"],null],[720,2,21,"v","wollen","хотеть","to want",null,["will","willst","wollen","wollt"],["will","willst","will","wollen","wollt","wollen"],null],[721,2,21,"v","sollen","следует, должен","should",null,["soll","sollen","sollst","sollt"],["soll","sollst","soll","sollen","sollt","sollen"],null],[722,2,21,"v","dürfen","можно, разрешено","may, to be allowed",null,["darf","darfst","dürfen","dürft"],["darf","darfst","darf","dürfen","dürft","dürfen"],null],[723,2,21,"v","werden","становиться; будет","to become / will",null,["werde","werden","werdet","wird","wirst"],["werde","wirst","wird","werden","werdet","werden"],null],[724,2,21,"vpast","war","был","was (past of sein)",null,["war","warst","waren","wart"],null,null],[725,2,21,"vpast","hatte","имел","had (past of haben)",null,["hatte","hattest","hatten","hattet"],null,null],[726,2,22,"prep","auf","на","on",null,["auf"],null,null],[727,2,22,"prep","an","на, у","at, on (vertical)",null,["an"],null,null],[728,2,22,"prep","im","в (in dem)","in the (in dem)",null,["im"],null,null],[729,2,22,"prep","am","у; в (о днях)","at the / on (an dem)",null,["am"],null,null],[730,2,22,"prep","mit","с","with",null,["mit"],null,null],[731,2,22,"prep","ohne","без","without",null,["ohne"],null,null],[732,2,22,"prep","für","для","for",null,["für"],null,null],[733,2,22,"prep","von","от, из","from, of",null,["von"],null,null],[734,2,22,"prep","zu","к","to",null,["zu"],null,null],[735,2,22,"prep","zum","к (zu dem)","to the (zu dem)",null,["zum"],null,null],[736,2,22,"prep","zur","к (zu der)","to the (zu der)",null,["zur"],null,null],[737,2,22,"prep","bei","у, при","at, near, with",null,["bei"],null,null],[738,2,22,"prep","über","над; о","over, about",null,["über"],null,null],[739,2,22,"prep","unter","под","under",null,["unter"],null,null],[740,2,22,"prep","neben","рядом с","next to",null,["neben"],null,null],[741,2,22,"prep","hinter","за, позади","behind",null,["hinter"],null,null],[742,2,22,"prep","zwischen","между","between",null,["zwischen"],null,null],[743,2,22,"prep","gegenüber","напротив","opposite",null,["gegenüber"],null,null],[744,2,22,"prep","ins","в (in das)","into the (in das)",null,["ins"],null,null],[745,2,22,"conj","weil","потому что","because",null,["weil"],null,null],[746,2,22,"conj","dass","что (союз)","that",null,["dass"],null,null],[747,2,22,"conj","wenn","если, когда","if, when",null,["wenn"],null,null],[748,2,22,"conj","denn","ведь, так как","because, for",null,["denn"],null,null],[749,2,22,"conj","also","итак, значит","so, therefore",null,["also"],null,null],[750,2,22,"adv","nur","только","only",null,["nur"],null,null],[751,2,22,"adv","wirklich","действительно","really",null,["wirklich"],null,null],[752,2,22,"adv","ganz","вполне, целый","quite, whole",null,["ganz"],null,null],[753,2,22,"adv","ziemlich","довольно","fairly",null,["ziemlich"],null,null],[754,2,22,"adv","so","так","so",null,["so"],null,null],[755,2,22,"adv","vielleicht","может быть","maybe",null,["vielleicht"],null,null],[756,2,22,"adv","natürlich","конечно","of course",null,["natürlich"],null,null],[757,2,22,"adv","leider","к сожалению","unfortunately",null,["leider"],null,null],[758,2,22,"adv","wieder","снова","again",null,["wieder"],null,null],[759,2,22,"adv","sofort","сразу","immediately",null,["sofort"],null,null],[760,2,22,"adv","gleich","сейчас же; одинаковый","right away / same",null,["gleich"],null,null],[761,2,22,"adv","zurück","назад, обратно","back",null,["zurück"],null,null],[762,2,22,"adv","wahrscheinlich","вероятно","probably",null,["wahrscheinlich"],null,null],[763,2,22,"adv","eigentlich","вообще-то","actually",null,["eigentlich"],null,null],[764,2,22,"part","doch","же; да (возражение)","yes (contradicting) / though",null,["doch"],null,null],[765,2,22,"part","mal","-ка (смягчение)","just, once",null,["mal"],null,null],[766,2,22,"adj","andere","другой","other",null,["andere","anderen","anderer"],null,null],[767,2,22,"adj","möglich","возможный","possible",null,["möglich"],null,null],[768,2,22,"adj","sicher","уверенный; безопасный","sure, safe",null,["sicher","sichere","sicheren","sicherer","sicheres","sicherem"],null,null],[769,2,22,"adj","klar","ясный","clear",null,["klar"],null,null],[770,2,22,"adj","besser","лучше","better",null,["besser","bessere","besseren","besserer","besseres","besserem"],null,null],[771,2,22,"adj","best","лучший","best",null,["beste","besten","bester","bestes","bestem"],null,null]]};
+
+/* ---------- icons ---------- */
+const ICON = {
+  mic: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  stop: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+  say: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+};
+
+/* ---------- data ---------- */
+const TOPICS = DATA.topics.map(([s, u, ru, en]) => ({ s, u, ru, en }));
+const W = DATA.words.map(a => ({ i: a[0], s: a[1], u: a[2], t: a[3], d: a[4], r: a[5], e: a[6], p: a[7], f: a[8], c: a[9], x: a[10] }));
+const BYID = new Map(W.map(w => [w.i, w]));
+const IDX = new Map();
+for (const w of W) { const k = w.d; if (!IDX.has(k)) IDX.set(k, []); IDX.get(k).push(w); }
+const NOUN_T = new Set(["m", "f", "n", "pl"]);
+const CONTENT_T = new Set(["m", "f", "n", "pl", "v", "vs", "adj", "adv", "num", "phr", "name", "vpast", "q"]);
+const ART_OF = { m: "der", f: "die", n: "das", pl: "die" };
+const TYPE_RU = { m: "сущ., м. р.", f: "сущ., ж. р.", n: "сущ., ср. р.", pl: "сущ., мн. ч.", v: "глагол", vs: "глагол, отделяемый", vpast: "глагол, прош. вр.", adj: "прилагательное", adv: "наречие", pron: "местоимение", prep: "предлог", conj: "союз", num: "числительное", art: "артикль", q: "вопросительное слово", phr: "фраза", name: "название", part: "частица" };
+const GENDER_RU = { m: "мужской род", f: "женский род", n: "средний род", pl: "множественное число" };
+const CASE_RU = { nom: "Nominativ", acc: "Akkusativ", dat: "Dativ" };
+
+function N(de) { return (IDX.get(de) || []).find(w => NOUN_T.has(w.t)); }
+function V(de) { return (IDX.get(de) || []).find(w => w.t === "v" || w.t === "vs"); }
+function A(de) { return (IDX.get(de) || []).find(w => w.t === "adj"); }
+function ANY(de) { return (IDX.get(de) || [])[0]; }
+function displayDe(w) { return NOUN_T.has(w.t) ? `${ART_OF[w.t]} ${w.d}` : w.d; }
+function artHtml(w) { if (!NOUN_T.has(w.t)) return esc(w.d); const a = ART_OF[w.t]; const cls = w.t === "pl" ? "die" : a; return `<span class="art ${cls}">${a}</span> ${esc(w.d)}`; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+function chance(p) { return Math.random() < p; }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function today() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+
+/* ---------- state & persistence ---------- */
+let state = { v: 1, stats: {}, excluded: [], daily: {}, settings: { speak: true, showRu: false, autoSend: true, rate: 0.9 } };
+let excluded = new Set();
+let dbRef = null, saveTimer = null, saving = Promise.resolve();
+const LS_KEY = "wortblase-state-v1";
+
+function loadLocal() { try { const s = localStorage.getItem(LS_KEY); if (s) return JSON.parse(s); } catch (e) {} return null; }
+function applyState(s) {
+  if (!s || typeof s !== "object") return;
+  state = { ...state, ...s, settings: { ...state.settings, ...(s.settings || {}) } };
+  excluded = new Set(state.excluded || []);
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    state.excluded = [...excluded];
+    const snap = JSON.parse(JSON.stringify(state));
+    try { localStorage.setItem(LS_KEY, JSON.stringify(snap)); } catch (e) {}
+    if (dbRef) saving = saving.then(() => dbRef.set(snap)).catch(() => {});
+  }, 1200);
+}
+function stat(id) { return state.stats[id] || [0, 0, 0]; }
+function mark(ids, ok) {
+  const now = Date.now();
+  for (const id of new Set(ids)) {
+    const w = BYID.get(id); if (!w || !CONTENT_T.has(w.t)) continue;
+    const s = stat(id).slice(); if (ok) s[0]++; else s[1]++; s[2] = now; state.stats[id] = s;
+  }
+  scheduleSave(); renderStats();
+}
+function countToday() { const k = today(); state.daily = { [k]: (state.daily[k] || 0) + 1 }; scheduleSave(); renderStats(); }
+function weight(id) { const [r, w] = stat(id); if (r + w === 0) return 1.5; return Math.max(0.25, (1 + 3 * w) / (1 + 0.6 * r)); }
+function isWeak(id) { const [r, w] = stat(id); return w > 0 && w * 2 >= r; }
+function inBubble(w) { return w && !excluded.has(w.i); }
+function pickW(arr) {
+  const list = arr.filter(Boolean); if (!list.length) return null;
+  let total = 0; const ws = list.map(x => { const v = weight(x.i ?? x.e?.i); total += v; return v; });
+  let r = Math.random() * total; for (let k = 0; k < list.length; k++) { r -= ws[k]; if (r <= 0) return list[k]; } return list[list.length - 1];
+}
+
+/* ---------- allowed vocabulary (the bubble) ---------- */
+let ALLOWED = new Set();
+const ALWAYS = ["anna", "max", "lisa", "paul", "s"];
+function rebuildAllowed() {
+  ALLOWED = new Set(ALWAYS);
+  for (const w of W) {
+    if (!inBubble(w)) continue;
+    const add = s => { for (const t of tokenize(s)) ALLOWED.add(t); };
+    add(w.d); (w.f || []).forEach(add);
+    if (w.p) add(w.p);
+  }
+}
+function tokenize(text) { return (String(text).toLowerCase().match(/[a-zäöüß]+(?:-[a-zäöüß]+)*/g) || []); }
+function outOfBubble(text) { return [...new Set(tokenize(text).filter(t => !ALLOWED.has(t) && !NUMWORD_SET.has(t)))]; }
+function highlightOob(text) {
+  return esc(text).replace(/[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*/g, m => {
+    const t = m.toLowerCase();
+    return ALLOWED.has(t) || NUMWORD_SET.has(t) ? m : `<span class="oob" title="Этого слова нет в вашем пузыре">${m}</span>`;
+  });
+}
+const FORM_IDX = new Map();
+for (const w of W) { for (const f of [w.d, ...(w.f || [])]) for (const t of tokenize(f)) { if (!FORM_IDX.has(t)) FORM_IDX.set(t, []); FORM_IDX.get(t).push(w.i); } }
+function idsInText(text) { const out = []; for (const t of tokenize(text)) { const ids = (FORM_IDX.get(t) || []).filter(id => CONTENT_T.has(BYID.get(id).t)); if (ids.length) out.push(ids[0]); } return out; }
+function idsForLemmas(list) { const out = []; for (const l of list || []) { const s = String(l).trim().replace(/^(der|die|das)\s+/i, ""); const hit = (IDX.get(s) || W.filter(w => w.d.toLowerCase() === s.toLowerCase()))[0]; if (hit) out.push(hit.i); else out.push(...idsInText(s)); } return out; }
+
+/* ---------- normalisation for answer checking ---------- */
+const NUMWORDS = { 0: "null", 1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn", 11: "elf", 12: "zwölf", 13: "dreizehn", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 17: "siebzehn", 18: "achtzehn", 19: "neunzehn", 20: "zwanzig", 30: "dreißig", 40: "vierzig", 50: "fünfzig", 100: "hundert" };
+const NUMWORD_SET = new Set(Object.values(NUMWORDS));
+function norm(s) {
+  return String(s).toLowerCase().replace(/\d+/g, d => NUMWORDS[+d] || d).replace(/[.,!?;:«»"„“()]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/* ---------- grammar engine ---------- */
+const DEF = { nom: { m: "der", f: "die", n: "das", pl: "die" }, acc: { m: "den", f: "die", n: "das", pl: "die" }, dat: { m: "dem", f: "der", n: "dem", pl: "den" } };
+const IND_END = { nom: { m: "", f: "e", n: "" }, acc: { m: "en", f: "e", n: "" }, dat: { m: "em", f: "er", n: "em" } };
+function detWord(kind, cas, g) {
+  if (kind === "def") return DEF[cas][g];
+  if (kind === "none") return null;
+  let stem = kind === "indef" ? "ein" : kind === "kein" ? "kein" : kind.slice(5);
+  if (g === "pl") { if (kind === "indef") return null; const end = cas === "dat" ? "en" : "e"; return stem === "euer" ? "eur" + end : stem + end; }
+  const end = IND_END[cas][g];
+  return stem === "euer" && end ? "eur" + end : stem + end;
+}
+function adjEnding(kind, cas, g) {
+  if (kind === "def") return cas === "nom" ? (g === "pl" ? "en" : "e") : cas === "acc" ? (g === "m" || g === "pl" ? "en" : "e") : "en";
+  if (kind === "none") { if (g === "pl") return cas === "dat" ? "en" : "e"; return { nom: { m: "er", f: "e", n: "es" }, acc: { m: "en", f: "e", n: "es" }, dat: { m: "em", f: "er", n: "em" } }[cas][g]; }
+  if (g === "pl") return "en";
+  return { nom: { m: "er", f: "e", n: "es" }, acc: { m: "en", f: "e", n: "es" }, dat: { m: "en", f: "en", n: "en" } }[cas][g];
+}
+function adjStem(a) { if (a === "dunkel") return "dunkl"; if (a === "teuer") return "teur"; if (a.endsWith("e")) return a.slice(0, -1); return a; }
+const T = (w, role, extra = {}) => ({ w, role, ...extra });
+
+function np(e, cas, kind, adj, plural) {
+  let g = e.t, noun = e.d;
+  if (plural && e.p && g !== "pl") { g = "pl"; noun = e.p; }
+  if (kind === "indef" && g === "pl") kind = "none";
+  const toks = [];
+  const a = detWord(kind, cas, g);
+  if (a) toks.push(T(a, "art", { g, cas, kind, noun: e }));
+  if (adj) toks.push(T(adjStem(adj.d) + adjEnding(kind, cas, g), "adj", { g, cas, kind, base: adj.d, ids: [adj.i], noun: e }));
+  toks.push(T(noun, "noun", { ids: [e.i], g }));
+  return toks;
+}
+
+/* verbs */
+const PERSONS = ["ich", "du", "er", "wir", "ihr", "sie"];
+const STEM_CHANGERS = new Set(["essen", "nehmen", "sehen", "lesen", "sprechen", "fahren", "schlafen", "laufen", "tragen", "waschen", "geben", "helfen", "treffen", "fangen", "laden", "gefallen"]);
+function finite(v, p) { const c = v.c; if (!c) return v.d; const f = c.length === 1 ? c[0] : c[p]; return v.t === "vs" ? f.split(" ")[0] : f; }
+function baseInf(v) { return v.t === "vs" ? v.d.slice(v.x.length) : v.d; }
+function regularForm(inf, p) {
+  let stem = inf.endsWith("en") ? inf.slice(0, -2) : inf.slice(0, -1);
+  const ends = [/(t|d)$/.test(stem) ? "e" : "", ""];
+  if (p === 1) return stem + (/(s|ß|z|x)$/.test(stem) ? "t" : ends[0] + "st");
+  if (p === 2) return stem + ends[0] + "t";
+  return null;
+}
+
+/* subjects */
+function S(txt, p, pron, ids = []) { return { txt, p, pron, ids }; }
+function subjects(withAnimals) {
+  const out = [S("ich", 0, "ich"), S("du", 1, "du"), S("er", 2, "er"), S("sie", 2, "sie"), S("wir", 3, "wir"), S("ihr", 4, "ihr"), S("Sie", 5, "Sie")];
+  const nounSubj = [["Mann", "der", 2, "er"], ["Frau", "die", 2, "sie"], ["Kind", "das", 2, "es"], ["Mädchen", "das", 2, "es"], ["Junge", "der", 2, "er"], ["Lehrer", "der", 2, "er"], ["Ärztin", "die", 2, "sie"], ["Student", "der", 2, "er"]];
+  for (const [de, art, p, pron] of nounSubj) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, p, pron, [e.i])); }
+  const poss = [["Bruder", "mein", 2, "er"], ["Schwester", "meine", 2, "sie"], ["Mutter", "meine", 2, "sie"], ["Vater", "mein", 2, "er"], ["Eltern", "meine", 5, "sie"], ["Freund", "mein", 2, "er"], ["Freundin", "meine", 2, "sie"], ["Oma", "meine", 2, "sie"]];
+  for (const [de, art, p, pron] of poss) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, p, pron, [e.i])); }
+  if (withAnimals) for (const [de, art] of [["Hund", "der"], ["Katze", "die"], ["Ente", "die"], ["Bär", "der"], ["Pferd", "das"], ["Maus", "die"]]) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, 2, art === "der" ? "er" : art === "die" ? "sie" : "es", [e.i])); }
+  return out;
+}
+function subjToks(s) { return s.txt.split(" ").map((w, k, arr) => T(w, k === arr.length - 1 ? "subj" : "subjdet", { ids: s.ids })); }
+
+/* categories */
+const L = arr => arr.map(x => N(x)).filter(inBubble);
+const CAT = {};
+function buildCats() {
+  CAT.food = L(["Apfel", "Brot", "Brötchen", "Kuchen", "Salat", "Suppe", "Pizza", "Fisch", "Wurst", "Ei", "Banane", "Orange", "Tomate", "Sandwich", "Kartoffel"]);
+  CAT.mass = L(["Käse", "Reis", "Fleisch", "Gemüse", "Obst", "Schokolade", "Nudeln", "Zucker", "Butter"]);
+  CAT.drink = L(["Kaffee", "Tee", "Wasser", "Milch", "Saft", "Bier", "Wein"]);
+  CAT.clothes = L(["Hemd", "Hose", "Kleid", "Rock", "Jacke", "Mantel", "Hut", "Mütze", "Pullover", "T-Shirt", "Brille"]);
+  CAT.things = L(["Buch", "Handy", "Computer", "Ticket", "Koffer", "Schlüssel", "Fahrrad", "Auto", "Tasche", "Regenschirm", "Lampe", "Stuhl", "Tisch", "Uhr", "Fahrkarte", "Karte", "Geschenk"]);
+  CAT.read = L(["Buch", "Zeitung", "Brief", "E-Mail", "Speisekarte"]);
+  CAT.animals = L(["Hund", "Katze", "Ente", "Pferd", "Maus", "Vogel", "Bär", "Elefant", "Kuh", "Löwe", "Affe", "Schildkröte", "Kaninchen"]);
+  CAT.places = L(["Küche", "Park", "Büro", "Supermarkt", "Bahnhof", "Hotel", "Restaurant", "Café", "Kino", "Museum", "Garten", "Stadt", "Apotheke", "Krankenhaus", "Bibliothek", "Bäckerei", "Wohnzimmer", "Schlafzimmer", "Bad", "Zoo", "Schule"]);
+  CAT.people = L(["Mutter", "Vater", "Bruder", "Schwester", "Oma", "Opa", "Freund", "Freundin", "Tante", "Onkel", "Kollege", "Kollegin", "Arzt", "Nachbar"]);
+  CAT.rooms = L(["Zimmer", "Küche", "Wohnung", "Bad", "Wohnzimmer"]);
+  CAT.openable = L(["Fenster", "Tür", "Koffer", "Flasche", "Buch"]);
+  CAT.play = L(["Fußball", "Tennis", "Gitarre", "Klavier"]);
+  const A_ = arr => arr.map(A).filter(inBubble);
+  CAT.adj = {
+    food: A_(["frisch", "lecker", "groß", "klein", "süß", "warm", "kalt"]),
+    drink: A_(["heiß", "kalt", "warm", "frisch", "gut"]),
+    clothes: A_(["rot", "blau", "grün", "gelb", "schwarz", "weiß", "grau", "braun", "neu", "alt", "schön", "teuer", "billig", "lang", "kurz", "bequem"]),
+    things: A_(["neu", "alt", "groß", "klein", "teuer", "billig", "schön", "schwarz", "rot", "blau"]),
+    animals: A_(["groß", "klein", "alt", "jung", "süß", "schwarz", "weiß", "braun", "lustig", "dick"]),
+    places: A_(["groß", "klein", "neu", "alt", "schön", "ruhig", "laut", "sauber", "voll", "leer", "gemütlich"]),
+  };
+}
+function catOf(e) { for (const k of ["food", "mass", "drink", "clothes", "things", "read", "animals", "places"]) if (CAT[k].includes(e)) return k === "mass" ? "food" : k === "read" ? "things" : k; return "things"; }
+
+/* frames: verb + which objects */
+function frames() {
+  const f = [
+    ["essen", [...CAT.food, ...CAT.mass]], ["trinken", CAT.drink], ["kaufen", [...CAT.food, ...CAT.clothes, ...CAT.things]],
+    ["brauchen", [...CAT.clothes, ...CAT.things]], ["suchen", CAT.things], ["haben", [...CAT.things, ...CAT.animals]],
+    ["möchten", [...CAT.food, ...CAT.drink]], ["nehmen", [...CAT.food, ...CAT.drink]], ["bestellen", [...CAT.food, ...CAT.drink]],
+    ["lesen", CAT.read], ["tragen", CAT.clothes], ["sehen", CAT.animals], ["finden", CAT.things], ["mögen", [...CAT.animals, ...CAT.drink]],
+    ["kochen", L(["Suppe", "Reis", "Kaffee", "Tee", "Fisch", "Nudeln", "Kartoffel"])], ["besuchen", [...CAT.people, ...L(["Museum", "Zoo", "Park"])]],
+    ["verkaufen", [...CAT.things, ...CAT.clothes]], ["zeigen", CAT.things],
+  ];
+  return f.map(([v, objs]) => ({ v: V(v), objs })).filter(x => inBubble(x.v) && x.objs.length);
+}
+const MASS = new Set(["Käse", "Reis", "Fleisch", "Gemüse", "Obst", "Schokolade", "Zucker", "Butter", "Wasser", "Milch", "Nudeln"]);
+const DRINKISH = new Set(["Kaffee", "Tee", "Saft", "Bier", "Wein"]);
+function objectNP(e, opts = {}) {
+  const isPerson = CAT.people.includes(e);
+  let kind, plural = false;
+  if (isPerson) kind = rnd(["poss:mein", "poss:mein", "poss:unser", "poss:dein", "def"]);
+  else if (MASS.has(e.d)) kind = rnd(["none", "def", "none"]);
+  else if (DRINKISH.has(e.d)) kind = rnd(["indef", "def", "none"]);
+  else { kind = rnd(["indef", "indef", "def", "poss:mein", "poss:dein"]); if (e.p && e.t !== "pl" && chance(0.18)) { plural = true; kind = rnd(["def", "none"]); } }
+  if (opts.kind) kind = opts.kind;
+  if (e.t === "pl" && kind === "indef") kind = "none";
+  const adjs = CAT.adj[catOf(e)] || [];
+  const adj = !isPerson && opts.adj !== false && adjs.length && chance(0.4) ? pickW(adjs) : null;
+  return { toks: np(e, "acc", kind, adj, plural), e, adj, kind };
+}
+const TIME_FRONT = () => [["heute"], ["morgen"], ["jetzt"], ["manchmal"], ["oft"], ["am", "Abend"], ["am", "Wochenende"], ["am", "Montag"], ["am", "Samstag"]]
+  .filter(ws => ws.every(w => ALLOWED.has(w.toLowerCase())));
+
+/* ---------- sentence templates ---------- */
+// each returns { toks, alts:[toks], ops:[() => {toks, type, ru, ids}], ids:[], topic }
+function capFirst(toks) { if (!toks.length) return toks; const c = toks.slice(); c[0] = { ...c[0], w: c[0].w[0].toUpperCase() + c[0].w.slice(1) }; return c; }
+function render(toks, end = ".") { let s = ""; for (const t of toks) { if (t.w === ",") s += ","; else s += (s ? " " : "") + t.w; } return capFirst([{ w: s }])[0].w + end; }
+function verbTok(v, p, subj) { return T(finite(v, p), "verb", { v, p, subj, ids: [v.i] }); }
+function idsOf(toks) { return toks.flatMap(t => t.ids || []); }
+
+function tObject() {
+  const fr = pickW(frames().map(x => ({ ...x, i: x.v.i }))); if (!fr) return null;
+  const subj = rnd(subjects(fr.v.d === "essen" || fr.v.d === "trinken"));
+  const obj = objectNP(pickW(fr.objs));
+  const vt = verbTok(fr.v, subj.p, subj.txt);
+  const st = subjToks(subj);
+  const times = TIME_FRONT();
+  const time = times.length && chance(0.35) ? rnd(times).map(w => T(w, "time")) : null;
+  let toks, alts = [], ops = [];
+  if (time) {
+    toks = [...time, vt, ...st, ...obj.toks];
+    alts.push([...st, vt, ...time, ...obj.toks]);
+    ops.push(() => ({ toks: [...time, ...st, vt, ...obj.toks], type: "Порядок слов", ru: `Глагол стоит на втором месте. Если предложение начинается с «${time.map(t => t.w).join(" ")}», подлежащее идёт после глагола: «${render([...time, vt, ...st]).slice(0, -1)} …».`, ids: [fr.v.i] }));
+  } else toks = [...st, vt, ...obj.toks];
+  return { toks, alts, ops, ids: [...idsOf(toks), ...subj.ids], topic: "Действие и объект (Akkusativ)" };
+}
+
+function tModal() {
+  const modals = ["können", "müssen", "wollen", "möchten", "sollen"].map(V).filter(inBubble);
+  const fr = pickW(frames().filter(x => !["möchten", "mögen", "haben"].includes(x.v.d)).map(x => ({ ...x, i: x.v.i })));
+  if (!modals.length || !fr) return null;
+  const m = rnd(modals), subj = rnd(subjects(false));
+  const obj = objectNP(pickW(fr.objs));
+  const mt = verbTok(m, subj.p, subj.txt);
+  const inf = T(fr.v.d, "inf", { ids: [fr.v.i] });
+  const st = subjToks(subj);
+  const toks = [...st, mt, ...obj.toks, inf];
+  const ops = [
+    () => ({ toks: [...st, mt, inf, ...obj.toks], type: "Порядок слов", ru: `С модальным глаголом «${m.d}» второй глагол (инфинитив «${fr.v.d}») уходит в самый конец предложения.`, ids: [fr.v.i, m.i] }),
+    () => { const wrongInf = finite(fr.v, subj.p); if (wrongInf === fr.v.d) return null; return { toks: [...st, mt, ...obj.toks, T(wrongInf, "inf")], type: "Форма глагола", ru: `После модального глагола второй глагол не спрягается — он стоит в инфинитиве: «${fr.v.d}».`, ids: [fr.v.i] }; },
+  ];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Модальные глаголы" };
+}
+
+function tSeparable() {
+  const nums = ["sechs", "sieben", "acht", "neun", "zehn"].filter(w => ALLOWED.has(w));
+  const um = () => nums.length && ALLOWED.has("uhr") ? [T("um", "x"), T(rnd(nums), "x"), T("Uhr", "x", { ids: [N("Uhr")?.i].filter(Boolean) })] : [T("früh", "x")];
+  const pa = (list, fb) => { const ok = list.filter(w => ALLOWED.has(w)); return ok.length ? rnd(ok) : fb; };
+  const options = [
+    ["aufstehen", () => chance(0.5) ? um() : [T(pa(["früh", "spät"], "früh"), "x")]],
+    ["einkaufen", () => [T(pa(["heute", "morgen", "oft"], "heute"), "x")]],
+    ["anrufen", () => objectNP(pickW(CAT.people), { adj: false }).toks],
+    ["fernsehen", () => (ALLOWED.has("abend") ? [T("am", "x"), T("Abend", "x")] : [T("heute", "x")])],
+    ["aufräumen", () => objectNP(pickW(CAT.rooms), { kind: rnd(["def", "poss:mein"]), adj: false }).toks],
+    ["anziehen", () => objectNP(pickW(CAT.clothes), { kind: rnd(["indef", "def", "poss:mein"]) }).toks],
+    ["einladen", () => objectNP(pickW(CAT.people), { adj: false }).toks],
+    ["aufmachen", () => objectNP(pickW(CAT.openable), { kind: "def", adj: false }).toks],
+    ["zumachen", () => objectNP(pickW(CAT.openable), { kind: "def", adj: false }).toks],
+    ["mitkommen", () => [T(pa(["heute", "morgen", "jetzt"], "heute"), "x")]],
+  ].map(([de, compl]) => ({ v: V(de), compl })).filter(o => inBubble(o.v));
+  const o = pickW(options.map(x => ({ ...x, i: x.v.i }))); if (!o) return null;
+  const subj = rnd(subjects(false));
+  const compl = o.compl().map(t => ({ ...t }));
+  const vt = verbTok(o.v, subj.p, subj.txt);
+  const pre = T(o.v.x, "prefix", { ids: [o.v.i] });
+  const st = subjToks(subj);
+  const toks = [...st, vt, ...compl, pre];
+  const ops = [
+    () => ({ toks: [...st, T(o.v.x + vt.w, "verb"), ...compl], type: "Отделяемая приставка", ru: `«${o.v.d}» — отделяемый глагол: приставка «${o.v.x}» отрывается и уходит в конец: «${render(toks).slice(0, -1)}».`, ids: [o.v.i] }),
+    () => ({ toks: [...st, vt, pre, ...compl], type: "Отделяемая приставка", ru: `Приставка «${o.v.x}» стоит в самом конце предложения, после всех дополнений.`, ids: [o.v.i] }),
+  ];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Отделяемые глаголы" };
+}
+
+function tLocation() {
+  const sein = V("sein"); const place = pickW(CAT.places); if (!place) return null;
+  const subj = rnd(subjects(true));
+  const vt = verbTok(sein, subj.p, subj.txt);
+  const st = subjToks(subj);
+  const g = place.t;
+  const adjs = CAT.adj.places; const adj = adjs.length && chance(0.25) ? pickW(adjs) : null;
+  const ptoks = g === "f" ? [T("in", "prep"), ...np(place, "dat", "def", adj)] : [T("im", "prep", { g, cas: "dat", noun: place }), ...(adj ? [T(adjStem(adj.d) + "en", "adj", { g, cas: "dat", kind: "def", base: adj.d, ids: [adj.i], noun: place })] : []), T(place.d, "noun", { ids: [place.i] })];
+  const toks = [...st, vt, ...ptoks];
+  const wrongPlace = g === "f" ? [T("in", "prep"), T("die", "art"), ...ptoks.slice(2)] : [T(g === "n" ? "ins" : "in den", "prep"), ...ptoks.slice(1)];
+  const ops = [() => ({ toks: [...st, vt, ...wrongPlace], type: "Падеж (Dativ)", ru: `На вопрос «где?» (wo?) после «in» нужен Dativ: ${g === "f" ? "in der " + place.d : "im " + place.d + " (= in dem)"}. «${g === "f" ? "in die" : g === "n" ? "ins" : "in den"}» отвечает на вопрос «куда?».`, ids: [place.i] })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Где? — Dativ" };
+}
+
+function tGo() {
+  const gehen = V("gehen"); const place = pickW(CAT.places.filter(p => !["Küche", "Wohnzimmer", "Schlafzimmer", "Bad", "Bahnhof"].includes(p.d))); if (!inBubble(gehen) || !place) return null;
+  const subj = rnd(subjects(false));
+  const vt = verbTok(gehen, subj.p, subj.txt); const st = subjToks(subj);
+  const g = place.t;
+  const ptoks = g === "n" ? [T("ins", "prep"), T(place.d, "noun", { ids: [place.i] })] : [T("in", "prep"), T(g === "m" ? "den" : "die", "art"), T(place.d, "noun", { ids: [place.i] })];
+  const times = TIME_FRONT(); const time = times.length && chance(0.4) ? rnd(times).map(w => T(w, "time")) : null;
+  const toks = time ? [...time, vt, ...st, ...ptoks] : [...st, vt, ...ptoks];
+  const alts = time ? [[...st, vt, ...time, ...ptoks]] : [];
+  const wrongP = g === "f" ? [T("in", "prep"), T("der", "art"), ptoks[2]] : [T("im", "prep"), ptoks[ptoks.length - 1]];
+  const ops = [() => ({ toks: time ? [...time, vt, ...st, ...wrongP] : [...st, vt, ...wrongP], type: "Падеж (Akkusativ)", ru: `На вопрос «куда?» (wohin?) после «in» нужен Akkusativ: ${g === "n" ? "ins " + place.d + " (= in das)" : (g === "m" ? "in den " : "in die ") + place.d}.`, ids: [place.i] })];
+  if (time) ops.push(() => ({ toks: [...time, ...st, vt, ...ptoks], type: "Порядок слов", ru: `Глагол всегда на втором месте: «${time.map(t => t.w).join(" ")} ${vt.w} ${subj.txt} …».`, ids: [gehen.i] }));
+  return { toks, alts, ops, ids: [...idsOf(toks), ...subj.ids], topic: "Куда? — Akkusativ" };
+}
+
+function tPredicate() {
+  const pools = [["food", CAT.food], ["drink", CAT.drink], ["clothes", CAT.clothes], ["things", CAT.things], ["animals", CAT.animals], ["places", CAT.places]].filter(([k, l]) => l.length && CAT.adj[k].length);
+  if (!pools.length) return null;
+  const [k, list] = rnd(pools); const e = pickW(list); const adj = pickW(CAT.adj[k]);
+  const plural = e.p && e.t !== "pl" && chance(0.2);
+  const subjNP = np(e, "nom", rnd(["def", "def", "poss:mein", "poss:dein"]), null, plural);
+  const isPl = plural || e.t === "pl";
+  const sein = V("sein"); const vt = verbTok(sein, isPl ? 5 : 2, subjNP.map(t => t.w).join(" "));
+  const deg = ["sehr", "zu", "ziemlich", "nicht", "wirklich"].filter(w => ALLOWED.has(w));
+  const degTok = deg.length && chance(0.5) ? [T(rnd(deg), "adv")] : [];
+  const toks = [...subjNP, vt, ...degTok, T(adj.d, "pred", { ids: [adj.i] })];
+  const ops = [];
+  ops.push(() => ({ toks: [...subjNP, T(isPl ? "ist" : "sind", "verb"), ...degTok, T(adj.d, "pred")], type: "Спряжение", ru: `Подлежащее «${subjNP.map(t => t.w).join(" ")}» — ${isPl ? "множественное число, поэтому «sind»" : "единственное число, поэтому «ist»"}.`, ids: [e.i] }));
+  return { toks, alts: [], ops, ids: idsOf(toks), topic: "Описание: sein + прилагательное" };
+}
+
+function tNegation() {
+  const fr = pickW(frames().filter(x => ["haben", "trinken", "essen", "brauchen", "kaufen", "möchten"].includes(x.v.d)).map(x => ({ ...x, i: x.v.i })));
+  if (!fr || !ALLOWED.has("kein")) return null;
+  const e = pickW(fr.objs.filter(o => !MASS.has(o.d) || o.t === "pl"));
+  if (!e) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(fr.v, subj.p, subj.txt); const st = subjToks(subj);
+  const ntoks = np(e, "acc", "kein", null);
+  const toks = [...st, vt, ...ntoks];
+  const ops = [];
+  if (e.t !== "pl") ops.push(() => ({ toks: [...st, vt, T("nicht", "neg"), ...np(e, "acc", "indef", null)], type: "Отрицание", ru: `Существительное с неопределённым артиклем отрицают словом «kein»: «${ntoks.map(t => t.w).join(" ")}», а не «nicht ${np(e, "acc", "indef", null).map(t => t.w).join(" ")}».`, ids: [e.i] }));
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Отрицание kein" };
+}
+
+function tWeil() {
+  const reasons = [];
+  const haben = V("haben"), sein = V("sein");
+  if (inBubble(N("Hunger")) && CAT.food.length) reasons.push({ v: V("essen"), objs: CAT.food, why: s => [T(s.pron, "x"), T("Hunger", "x", { ids: [N("Hunger").i] }), T(finite(haben, pronP(s)), "fin", { v: haben })] });
+  if (inBubble(N("Durst")) && CAT.drink.length) reasons.push({ v: V("trinken"), objs: CAT.drink, why: s => [T(s.pron, "x"), T("Durst", "x", { ids: [N("Durst").i] }), T(finite(haben, pronP(s)), "fin", { v: haben })] });
+  if (inBubble(A("müde"))) reasons.push({ v: V("schlafen"), objs: null, why: s => [T(s.pron, "x"), T("müde", "x", { ids: [A("müde").i] }), T(finite(sein, pronP(s)), "fin", { v: sein })] });
+  if (inBubble(A("krank"))) reasons.push({ v: V("bleiben"), objs: null, extra: [T("im", "x"), T("Bett", "x", { ids: [N("Bett")?.i].filter(Boolean) })], why: s => [T(s.pron, "x"), T("krank", "x", { ids: [A("krank").i] }), T(finite(sein, pronP(s)), "fin", { v: sein })] });
+  const r = rnd(reasons.filter(x => inBubble(x.v))); if (!r || !ALLOWED.has("weil")) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(r.v, subj.p, subj.txt); const st = subjToks(subj);
+  const objT = r.objs ? objectNP(pickW(r.objs), { adj: false }).toks : (r.extra || []);
+  const why = r.why(subj);
+  const toks = [...st, vt, ...objT, T(",", "punct"), T("weil", "conj"), ...why];
+  const ops = [() => ({ toks: [...st, vt, ...objT, T(",", "punct"), T("weil", "conj"), why[0], why[2], why[1]], type: "Порядок слов (weil)", ru: `После «weil» спрягаемый глагол уходит в конец придаточного: «…, weil ${why.map(t => t.w).join(" ")}».`, ids: [r.v.i] })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Придаточное с weil" };
+}
+function pronP(s) { return { ich: 0, du: 1, er: 2, sie: s.p === 5 ? 5 : 2, es: 2, wir: 3, ihr: 4, Sie: 5 }[s.pron] ?? s.p; }
+
+function tQuestion() {
+  const fr = pickW(frames().map(x => ({ ...x, i: x.v.i }))); if (!fr) return null;
+  const subj = rnd(subjects(false).filter(s => ["du", "ihr", "Sie", "er", "sie"].includes(s.txt)));
+  const obj = objectNP(pickW(fr.objs));
+  const vt = verbTok(fr.v, subj.p, subj.txt); const st = subjToks(subj);
+  const toks = [vt, ...st, ...obj.toks];
+  const ops = [() => ({ toks: [...st, vt, ...obj.toks], type: "Порядок слов (вопрос)", ru: `В вопросе без вопросительного слова глагол стоит на первом месте: «${vt.w[0].toUpperCase() + vt.w.slice(1)} ${subj.txt} …?».`, ids: [fr.v.i], end: "?" })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], end: "?", topic: "Вопрос да/нет" };
+}
+
+function tPlay() {
+  const spielen = V("spielen"); const thing = pickW(CAT.play); if (!inBubble(spielen) || !thing) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(spielen, subj.p, subj.txt); const st = subjToks(subj);
+  const extra = ALLOWED.has("gern") && chance(0.6) ? [T("gern", "adv")] : [];
+  const toks = [...st, vt, ...extra, T(thing.d, "noun", { ids: [thing.i] })];
+  return { toks, alts: [], ops: [], ids: [...idsOf(toks), ...subj.ids], topic: "Хобби" };
+}
+
+function tFrom() {
+  const places = [["Deutschland", null], ["Österreich", null], ["Berlin", null], ["Hamburg", null], ["München", null], ["Wien", null], ["Schweiz", "der"]].filter(([p]) => ALLOWED.has(p.toLowerCase()));
+  if (!places.length) return null;
+  const [pl, art] = rnd(places);
+  const useWohnen = chance(0.5) && inBubble(V("wohnen"));
+  const v = useWohnen ? V("wohnen") : V("kommen");
+  const subj = rnd(subjects(false)); const vt = verbTok(v, subj.p, subj.txt); const st = subjToks(subj);
+  const ptoks = [T(useWohnen ? "in" : "aus", "prep"), ...(art ? [T(art, "art")] : []), T(pl, "noun", { ids: [ANY(pl === "Schweiz" ? "die Schweiz" : pl)?.i].filter(Boolean) })];
+  const toks = [...st, vt, ...ptoks];
+  return { toks, alts: [], ops: [], ids: [...idsOf(toks), ...subj.ids], topic: useWohnen ? "Где живёшь?" : "Откуда ты?" };
+}
+
+const TEMPLATES = [[tObject, 5], [tModal, 3], [tSeparable, 3], [tLocation, 3], [tGo, 3], [tPredicate, 3], [tNegation, 2], [tWeil, 2], [tQuestion, 2], [tPlay, 1], [tFrom, 1]];
+
+/* generic token-level distortions */
+function tokenDistortions(sent) {
+  const out = [];
+  sent.toks.forEach((t, k) => {
+    if (t.role === "verb" && t.v && t.v.c && t.v.c.length > 1) {
+      const correct = t.w;
+      const inf = baseInf(t.v);
+      if (STEM_CHANGERS.has(inf) && (t.p === 1 || t.p === 2)) {
+        const reg = regularForm(inf, t.p);
+        if (reg && reg !== correct) out.push(() => ({ toks: replaceAt(sent.toks, k, reg), type: "Смена корневой гласной", ru: `«${t.v.d}» меняет корень с du и er/sie/es: du ${finite(t.v, 1)}, er ${finite(t.v, 2)}.`, ids: [t.v.i] }));
+      }
+      const ambiguous = /^sie$/i.test(t.subj || "") ? [finite(t.v, 2), finite(t.v, 5)] : [];
+      const others = [...new Set(t.v.c.map((_, p) => finite(t.v, p)))].filter(f => f !== correct && !ambiguous.includes(f));
+      if (others.length) out.push(() => ({ toks: replaceAt(sent.toks, k, rnd(others)), type: "Спряжение", ru: `С «${t.subj}» глагол «${t.v.d}» имеет форму «${correct}».`, ids: [t.v.i] }));
+    }
+    if (t.role === "art" && t.noun && t.g !== "pl") {
+      if (t.cas === "acc" && t.g === "m" && t.kind !== "none") {
+        const nomW = detWord(t.kind, "nom", "m");
+        if (nomW !== t.w) out.push(() => ({ toks: replaceAt(sent.toks, k, nomW), type: "Падеж (Akkusativ)", ru: `Это дополнение (кого? что?) — нужен Akkusativ. У мужского рода артикль меняется: ${nomW} → ${t.w} ${t.noun.d}.`, ids: [t.noun.i] }));
+      }
+      const g2 = rnd(["m", "f", "n"].filter(g => g !== t.g));
+      const w2 = detWord(t.kind, t.cas, g2);
+      if (w2 && w2 !== t.w) out.push(() => ({ toks: replaceAt(sent.toks, k, w2), type: "Род существительного", ru: `«${t.noun.d}» — ${GENDER_RU[t.g]}: ${ART_OF[t.g]} ${t.noun.d}. Поэтому здесь «${t.w}».`, ids: [t.noun.i] }));
+    }
+    if (t.role === "adj" && t.base) {
+      const stem = adjStem(t.base); const cur = t.w.slice(stem.length);
+      const wrong = rnd(["e", "en", "er", "es"].filter(x => x !== cur));
+      out.push(() => ({ toks: replaceAt(sent.toks, k, stem + wrong), type: "Окончание прилагательного", ru: `${CASE_RU[t.cas]}, ${GENDER_RU[t.g]}, ${t.kind === "def" ? "после определённого артикля" : t.kind === "none" ? "без артикля" : "после ein/kein/mein"} → «${t.w}».`, ids: [t.ids[0], t.noun?.i].filter(Boolean) }));
+    }
+  });
+  return out;
+}
+function replaceAt(toks, k, w) { const c = toks.slice(); c[k] = { ...c[k], w }; return c; }
+
+function makeSentence() {
+  for (let tries = 0; tries < 30; tries++) {
+    const total = TEMPLATES.reduce((a, [, w]) => a + w, 0); let r = Math.random() * total, fn = TEMPLATES[0][0];
+    for (const [f, w] of TEMPLATES) { r -= w; if (r <= 0) { fn = f; break; } }
+    let s = null; try { s = fn(); } catch (e) { console.warn(e); }
+    if (!s) continue;
+    const text = render(s.toks, s.end || ".");
+    if (outOfBubble(text).length) continue;
+    s.text = text; s.end = s.end || ".";
+    return s;
+  }
+  return null;
+}
+function distort(s) {
+  const ops = [...s.ops, ...tokenDistortions(s)];
+  for (const op of shuffle(ops)) { const d = op(); if (d && norm(render(d.toks, s.end)) !== norm(s.text)) { d.text = render(d.toks, d.end || s.end); return d; } }
+  return null;
+}
+function acceptable(s) { return [s.text, ...s.alts.map(a => render(a, s.end))].map(norm); }
+
+function diffHtml(correct, wrongText) {
+  const wt = new Set(tokenize(wrongText));
+  return esc(correct).replace(/[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*/g, m => wt.has(m.toLowerCase()) ? m : `<mark class="good">${m}</mark>`);
+}
+function glossHtml(ids) {
+  const seen = new Set(); const parts = [];
+  for (const id of ids) { if (seen.has(id)) continue; seen.add(id); const w = BYID.get(id); if (!w || !CONTENT_T.has(w.t) || w.t === "num") continue; parts.push(`<span>${artHtml(w)} <i>— ${esc(w.r)}</i></span>`); }
+  return parts.length ? `<div class="gloss">${parts.join("")}</div>` : "";
+}
+
+/* ---------- voice: speech-to-text & text-to-speech ---------- */
+let api = { dict: null, tts: null, sample: null, sampleKnown: false };
+async function use(name) { try { return window.claude && window.claude.use ? await window.claude.use(name) : null; } catch (e) { return null; } }
+let mic = { target: null, state: "idle", sr: null };
+const micTargets = [];
+function registerMic(btn, input, onDone) { const t = { btn, input, onDone, base: "" }; btn.innerHTML = ICON.mic; btn.addEventListener("click", () => micClick(t)); micTargets.push(t); return t; }
+function paintMics() { for (const t of micTargets) { const on = mic.target === t && mic.state !== "idle"; t.btn.classList.toggle("on", on); t.btn.innerHTML = on ? ICON.stop : ICON.mic; t.btn.setAttribute("aria-label", on ? "Остановить" : "Говорить по-немецки"); } }
+function micClick(t) {
+  if (mic.target === t && mic.state !== "idle") { if (api.dict) api.dict.stop().catch(() => {}); else if (mic.sr) mic.sr.stop(); return; }
+  stopSpeaking();
+  mic.target = t; t.final_ = ""; t.base = t.input.value.trim() ? t.input.value.trim() + " " : "";
+  if (api.dict) {
+    mic.state = "starting"; paintMics();
+    api.dict.start({ language: "de" }).catch(e => {
+      const code = e && e.code;
+      if (code === "not_granted") note("Микрофон не разрешён для этой страницы. Включите его в меню «Разрешения» артефакта или пишите текстом.");
+      else if (code === "unavailable") note("Немецкий голосовой ввод сейчас недоступен. Пишите текстом.");
+      else if (code === "rate_limited") note("Слишком много запросов к распознаванию речи. Подождите немного.");
+      else if (code && code !== "stopped" && code !== "dismissed") note("Не удалось включить микрофон: " + code);
+    });
+  } else if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    try {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const sr = new SR();
+      sr.lang = "de-DE"; sr.interimResults = true; sr.continuous = true; mic.sr = sr;
+      let finalText = "";
+      sr.onresult = ev => { let interim = ""; for (let k = ev.resultIndex; k < ev.results.length; k++) { const r = ev.results[k]; if (r.isFinal) finalText += r[0].transcript; else interim += r[0].transcript; } t.input.value = (t.base + finalText + interim).trimStart(); };
+      sr.onerror = ev => { if (ev.error === "not-allowed") { note("Браузер не дал доступ к микрофону."); document.body.classList.add("no-mic"); } };
+      sr.onend = () => { mic.state = "idle"; const tt = mic.target; mic.target = null; paintMics(); if (tt) tt.onDone && tt.onDone(); };
+      sr.start(); mic.state = "listening"; paintMics();
+    } catch (e) { note("Голосовой ввод недоступен в этом браузере."); }
+  }
+}
+function note(msg) { flash(msg); }
+function flash(msg) { for (const id of ["talkNote", "fixMeta", "orderMeta", "cardResult", "trResult"]) { const el = document.getElementById(id); if (el && !el.closest("[hidden]")) { el.textContent = msg; el.classList.add("warn"); setTimeout(() => el.classList.remove("warn"), 6000); return; } } }
+
+function initDictation(d) {
+  api.dict = d;
+  d.onPartial(({ text }) => { const t = mic.target; if (t) t.input.value = (t.base + t.final_ + text).trimStart(); });
+  d.onFinal(({ text }) => { const t = mic.target; if (!t) return; t.final_ = (t.final_ || "") + (t.base || t.final_ ? text : text.trimStart()); t.input.value = (t.base + t.final_).trimStart(); });
+  d.onState(({ state: s, reason }) => {
+    mic.state = s;
+    if (s === "starting" && mic.target) mic.target.final_ = "";
+    if (s === "idle") { const t = mic.target; mic.target = null; paintMics(); if (t) { t.final_ = ""; if (reason === "unavailable") { document.body.classList.add("no-mic"); flash("Голосовой ввод недоступен для этого аккаунта или языка."); } if (["stopped", "viewer_stopped"].includes(reason) && t.onDone) t.onDone(); } return; }
+    paintMics();
+  });
+}
+
+let speakingAvailable = false;
+function say(text) {
+  if (!text) return;
+  const rate = +state.settings.rate || 0.9;
+  if (api.tts) { api.tts.speak(text, { language: "de", rate }).catch(e => { if (e && e.code === "not_granted") { api.tts = null; checkSayAvailable(); } }); return; }
+  if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "de-DE"; u.rate = rate; speechSynthesis.speak(u); } catch (e) {} }
+}
+function stopSpeaking() { try { if (api.tts) api.tts.stop(); else if ("speechSynthesis" in window) speechSynthesis.cancel(); } catch (e) {} }
+function checkSayAvailable() { speakingAvailable = !!api.tts || "speechSynthesis" in window; document.body.classList.toggle("no-say", !speakingAvailable); }
+function sayBtn(text) { const b = document.createElement("button"); b.className = "btn ghost icon-btn say"; b.innerHTML = ICON.say; b.setAttribute("aria-label", "Прослушать"); b.onclick = () => say(text); return b; }
+
+/* ---------- Claude (sample) ---------- */
+function claudeErr(e) {
+  const c = e && e.code;
+  return ({ not_granted: "Вы не разрешили странице обращаться к Claude. Разрешение включается в меню «Разрешения» артефакта.", rate_limited: "Слишком много запросов. Подождите минуту и попробуйте снова.", invalid_json: "Claude ответил в неожиданном формате. Нажмите ещё раз.", sampling_disabled: "Запросы к Claude отключены для этого аккаунта.", session_expired: "Сессия истекла. Обновите страницу.", cancelled: "" })[c] ?? `Не удалось получить ответ от Claude (${c || "ошибка"}).`;
+}
+function vocabForPrompt() {
+  const groups = {};
+  for (const w of W) { if (!inBubble(w) || w.t === "art") continue; const k = NOUN_T.has(w.t) ? "Существительные" : w.t === "v" || w.t === "vs" || w.t === "vpast" ? "Глаголы" : w.t === "adj" ? "Прилагательные" : "Прочие слова"; (groups[k] = groups[k] || []).push(displayDe(w)); }
+  return Object.entries(groups).map(([k, l]) => `${k}: ${l.join(", ")}`).join("\n");
+}
+function weakForPrompt(n = 25) { return W.filter(w => inBubble(w) && isWeak(w.i)).sort((a, b) => stat(b.i)[1] - stat(a.i)[1]).slice(0, n).map(displayDe); }
+
+/* ---------- TALK ---------- */
+const talk = { turns: [], busy: false, ctl: null };
+function talkRules(topic) {
+  const weak = weakForPrompt();
+  return `Ты — собеседник для разговорной практики немецкого (уровень A1). Ученик говорит по-русски, учит немецкий в Duolingo.
+ГЛАВНОЕ ПРАВИЛО: в поле "reply" пиши только по-немецки и используй ИСКЛЮЧИТЕЛЬНО слова из СЛОВАРЯ ниже и их грамматические формы (спряжение в настоящем времени, артикли der/die/das/den/dem/ein/einen/kein…, падежные окончания, множественное число). Ни одного слова вне списка. Если нужное слово отсутствует — перефразируй тем, что есть. Имена людей — только Anna, Max, Lisa, Paul.
+Грамматика: Präsens, модальные глаголы, отделяемые глаголы, war/hatte, придаточные с weil/dass/wenn. Без Perfekt, без Futur, без сложных конструкций.
+Стиль: 1–3 коротких простых предложения. Почти всегда заканчивай вопросом к ученику, чтобы разговор шёл дальше. Реагируй на смысл того, что сказал ученик.
+Проверка ученика: если в его последней реплике есть ошибки (грамматика, артикль, порядок слов, неверное слово), запиши исправленный вариант в "user_fixed" и коротко объясни по-русски в "explain_ru" (1–2 предложения). Если ошибок нет — "user_fixed": "" и "explain_ru": "". В "mistake_words" перечисли немецкие слова (в словарной форме), в которых ученик ошибся.
+${weak.length ? "Слабые слова ученика — вплетай их в разговор чаще: " + weak.join(", ") + "." : ""}
+${topic ? "Тема разговора: " + topic + "." : "Тема: свободная, бытовая."}
+Отвечай ТОЛЬКО JSON-объектом: {"reply": "немецкий текст", "reply_ru": "перевод reply на русский", "user_fixed": "", "explain_ru": "", "mistake_words": []}
+
+СЛОВАРЬ:
+${vocabForPrompt()}`;
+}
+function talkTopicLabel() { const v = $("talkTopic").value; if (!v) return ""; if (v.startsWith("sc:")) return v.slice(3); const t = TOPICS.find(t => `${t.s}-${t.u}` === v); return t ? `${t.ru}` : ""; }
+function $(id) { return document.getElementById(id); }
+function addMsg(kind, html) { const d = document.createElement("div"); d.className = "msg " + kind; d.innerHTML = html; $("chat").append(d); $("chat").scrollTop = $("chat").scrollHeight; return d; }
+function botMsg(obj) {
+  const d = addMsg("bot", "");
+  const de = document.createElement("div"); de.className = "de"; de.innerHTML = highlightOob(obj.reply || ""); d.append(de);
+  const tools = document.createElement("div"); tools.className = "tools"; tools.append(sayBtn(obj.reply || ""));
+  const tr = document.createElement("div"); tr.className = "tr"; tr.textContent = obj.reply_ru || ""; tr.hidden = !state.settings.showRu;
+  const tb = document.createElement("button"); tb.className = "linkish"; tb.textContent = tr.hidden ? "Показать перевод" : "Скрыть перевод"; tb.onclick = () => { tr.hidden = !tr.hidden; tb.textContent = tr.hidden ? "Показать перевод" : "Скрыть перевод"; };
+  if (obj.reply_ru) tools.append(tb);
+  d.append(tools, tr);
+  $("chat").scrollTop = $("chat").scrollHeight;
+  if (state.settings.speak) say(obj.reply || "");
+}
+async function talkCall(extraUser) {
+  if (!api.sample) return;
+  talk.busy = true; $("talkSend").disabled = true; $("talkStart").disabled = true;
+  const thinking = addMsg("bot", '<span class="thinking">Claude думает…</span>');
+  const rules = talkRules(talkTopicLabel());
+  const history = talk.turns.slice(-14);
+  const input = [{ role: "user", content: rules + "\n\n" + (history.length ? "Начало разговора ниже." : "Начни разговор: поздоровайся и задай первый вопрос по теме.") }];
+  if (history.length) { input.push({ role: "assistant", content: '{"reply":"Okay."}' }); input.push(...history); }
+  if (extraUser) input.push({ role: "user", content: extraUser });
+  if (input[input.length - 1].role !== "user") input.push({ role: "user", content: "Продолжай." });
+  const merged = []; for (const m of input) { if (merged.length && merged[merged.length - 1].role === m.role) merged[merged.length - 1].content += "\n\n" + m.content; else merged.push({ ...m }); }
+  talk.ctl = new AbortController();
+  try {
+    let obj = await api.sample.json(merged, { cache: false, signal: talk.ctl.signal });
+    if (!obj || typeof obj.reply !== "string") throw { code: "invalid_json" };
+    let oob = outOfBubble(obj.reply);
+    if (oob.length) {
+      const fix = [...merged, { role: "assistant", content: JSON.stringify(obj) }, { role: "user", content: `В "reply" есть слова вне словаря: ${oob.join(", ")}. Перепиши "reply" (и "reply_ru") только словами из СЛОВАРЯ. Остальные поля оставь. Тот же JSON.` }];
+      try { const obj2 = await api.sample.json(fix, { cache: false, signal: talk.ctl.signal }); if (obj2 && typeof obj2.reply === "string" && outOfBubble(obj2.reply).length <= oob.length) obj = { ...obj, ...obj2, user_fixed: obj.user_fixed, explain_ru: obj.explain_ru, mistake_words: obj.mistake_words }; } catch (e) {}
+    }
+    thinking.remove();
+    return obj;
+  } catch (e) {
+    thinking.remove();
+    const m = claudeErr(e); if (m) { $("talkNote").textContent = m; $("talkNote").classList.add("warn"); }
+    return null;
+  } finally { talk.busy = false; $("talkSend").disabled = false; $("talkStart").disabled = false; }
+}
+async function talkStart() {
+  if (talk.busy) return;
+  $("chat").innerHTML = ""; talk.turns = []; $("talkNote").textContent = "";
+  const obj = await talkCall(null);
+  if (!obj) return;
+  talk.turns.push({ role: "assistant", content: JSON.stringify({ reply: obj.reply }) });
+  botMsg(obj);
+}
+async function talkSend() {
+  const text = $("talkInput").value.trim(); if (!text || talk.busy) return;
+  if (!api.sample) { $("talkNote").textContent = "Разговор работает, когда страница открыта на claude.ai."; return; }
+  if (!talk.turns.length) { await talkStart(); }
+  $("talkInput").value = "";
+  const me = addMsg("me", `<div class="de">${highlightOob(text)}</div>`);
+  const oob = outOfBubble(text);
+  if (oob.length) { const n = document.createElement("div"); n.className = "tr"; n.textContent = `Вне пузыря: ${oob.join(", ")}`; me.append(n); }
+  talk.turns.push({ role: "user", content: text });
+  const obj = await talkCall(null);
+  if (!obj) { talk.turns.pop(); return; }
+  talk.turns.push({ role: "assistant", content: JSON.stringify({ reply: obj.reply }) });
+  const fixed = (obj.user_fixed || "").trim();
+  const userIds = idsInText(text);
+  if (fixed && norm(fixed) !== norm(text)) {
+    const f = document.createElement("div"); f.className = "fix"; f.innerHTML = `<b>Правильно:</b> ${diffHtml(fixed, text)}${obj.explain_ru ? `<div class="tr">${esc(obj.explain_ru)}</div>` : ""}`;
+    me.append(f);
+    const bad = idsForLemmas(obj.mistake_words);
+    mark(bad.length ? bad : idsInText(fixed).filter(id => !userIds.includes(id)), false);
+    mark(userIds.filter(id => !bad.includes(id)), true);
+  } else mark(userIds, true);
+  countToday();
+  botMsg(obj);
+}
+
+/* ---------- FIX ---------- */
+const fix = { cur: null, wrong: null, done: false };
+function fixNew() {
+  const s = makeSentence(); if (!s) { $("fixSentence").textContent = "В пузыре слишком мало слов для упражнения."; return; }
+  fix.cur = s; fix.done = false;
+  fix.wrong = chance(0.25) ? null : distort(s);
+  $("fixSentence").textContent = fix.wrong ? fix.wrong.text : s.text;
+  $("fixMeta").textContent = s.topic; $("fixMeta").classList.remove("warn");
+  $("fixInput").value = ""; $("fixResult").innerHTML = "";
+  $("fixInput").focus({ preventScroll: true });
+}
+function fixCheck(noneClaim) {
+  if (!fix.cur || fix.done) return;
+  const s = fix.cur, wr = fix.wrong;
+  const answer = noneClaim ? (wr ? "__" : s.text) : $("fixInput").value;
+  if (!noneClaim && !answer.trim()) { $("fixInput").focus(); return; }
+  const ok = acceptable(s).includes(norm(answer)) && !(noneClaim && wr);
+  fix.done = true;
+  let html;
+  if (ok) {
+    html = `<div class="result ok"><div class="head">${wr ? "Верно, ошибка найдена" : "Верно, ошибки не было"}</div>${wr ? `<div>${esc(wr.type)}: ${esc(wr.ru)}</div>` : ""}${glossHtml(s.ids)}</div>`;
+    mark(s.ids, true);
+  } else {
+    const shown = wr ? wr.text : s.text;
+    html = `<div class="result bad"><div class="head">${noneClaim ? "Ошибка была" : "Не совсем"}</div><div class="sentence" style="font-size:20px">${diffHtml(s.text, shown)}</div>${wr ? `<div><b>${esc(wr.type)}.</b> ${esc(wr.ru)}</div>` : `<div>В исходном предложении ошибки не было — его нужно было оставить как есть.</div>`}${!noneClaim ? `<div class="note">Ваш ответ: ${highlightOob(answer)}</div>` : ""}${glossHtml(s.ids)}</div>`;
+    mark(wr ? wr.ids : s.ids, false);
+  }
+  $("fixResult").innerHTML = html;
+  countToday();
+  say(s.text);
+}
+
+/* ---------- ORDER ---------- */
+const ord = { cur: null, pool: [], answer: [], done: false };
+function ordNew() {
+  let s = null; for (let k = 0; k < 10; k++) { s = makeSentence(); if (s && s.toks.filter(t => t.role !== "punct").length >= 4) break; }
+  if (!s) return;
+  ord.cur = s; ord.done = false;
+  const words = s.toks.filter(t => t.role !== "punct").map((t, k) => ({ w: t.w, k }));
+  let sh = shuffle(words); if (sh.map(x => x.w).join(" ") === words.map(x => x.w).join(" ")) sh = shuffle(words);
+  ord.pool = sh; ord.answer = [];
+  $("orderMeta").textContent = s.topic + (s.end === "?" ? " · вопрос" : ""); $("orderMeta").classList.remove("warn");
+  $("orderResult").innerHTML = "";
+  ordPaint();
+}
+function ordPaint() {
+  const mk = (list, from) => list.map((x, k) => { const b = document.createElement("button"); b.className = "tok"; b.textContent = x.w; b.onclick = () => { if (ord.done) return; const [it] = from.splice(k, 1); (from === ord.pool ? ord.answer : ord.pool).push(it); ordPaint(); }; return b; });
+  $("orderPool").replaceChildren(...mk(ord.pool, ord.pool));
+  $("orderAnswer").replaceChildren(...mk(ord.answer, ord.answer));
+  if (!ord.answer.length) $("orderAnswer").innerHTML = '<span class="note">Нажимайте на слова внизу по порядку</span>';
+}
+function ordCheck() {
+  if (!ord.cur || ord.done) return;
+  if (ord.pool.length) { $("orderResult").innerHTML = '<p class="note">Используйте все слова.</p>'; return; }
+  const s = ord.cur; const answer = ord.answer.map(x => x.w).join(" ");
+  const ok = acceptable(s).includes(norm(answer));
+  ord.done = true;
+  $("orderResult").innerHTML = ok
+    ? `<div class="result ok"><div class="head">Верно</div><div>${esc(s.text)}</div>${glossHtml(s.ids)}</div>`
+    : `<div class="result bad"><div class="head">Правильный порядок</div><div class="sentence" style="font-size:20px">${esc(s.text)}</div>${orderHint(s)}${glossHtml(s.ids)}</div>`;
+  const verbIds = s.toks.filter(t => t.role === "verb" || t.role === "prefix" || t.role === "inf").flatMap(t => t.ids || []);
+  mark(ok ? s.ids : (verbIds.length ? verbIds : s.ids), ok);
+  countToday(); say(s.text);
+}
+function orderHint(s) {
+  const r = s.toks.map(t => t.role);
+  if (r.includes("prefix")) return "<div>Отделяемая приставка стоит в самом конце.</div>";
+  if (r.includes("inf")) return "<div>После модального глагола инфинитив уходит в конец.</div>";
+  if (r.includes("conj")) return "<div>После «weil» спрягаемый глагол стоит в конце.</div>";
+  if (s.end === "?") return "<div>В вопросе без вопросительного слова глагол стоит первым.</div>";
+  if (r[0] === "time") return "<div>Глагол стоит на втором месте, подлежащее — после него.</div>";
+  return "<div>Глагол — на втором месте, дополнение — после глагола.</div>";
+}
+
+/* ---------- TRANSLATE ---------- */
+const tr = { queue: [], cur: null, done: false, ctl: null };
+async function trNew() {
+  const body = $("transBody");
+  if (!api.sample) { body.innerHTML = `<p class="note">${api.sampleKnown ? "Этот режим работает, когда страница открыта на claude.ai: фразы придумывает Claude." : "Подключаю Claude…"}</p>`; return; }
+  body.innerHTML = '<p class="thinking">Claude придумывает фразы из ваших слов…</p>'; $("transNew").disabled = true;
+  const topic = $("transTopic").value ? (TOPICS.find(t => `${t.s}-${t.u}` === $("transTopic").value) || {}).ru : "";
+  const weak = weakForPrompt(20);
+  const prompt = `Составь 6 коротких немецких предложений (уровень A1, 4–9 слов) для упражнения «переведи с русского на немецкий».
+Используй ИСКЛЮЧИТЕЛЬНО слова из СЛОВАРЯ ниже и их грамматические формы. Ни одного слова вне списка. Имена — только Anna, Max, Lisa, Paul.
+Грамматика разнообразная: Akkusativ, Dativ после in, модальные глаголы, отделяемые глаголы, отрицание kein/nicht, вопросы, weil. Только Präsens (и war/hatte).
+${topic ? "Тема: " + topic + "." : ""}
+${weak.length ? "Обязательно используй эти слабые слова ученика: " + weak.join(", ") + "." : ""}
+Для каждого предложения дай естественный русский перевод и 1–3 правильных немецких варианта (первый — основной; другие — допустимый другой порядок слов или синоним из словаря).
+Ответ — ТОЛЬКО JSON-массив: [{"ru": "Я пью кофе.", "de": ["Ich trinke Kaffee."]}]
+
+СЛОВАРЬ:
+${vocabForPrompt()}`;
+  tr.ctl = new AbortController();
+  try {
+    const arr = await api.sample.json(prompt, { cache: false, signal: tr.ctl.signal });
+    const good = (Array.isArray(arr) ? arr : []).filter(x => x && typeof x.ru === "string" && Array.isArray(x.de) && x.de.length && typeof x.de[0] === "string").map(x => ({ ru: x.ru, de: x.de.filter(d => typeof d === "string") })).filter(x => outOfBubble(x.de[0]).length === 0);
+    if (!good.length) { body.innerHTML = '<p class="note warn">Claude не смог уложиться в ваш словарь. Попробуйте ещё раз или другую тему.</p>'; return; }
+    tr.queue = good; trNext();
+  } catch (e) { body.innerHTML = `<p class="note warn">${esc(claudeErr(e))}</p>`; }
+  finally { $("transNew").disabled = false; }
+}
+function trNext() {
+  const body = $("transBody");
+  if (!tr.queue.length) { body.innerHTML = '<p class="note">Фразы закончились. Нажмите «Новые фразы».</p>'; return; }
+  tr.cur = tr.queue.shift(); tr.done = false;
+  body.innerHTML = `<div class="note">Осталось: ${tr.queue.length}</div><div class="ru-big">${esc(tr.cur.ru)}</div>
+  <div class="composer"><button class="btn mic" id="trMic">MIC</button><input type="text" id="trInput" placeholder="По-немецки…" autocomplete="off"></div>
+  <div class="row"><button class="btn primary" id="trCheck">Проверить</button><button class="btn" id="trShow">Показать ответ</button><span class="grow"></span><button class="btn ghost" id="trNextBtn">Дальше</button></div><div id="trResult"></div>`;
+  registerMicOnce($("trMic"), $("trInput"), () => trCheck());
+  $("trCheck").onclick = () => trCheck(); $("trShow").onclick = () => trShow(); $("trNextBtn").onclick = trNext;
+  $("trInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); tr.done ? trNext() : trCheck(); } });
+}
+function registerMicOnce(btn, input, onDone) { for (let k = micTargets.length - 1; k >= 0; k--) if (!document.body.contains(micTargets[k].btn)) micTargets.splice(k, 1); registerMic(btn, input, onDone); }
+function trShow() { if (!tr.cur) return; tr.done = true; $("trResult").innerHTML = `<div class="result bad"><div class="head">Ответ</div><div class="sentence" style="font-size:20px">${esc(tr.cur.de[0])}</div>${glossHtml(idsInText(tr.cur.de[0]))}</div>`; mark(idsInText(tr.cur.de[0]), false); say(tr.cur.de[0]); }
+async function trCheck() {
+  if (!tr.cur || tr.done) return;
+  const ans = $("trInput").value.trim(); if (!ans) return;
+  const ok = tr.cur.de.map(norm).includes(norm(ans));
+  const ids = idsInText(tr.cur.de[0]);
+  if (ok) { tr.done = true; $("trResult").innerHTML = `<div class="result ok"><div class="head">Верно</div>${glossHtml(ids)}</div>`; mark(ids, true); countToday(); say(tr.cur.de[0]); return; }
+  $("trResult").innerHTML = `<div class="result bad"><div class="head">Не совпало с эталоном</div><div>Эталон: ${esc(tr.cur.de[0])}</div><div class="row"><button class="btn" id="trAsk">Проверить с Claude</button><span class="note">Ваш вариант может быть тоже верным</span></div></div>`;
+  $("trAsk").onclick = () => trAsk(ans);
+}
+async function trAsk(ans) {
+  if (!api.sample) return;
+  $("trResult").innerHTML = '<p class="thinking">Claude проверяет…</p>';
+  try {
+    const j = await api.sample.json(`Ученик (уровень A1) переводил на немецкий фразу: «${tr.cur.ru}». Эталон: «${tr.cur.de[0]}». Ответ ученика: «${ans}».
+Оцени, правильно ли по смыслу и грамматике (другой порядок слов или синоним допустимы). Ответ ТОЛЬКО JSON: {"ok": true|false, "fixed": "исправленный вариант ответа ученика", "explain_ru": "1–2 предложения по-русски, что не так", "mistake_words": ["немецкие слова в словарной форме, где ошибка"]}`, { cache: false, modelTier: "quick" });
+    tr.done = true;
+    const ids = idsInText(tr.cur.de[0]);
+    if (j && j.ok) { $("trResult").innerHTML = `<div class="result ok"><div class="head">Claude: ваш вариант верный</div>${j.explain_ru ? `<div>${esc(j.explain_ru)}</div>` : ""}${glossHtml(ids)}</div>`; mark(ids, true); }
+    else { $("trResult").innerHTML = `<div class="result bad"><div class="head">Нужно так</div><div class="sentence" style="font-size:20px">${diffHtml(j?.fixed || tr.cur.de[0], ans)}</div><div>${esc(j?.explain_ru || "")}</div>${glossHtml(ids)}</div>`; const bad = idsForLemmas(j?.mistake_words); mark(bad.length ? bad : ids, false); }
+    countToday(); say(tr.cur.de[0]);
+  } catch (e) { $("trResult").innerHTML = `<p class="note warn">${esc(claudeErr(e))}</p>`; }
+}
+
+/* ---------- CARDS ---------- */
+const card = { mode: "say", cur: null, done: false };
+function cardPool() {
+  let pool = W.filter(w => inBubble(w) && CONTENT_T.has(w.t) && !["num", "phr", "name", "vpast"].includes(w.t));
+  if ($("cardWeakOnly").checked) { const weak = pool.filter(w => isWeak(w.i)); if (weak.length) pool = weak; }
+  return pool;
+}
+function cardNew() {
+  const w = pickW(cardPool()); const body = $("cardBody"); if (!w) { body.innerHTML = '<p class="note">Нет слов для карточек.</p>'; return; }
+  card.cur = w; card.done = false;
+  if (card.mode === "say") {
+    body.innerHTML = `<div class="flash"><div class="kind">${esc(TYPE_RU[w.t] || "")}</div><div class="ru-big" style="font-size:26px">${esc(w.r)}</div><div class="note">${esc(w.e)}</div></div>
+    <div class="composer"><button class="btn mic" id="cardMic">MIC</button><input type="text" id="cardInput" placeholder="${NOUN_T.has(w.t) ? "der / die / das + слово" : "по-немецки"}" autocomplete="off"></div>
+    <div class="row"><button class="btn primary" id="cardCheck">Проверить</button><button class="btn" id="cardSkip">Не помню</button><span class="grow"></span><button class="btn ghost" id="cardNext">Дальше</button></div><div id="cardResult"></div>`;
+    registerMicOnce($("cardMic"), $("cardInput"), () => cardCheck(false));
+    $("cardCheck").onclick = () => cardCheck(false); $("cardSkip").onclick = () => cardCheck(true); $("cardNext").onclick = cardNew;
+    $("cardInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); card.done ? cardNew() : cardCheck(false); } });
+    $("cardInput").focus({ preventScroll: true });
+  } else {
+    const others = shuffle(W.filter(x => x !== w && inBubble(x) && x.t === w.t && x.r !== w.r)).slice(0, 3);
+    const opts = shuffle([w, ...others]);
+    body.innerHTML = `<div class="flash"><div class="kind">Послушайте и выберите перевод</div><button class="btn primary" id="cardPlay">${ICON.say} Прослушать ещё раз</button></div><div class="choices" id="cardChoices"></div><div class="row"><span class="grow"></span><button class="btn ghost" id="cardNext">Дальше</button></div><div id="cardResult"></div>`;
+    $("cardPlay").onclick = () => say(displayDe(w)); $("cardNext").onclick = cardNew;
+    const box = $("cardChoices");
+    for (const o of opts) { const b = document.createElement("button"); b.className = "btn"; b.textContent = o.r; b.onclick = () => { if (card.done) return; card.done = true; const ok = o === w; b.classList.add(ok ? "ok" : "bad"); [...box.children][opts.indexOf(w)].classList.add("ok"); $("cardResult").innerHTML = `<div class="result ${ok ? "ok" : "bad"}"><div class="head">${artHtml(w)} — ${esc(w.r)}</div></div>`; mark([w.i], ok); countToday(); }; box.append(b); }
+    if (!speakingAvailable) $("cardResult").innerHTML = `<p class="note warn">Озвучка недоступна в этом браузере. Слово: ${esc(displayDe(w))}</p>`;
+    say(displayDe(w));
+  }
+}
+function cardCheck(skip) {
+  if (!card.cur || card.done) return;
+  const w = card.cur; const expected = displayDe(w); const ans = skip ? "" : $("cardInput").value;
+  if (!skip && !ans.trim()) return;
+  card.done = true;
+  const a = norm(ans), e = norm(expected);
+  let ok = a === e, head;
+  if (!ok && NOUN_T.has(w.t) && a === norm(w.d)) head = `Почти: нужен артикль — ${artHtml(w)}`;
+  else if (!ok && NOUN_T.has(w.t) && a.split(" ").slice(1).join(" ") === norm(w.d)) head = `Артикль другой: ${artHtml(w)} (${GENDER_RU[w.t]})`;
+  else head = ok ? `Верно: ${artHtml(w)}` : `Правильно: ${artHtml(w)}`;
+  const forms = w.c && w.c.length > 1 ? `<div class="note art">${esc(w.c.join(" · "))}</div>` : w.p ? `<div class="note">мн. ч.: ${esc(w.p)}</div>` : "";
+  $("cardResult").innerHTML = `<div class="result ${ok ? "ok" : "bad"}"><div class="head">${head}</div>${forms}</div>`;
+  mark([w.i], ok); countToday(); say(expected);
+}
+
+/* ---------- DICTIONARY ---------- */
+function renderDict() {
+  const q = $("dictSearch").value.trim().toLowerCase(); const sec = $("dictSection").value; const f = $("dictFilter").value;
+  const rows = []; let shown = 0, lastTopic = null;
+  for (const w of W) {
+    if (sec && String(w.s) !== sec) continue;
+    if (f === "weak" && !isWeak(w.i)) continue;
+    if (f === "off" && !excluded.has(w.i)) continue;
+    if (q && !(w.d.toLowerCase().includes(q) || w.r.toLowerCase().includes(q) || w.e.toLowerCase().includes(q) || (w.f || []).some(x => x.toLowerCase().includes(q)))) continue;
+    const tk = `${w.s}-${w.u}`;
+    if (tk !== lastTopic) { lastTopic = tk; const t = TOPICS.find(t => t.s === w.s && t.u === w.u); rows.push(`<tr class="topic-row"><td colspan="5">Раздел ${w.s} · ${esc(t ? t.ru : "")}<button class="linkish" data-topic-on="${tk}">все в пузырь</button><button class="linkish" data-topic-off="${tk}">убрать тему</button></td></tr>`); }
+    const [r, wr] = stat(w.i);
+    const forms = w.c ? (w.c.length > 1 ? w.c.join(", ") : w.c[0]) : w.p ? "мн.: " + w.p : (w.f || []).slice(1).join(", ");
+    rows.push(`<tr class="${excluded.has(w.i) ? "off" : ""}"><td><input type="checkbox" data-id="${w.i}" ${excluded.has(w.i) ? "" : "checked"} aria-label="В пузыре: ${esc(w.d)}"></td><td class="de">${artHtml(w)} <button class="btn ghost icon-btn say" data-say="${esc(displayDe(w))}" aria-label="Прослушать" style="width:28px;height:28px">${ICON.say}</button></td><td>${esc(w.r)}<div class="note">${esc(TYPE_RU[w.t] || "")}</div></td><td class="forms">${esc(forms)}</td><td><span class="bar"><span class="r">+${r}</span><span class="w">−${wr}</span></span></td></tr>`);
+    shown++;
+  }
+  $("dictBody").innerHTML = rows.join("") || '<tr><td colspan="5" class="note">Ничего не найдено.</td></tr>';
+  $("dictCount").textContent = `Показано: ${shown} из ${W.length}`;
+}
+function setTopic(tk, on) { for (const w of W) if (`${w.s}-${w.u}` === tk) { if (on) excluded.delete(w.i); else excluded.add(w.i); } bubbleChanged(); }
+function bubbleChanged() { rebuildAllowed(); buildCats(); scheduleSave(); renderStats(); renderDict(); }
+
+/* ---------- header stats ---------- */
+function renderStats() {
+  $("statWords").textContent = W.filter(inBubble).length;
+  $("statWeak").textContent = W.filter(w => inBubble(w) && isWeak(w.i)).length;
+  $("statToday").textContent = state.daily[today()] || 0;
+}
+
+/* ---------- tabs & wiring ---------- */
+const started = {};
+function showTab(name) {
+  for (const b of document.querySelectorAll("nav.tabs button")) b.setAttribute("aria-selected", String(b.dataset.tab === name));
+  for (const p of document.querySelectorAll("section.panel")) p.hidden = p.id !== "tab-" + name;
+  if (!started[name]) { started[name] = true; ({ fix: fixNew, order: ordNew, cards: cardNew, dict: renderDict, trans: () => trIntro() })[name]?.(); }
+}
+function trIntro() { $("transBody").innerHTML = `<p class="note">${api.sample ? "Выберите тему и нажмите «Новые фразы»." : api.sampleKnown ? "Этот режим работает, когда страница открыта на claude.ai." : "Подключаю Claude…"}</p>`; }
+
+function fillTopics(sel, withScenes) {
+  const o = ['<option value="">Свободная тема</option>'];
+  if (withScenes) for (const sc of ["Ты официант в кафе, я заказываю", "Я турист и ищу дорогу", "Мы знакомимся", "Я рассказываю о своей семье", "Мы обсуждаем выходные", "Я покупаю одежду в магазине", "Я у врача"]) o.push(`<option value="sc:${esc(sc)}">Сценка: ${esc(sc)}</option>`);
+  for (const t of TOPICS) o.push(`<option value="${t.s}-${t.u}">Раздел ${t.s} · ${esc(t.ru)}</option>`);
+  sel.innerHTML = o.join("");
+}
+
+function wire() {
+  for (const b of document.querySelectorAll("nav.tabs button")) b.onclick = () => showTab(b.dataset.tab);
+  for (const b of document.querySelectorAll("button.say")) if (b.textContent === "SAY") b.innerHTML = ICON.say;
+  fillTopics($("talkTopic"), true); fillTopics($("transTopic"), false);
+  $("optSpeak").checked = state.settings.speak; $("optShowRu").checked = state.settings.showRu; $("optAutoSend").checked = state.settings.autoSend; $("optRate").value = state.settings.rate;
+  $("optSpeak").onchange = e => { state.settings.speak = e.target.checked; if (!e.target.checked) stopSpeaking(); scheduleSave(); };
+  $("optShowRu").onchange = e => { state.settings.showRu = e.target.checked; scheduleSave(); };
+  $("optAutoSend").onchange = e => { state.settings.autoSend = e.target.checked; scheduleSave(); };
+  $("optRate").onchange = e => { state.settings.rate = +e.target.value; scheduleSave(); };
+  $("talkStart").onclick = () => { if (!api.sample) { $("talkNote").textContent = api.sampleKnown ? "Разговор работает, когда страница открыта на claude.ai (отвечает Claude). Остальные режимы работают и без него." : "Подключаю Claude…"; return; } talkStart(); };
+  $("talkSend").onclick = talkSend;
+  $("talkInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); talkSend(); } });
+  registerMic($("talkMic"), $("talkInput"), () => { if (state.settings.autoSend) talkSend(); });
+  registerMic($("fixMic"), $("fixInput"), () => fixCheck(false));
+  $("fixSay").onclick = () => say($("fixSentence").textContent);
+  $("fixCheck").onclick = () => fixCheck(false); $("fixNone").onclick = () => fixCheck(true); $("fixNext").onclick = fixNew;
+  $("fixInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); fix.done ? fixNew() : fixCheck(false); } });
+  $("orderSay").onclick = () => { if (ord.done && ord.cur) say(ord.cur.text); else flash("Озвучка будет после проверки — чтобы не подсказывать."); };
+  $("orderCheck").onclick = ordCheck; $("orderNext").onclick = ordNew; $("orderReset").onclick = () => { if (ord.done) return; ord.pool.push(...ord.answer); ord.answer = []; ordPaint(); };
+  $("transNew").onclick = trNew;
+  $("cardModeSay").onclick = () => { card.mode = "say"; $("cardModeSay").setAttribute("aria-pressed", "true"); $("cardModeHear").setAttribute("aria-pressed", "false"); cardNew(); };
+  $("cardModeHear").onclick = () => { card.mode = "hear"; $("cardModeHear").setAttribute("aria-pressed", "true"); $("cardModeSay").setAttribute("aria-pressed", "false"); cardNew(); };
+  $("cardWeakOnly").onchange = cardNew;
+  let dt; $("dictSearch").oninput = () => { clearTimeout(dt); dt = setTimeout(renderDict, 150); };
+  $("dictSection").onchange = renderDict; $("dictFilter").onchange = renderDict;
+  $("dictBody").addEventListener("change", e => { const id = +e.target.dataset.id; if (!id) return; if (e.target.checked) excluded.delete(id); else excluded.add(id); e.target.closest("tr").classList.toggle("off", !e.target.checked); rebuildAllowed(); buildCats(); scheduleSave(); renderStats(); });
+  $("dictBody").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.say) say(b.dataset.say); if (b.dataset.topicOn) setTopic(b.dataset.topicOn, true); if (b.dataset.topicOff) setTopic(b.dataset.topicOff, false); });
+  $("resetProgress").onclick = () => { $("resetConfirm").hidden = false; };
+  $("resetNo").onclick = () => { $("resetConfirm").hidden = true; };
+  $("resetYes").onclick = () => { state.stats = {}; state.daily = {}; $("resetConfirm").hidden = true; scheduleSave(); renderStats(); renderDict(); };
+  paintMics();
+}
+
+function demoChat() {
+  $("chat").innerHTML = "";
+  addMsg("bot", `<div class="de">Hallo! Wie geht's? Trinkst du gern Kaffee?</div><div class="tr">Пример. Нажмите «Начать разговор» — Claude ответит по-настоящему.</div>`);
+  addMsg("me", `<div class="de">Ja, ich trinke gern ein Kaffee.</div><div class="fix"><b>Правильно:</b> Ja, ich trinke gern <mark class="good">einen</mark> Kaffee.<div class="tr">Kaffee — мужской род, в Akkusativ «ein» становится «einen».</div></div>`);
+}
+
+/* ---------- boot ---------- */
+(function boot() {
+  applyState(loadLocal());
+  rebuildAllowed(); buildCats();
+  wire(); renderStats(); demoChat(); checkSayAvailable();
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) document.body.classList.add("no-mic");
+  use("dictation").then(d => { if (d) { document.body.classList.remove("no-mic"); initDictation(d); } });
+  use("tts").then(t => { if (t) api.tts = t; checkSayAvailable(); });
+  use("sample").then(s => { api.sample = s; api.sampleKnown = true; if (!s) $("talkNote").textContent = "Разговор и перевод работают, когда страница открыта на claude.ai. Остальные режимы работают везде."; if (started.trans) trIntro(); });
+  Promise.all([use("db"), use("user")]).then(async ([db, user]) => {
+    if (!db || !user) return;
+    try {
+      const id = await user.id(); if (!id) return;
+      const ref = db.doc(`data/users/${id}/progress`);
+      const timer = new Promise(res => setTimeout(() => res(null), 10000));
+      const snap = await Promise.race([ref.get(), timer]);
+      dbRef = ref;
+      if (snap && snap.exists) { applyState(snap.data()); rebuildAllowed(); buildCats(); renderStats(); if (started.dict) renderDict(); $("optSpeak").checked = state.settings.speak; $("optShowRu").checked = state.settings.showRu; $("optAutoSend").checked = state.settings.autoSend; $("optRate").value = state.settings.rate; }
+      else scheduleSave();
+    } catch (e) { console.warn("db", e); }
+  });
+})();
+</script>

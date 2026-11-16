@@ -1,0 +1,1212 @@
+<title>Wortblase</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one working column; sticky header with the bubble's numbers, scrollable mode tabs, one active practice panel. */
+:root {
+  --bg: #EDF1F3;
+  --surface: #FFFFFF;
+  --surface-2: #F5F8F9;
+  --ink: #14212A;
+  --muted: #5A6A76;
+  --line: #D3DCE2;
+  --accent: #1D6A86;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DAEAF1;
+  --ok: #2B7A4B;
+  --ok-soft: #DDF0E4;
+  --bad: #B3261E;
+  --bad-soft: #F8E1DF;
+  --warn: #8F6200;
+  --der: #2F5FB3;
+  --die: #B23A48;
+  --das: #2E7D57;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E161C; --surface: #15212A; --surface-2: #1A2832; --ink: #E2EAEF; --muted: #8EA2AF;
+    --line: #26363F; --accent: #62B4D0; --accent-ink: #06222C; --accent-soft: #17323E;
+    --ok: #6CC48E; --ok-soft: #173426; --bad: #F2867E; --bad-soft: #3A1D1B; --warn: #E3B65B;
+    --der: #7FA7F0; --die: #F08A97; --das: #6FCB9A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E161C; --surface: #15212A; --surface-2: #1A2832; --ink: #E2EAEF; --muted: #8EA2AF;
+  --line: #26363F; --accent: #62B4D0; --accent-ink: #06222C; --accent-soft: #17323E;
+  --ok: #6CC48E; --ok-soft: #173426; --bad: #F2867E; --bad-soft: #3A1D1B; --warn: #E3B65B;
+  --der: #7FA7F0; --die: #F08A97; --das: #6FCB9A; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-block: 12px 0; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.brand svg { flex: none; }
+.brand small { font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.chip { font-size: 12.5px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip b { color: var(--ink); font-weight: 600; }
+.chip.weak b { color: var(--bad); }
+nav.tabs { flex-basis: 100%; overflow-x: auto; display: flex; gap: 2px; scrollbar-width: none; margin-top: 4px; }
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs button { flex: none; border: 0; background: none; font: inherit; font-weight: 500; color: var(--muted); padding: 10px 12px; border-bottom: 2px solid transparent; cursor: pointer; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs button:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+main { padding-block: 20px 48px; }
+section.panel { display: grid; gap: 16px; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.lead { color: var(--muted); margin: 4px 0 0; max-width: 62ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.grow { flex: 1 1 200px; min-width: 0; }
+.row.meta { flex-wrap: nowrap; }
+.row.meta .grow { flex-basis: 0; }
+.btn { font: inherit; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 9px 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.ghost { background: none; }
+.btn:disabled { opacity: .5; cursor: default; }
+.icon-btn { width: 36px; height: 36px; padding: 0; justify-content: center; flex: none; }
+.mic { width: 48px; height: 48px; border-radius: 50%; padding: 0; justify-content: center; flex: none; background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.mic.on { background: var(--bad); color: #fff; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 45%, transparent); } 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--bad) 0%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .mic.on { animation: none; } }
+body.no-mic .mic { display: none; }
+body.no-say .say { display: none; }
+input[type=text], textarea, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+textarea { resize: vertical; min-height: 48px; width: 100%; }
+input[type=text] { width: 100%; }
+label.check { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 13.5px; cursor: pointer; }
+.note { font-size: 13.5px; color: var(--muted); }
+.note.warn { color: var(--warn); }
+.sentence { font-family: var(--font-display); font-weight: 500; font-size: clamp(22px, 4.6vw, 30px); line-height: 1.3; letter-spacing: -0.005em; text-wrap: balance; }
+.ru-big { font-size: 20px; font-weight: 500; }
+.result { border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; }
+.result.ok { background: var(--ok-soft); }
+.result.bad { background: var(--bad-soft); }
+.result .head { font-weight: 600; }
+.result.ok .head { color: var(--ok); }
+.result.bad .head { color: var(--bad); }
+mark.diff { background: none; color: var(--bad); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+mark.good { background: none; color: var(--ok); font-weight: 600; }
+.oob { text-decoration: underline wavy var(--warn); text-underline-offset: 4px; cursor: help; }
+.gloss { display: flex; flex-wrap: wrap; gap: 6px; }
+.gloss span { font-size: 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; }
+.gloss span i { font-style: normal; color: var(--muted); }
+.art { font-family: var(--font-mono); font-size: 0.86em; font-weight: 500; }
+.art.der { color: var(--der); } .art.die { color: var(--die); } .art.das { color: var(--das); }
+/* chat */
+.chat { display: grid; gap: 10px; max-height: 58vh; overflow-y: auto; padding: 4px 2px; }
+.msg { max-width: 88%; border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; min-width: 0; }
+.msg.bot { background: var(--surface-2); border: 1px solid var(--line); justify-self: start; }
+.msg.me { background: var(--accent-soft); justify-self: end; }
+.msg .de { font-size: 16.5px; overflow-wrap: anywhere; }
+.msg .tr { color: var(--muted); font-size: 14px; }
+.msg .fix { border-top: 1px dashed var(--line); padding-top: 6px; font-size: 14px; }
+.msg .fix b { color: var(--ok); }
+.msg .tools { display: flex; gap: 6px; align-items: center; }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
+.thinking { color: var(--muted); font-style: italic; }
+.composer { display: flex; gap: 8px; align-items: flex-end; }
+.composer textarea { flex: 1; }
+/* order */
+.tray { display: flex; flex-wrap: wrap; gap: 8px; min-height: 52px; padding: 10px; border-radius: 12px; border: 1px dashed var(--line); background: var(--surface-2); }
+.tok { font: inherit; font-size: 17px; padding: 6px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); cursor: pointer; }
+.tok:hover { border-color: var(--accent); }
+/* cards */
+.flash { text-align: center; padding-block: 18px; display: grid; gap: 8px; justify-items: center; }
+.flash .kind { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+.choices .btn { justify-content: center; text-align: center; font-weight: 500; }
+.choices .btn.ok { background: var(--ok-soft); border-color: var(--ok); }
+.choices .btn.bad { background: var(--bad-soft); border-color: var(--bad); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13.5px; border: 0; background: var(--surface); color: var(--muted); padding: 7px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+/* dictionary */
+.filters { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 8px; }
+@media (max-width: 620px) { .filters { grid-template-columns: 1fr; } }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--surface-2); position: sticky; top: 0; }
+tr.off td:not(:first-child) { opacity: .45; }
+td.de { font-weight: 600; white-space: nowrap; }
+td.forms { font-family: var(--font-mono); font-size: 12px; color: var(--muted); max-width: 280px; }
+.bar { display: inline-flex; gap: 6px; font-variant-numeric: tabular-nums; font-size: 12.5px; white-space: nowrap; }
+.bar .r { color: var(--ok); } .bar .w { color: var(--bad); }
+.topic-row td { background: var(--surface-2); font-weight: 600; font-size: 13px; }
+.topic-row .linkish { margin-left: 8px; }
+.kbd { font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="var(--accent)" stroke-width="2.2"/><circle cx="9.5" cy="9.5" r="2.4" fill="var(--accent)" opacity=".55"/></svg>
+      Wortblase <small>немецкий внутри ваших слов</small>
+    </div>
+    <div class="chips">
+      <span class="chip">в пузыре: <b id="statWords">0</b></span>
+      <span class="chip weak">слабых: <b id="statWeak">0</b></span>
+      <span class="chip">сегодня: <b id="statToday">0</b></span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Режимы">
+      <button role="tab" data-tab="talk" aria-selected="true">Разговор</button>
+      <button role="tab" data-tab="fix" aria-selected="false">Найди ошибку</button>
+      <button role="tab" data-tab="order" aria-selected="false">Собери фразу</button>
+      <button role="tab" data-tab="trans" aria-selected="false">Перевод</button>
+      <button role="tab" data-tab="cards" aria-selected="false">Карточки</button>
+      <button role="tab" data-tab="dict" aria-selected="false">Словарь</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- TALK -->
+  <section class="panel" id="tab-talk">
+    <div>
+      <h2>Разговор</h2>
+      <p class="lead">Claude говорит с вами только словами из вашего пузыря. Нажмите микрофон, скажите фразу по-немецки, нажмите ещё раз — фраза отправится. Ошибки он исправит и объяснит по-русски.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <select id="talkTopic" class="grow" aria-label="Тема разговора"></select>
+        <button class="btn primary" id="talkStart">Начать разговор</button>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="optSpeak" checked> Озвучивать ответы</label>
+        <label class="check"><input type="checkbox" id="optShowRu"> Сразу показывать перевод</label>
+        <label class="check"><input type="checkbox" id="optAutoSend" checked> Отправлять после микрофона</label>
+        <label class="check say">Темп речи <input type="range" id="optRate" min="0.7" max="1.2" step="0.05" value="0.9" aria-label="Темп речи"></label>
+      </div>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="composer">
+        <button class="btn mic" id="talkMic" aria-label="Говорить">MIC</button>
+        <textarea id="talkInput" rows="2" placeholder="Schreib auf Deutsch… (Enter — отправить)"></textarea>
+        <button class="btn primary" id="talkSend">Отправить</button>
+      </div>
+      <p class="note" id="talkNote"></p>
+    </div>
+  </section>
+
+  <!-- FIX -->
+  <section class="panel" id="tab-fix" hidden>
+    <div>
+      <h2>Найди ошибку</h2>
+      <p class="lead">Предложение собрано из ваших слов, но грамматика может быть испорчена: артикль, падеж, окончание, порядок слов. Скажите или напишите правильный вариант. Если всё верно — «Ошибки нет».</p>
+    </div>
+    <div class="card">
+      <div class="row meta"><span class="note" id="fixMeta"></span><span class="grow"></span><button class="btn ghost icon-btn say" id="fixSay" aria-label="Прослушать">SAY</button></div>
+      <div class="sentence" id="fixSentence"></div>
+      <div class="composer">
+        <button class="btn mic" id="fixMic" aria-label="Говорить">MIC</button>
+        <input type="text" id="fixInput" placeholder="Правильное предложение…" autocomplete="off">
+      </div>
+      <div class="row">
+        <button class="btn primary" id="fixCheck">Проверить</button>
+        <button class="btn" id="fixNone">Ошибки нет</button>
+        <span class="grow"></span>
+        <button class="btn ghost" id="fixNext">Дальше <span class="kbd">Enter</span></button>
+      </div>
+      <div id="fixResult"></div>
+    </div>
+  </section>
+
+  <!-- ORDER -->
+  <section class="panel" id="tab-order" hidden>
+    <div>
+      <h2>Собери фразу</h2>
+      <p class="lead">Расставьте слова в правильном порядке. Следите за местом глагола, отделяемых приставок и инфинитива.</p>
+    </div>
+    <div class="card">
+      <div class="row meta"><span class="note" id="orderMeta"></span><span class="grow"></span><button class="btn ghost icon-btn say" id="orderSay" aria-label="Прослушать">SAY</button></div>
+      <div class="tray" id="orderAnswer" aria-label="Ваш ответ"></div>
+      <div class="tray" id="orderPool" aria-label="Слова"></div>
+      <div class="row">
+        <button class="btn primary" id="orderCheck">Проверить</button>
+        <button class="btn" id="orderReset">Сбросить</button>
+        <span class="grow"></span>
+        <button class="btn ghost" id="orderNext">Дальше</button>
+      </div>
+      <div id="orderResult"></div>
+    </div>
+  </section>
+
+  <!-- TRANSLATE -->
+  <section class="panel" id="tab-trans" hidden>
+    <div>
+      <h2>Перевод</h2>
+      <p class="lead">Claude придумывает русские фразы, которые можно перевести только вашими словами. Переводите вслух или письменно.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <select id="transTopic" class="grow" aria-label="Тема"></select>
+        <button class="btn primary" id="transNew">Новые фразы</button>
+      </div>
+      <div id="transBody"></div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="panel" id="tab-cards" hidden>
+    <div>
+      <h2>Карточки</h2>
+      <p class="lead">Слова, в которых вы ошибались, выпадают чаще. Существительные отвечайте с артиклем: <span class="art der">der</span>, <span class="art die">die</span>, <span class="art das">das</span>.</p>
+    </div>
+    <div class="card">
+      <div class="row">
+        <div class="seg" role="group" aria-label="Направление">
+          <button id="cardModeSay" aria-pressed="true">Русский → немецкий</button>
+          <button id="cardModeHear" aria-pressed="false">На слух → русский</button>
+        </div>
+        <span class="grow"></span>
+        <label class="check"><input type="checkbox" id="cardWeakOnly"> Только слабые</label>
+      </div>
+      <div id="cardBody"></div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section class="panel" id="tab-dict" hidden>
+    <div>
+      <h2>Словарь пузыря</h2>
+      <p class="lead">Снимите галочку со слов, которых не было в ваших разделах Duolingo, — они исчезнут из всех упражнений и из разговора.</p>
+    </div>
+    <div class="filters">
+      <input type="text" id="dictSearch" placeholder="Поиск: Hund, собака, dog…" autocomplete="off">
+      <select id="dictSection" aria-label="Раздел"><option value="">Все разделы</option><option value="1">Раздел 1</option><option value="2">Раздел 2</option></select>
+      <select id="dictFilter" aria-label="Фильтр"><option value="">Все слова</option><option value="weak">Только слабые</option><option value="off">Убранные из пузыря</option></select>
+    </div>
+    <div class="row"><span class="note" id="dictCount"></span><span class="grow"></span><button class="btn ghost" id="resetProgress">Сбросить прогресс</button></div>
+    <div id="resetConfirm" hidden class="card"><div>Удалить всю статистику ответов? Список убранных слов сохранится.</div><div class="row"><button class="btn primary" id="resetYes">Да, сбросить</button><button class="btn" id="resetNo">Отмена</button></div></div>
+    <div class="tablewrap"><table><thead><tr><th>В пузыре</th><th>Немецкий</th><th>Русский</th><th>Формы</th><th>Ответы</th></tr></thead><tbody id="dictBody"></tbody></table></div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const DATA = __DATA__;
+
+/* ---------- icons ---------- */
+const ICON = {
+  mic: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  stop: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+  say: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+};
+
+/* ---------- data ---------- */
+const TOPICS = DATA.topics.map(([s, u, ru, en]) => ({ s, u, ru, en }));
+const W = DATA.words.map(a => ({ i: a[0], s: a[1], u: a[2], t: a[3], d: a[4], r: a[5], e: a[6], p: a[7], f: a[8], c: a[9], x: a[10] }));
+const BYID = new Map(W.map(w => [w.i, w]));
+const IDX = new Map();
+for (const w of W) { const k = w.d; if (!IDX.has(k)) IDX.set(k, []); IDX.get(k).push(w); }
+const NOUN_T = new Set(["m", "f", "n", "pl"]);
+const CONTENT_T = new Set(["m", "f", "n", "pl", "v", "vs", "adj", "adv", "num", "phr", "name", "vpast", "q"]);
+const ART_OF = { m: "der", f: "die", n: "das", pl: "die" };
+const TYPE_RU = { m: "сущ., м. р.", f: "сущ., ж. р.", n: "сущ., ср. р.", pl: "сущ., мн. ч.", v: "глагол", vs: "глагол, отделяемый", vpast: "глагол, прош. вр.", adj: "прилагательное", adv: "наречие", pron: "местоимение", prep: "предлог", conj: "союз", num: "числительное", art: "артикль", q: "вопросительное слово", phr: "фраза", name: "название", part: "частица" };
+const GENDER_RU = { m: "мужской род", f: "женский род", n: "средний род", pl: "множественное число" };
+const CASE_RU = { nom: "Nominativ", acc: "Akkusativ", dat: "Dativ" };
+
+function N(de) { return (IDX.get(de) || []).find(w => NOUN_T.has(w.t)); }
+function V(de) { return (IDX.get(de) || []).find(w => w.t === "v" || w.t === "vs"); }
+function A(de) { return (IDX.get(de) || []).find(w => w.t === "adj"); }
+function ANY(de) { return (IDX.get(de) || [])[0]; }
+function displayDe(w) { return NOUN_T.has(w.t) ? `${ART_OF[w.t]} ${w.d}` : w.d; }
+function artHtml(w) { if (!NOUN_T.has(w.t)) return esc(w.d); const a = ART_OF[w.t]; const cls = w.t === "pl" ? "die" : a; return `<span class="art ${cls}">${a}</span> ${esc(w.d)}`; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+function chance(p) { return Math.random() < p; }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function today() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+
+/* ---------- state & persistence ---------- */
+let state = { v: 1, stats: {}, excluded: [], daily: {}, settings: { speak: true, showRu: false, autoSend: true, rate: 0.9 } };
+let excluded = new Set();
+let dbRef = null, saveTimer = null, saving = Promise.resolve();
+const LS_KEY = "wortblase-state-v1";
+
+function loadLocal() { try { const s = localStorage.getItem(LS_KEY); if (s) return JSON.parse(s); } catch (e) {} return null; }
+function applyState(s) {
+  if (!s || typeof s !== "object") return;
+  state = { ...state, ...s, settings: { ...state.settings, ...(s.settings || {}) } };
+  excluded = new Set(state.excluded || []);
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    state.excluded = [...excluded];
+    const snap = JSON.parse(JSON.stringify(state));
+    try { localStorage.setItem(LS_KEY, JSON.stringify(snap)); } catch (e) {}
+    if (dbRef) saving = saving.then(() => dbRef.set(snap)).catch(() => {});
+  }, 1200);
+}
+function stat(id) { return state.stats[id] || [0, 0, 0]; }
+function mark(ids, ok) {
+  const now = Date.now();
+  for (const id of new Set(ids)) {
+    const w = BYID.get(id); if (!w || !CONTENT_T.has(w.t)) continue;
+    const s = stat(id).slice(); if (ok) s[0]++; else s[1]++; s[2] = now; state.stats[id] = s;
+  }
+  scheduleSave(); renderStats();
+}
+function countToday() { const k = today(); state.daily = { [k]: (state.daily[k] || 0) + 1 }; scheduleSave(); renderStats(); }
+function weight(id) { const [r, w] = stat(id); if (r + w === 0) return 1.5; return Math.max(0.25, (1 + 3 * w) / (1 + 0.6 * r)); }
+function isWeak(id) { const [r, w] = stat(id); return w > 0 && w * 2 >= r; }
+function inBubble(w) { return w && !excluded.has(w.i); }
+function pickW(arr) {
+  const list = arr.filter(Boolean); if (!list.length) return null;
+  let total = 0; const ws = list.map(x => { const v = weight(x.i ?? x.e?.i); total += v; return v; });
+  let r = Math.random() * total; for (let k = 0; k < list.length; k++) { r -= ws[k]; if (r <= 0) return list[k]; } return list[list.length - 1];
+}
+
+/* ---------- allowed vocabulary (the bubble) ---------- */
+let ALLOWED = new Set();
+const ALWAYS = ["anna", "max", "lisa", "paul", "s"];
+function rebuildAllowed() {
+  ALLOWED = new Set(ALWAYS);
+  for (const w of W) {
+    if (!inBubble(w)) continue;
+    const add = s => { for (const t of tokenize(s)) ALLOWED.add(t); };
+    add(w.d); (w.f || []).forEach(add);
+    if (w.p) add(w.p);
+  }
+}
+function tokenize(text) { return (String(text).toLowerCase().match(/[a-zäöüß]+(?:-[a-zäöüß]+)*/g) || []); }
+function outOfBubble(text) { return [...new Set(tokenize(text).filter(t => !ALLOWED.has(t) && !NUMWORD_SET.has(t)))]; }
+function highlightOob(text) {
+  return esc(text).replace(/[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*/g, m => {
+    const t = m.toLowerCase();
+    return ALLOWED.has(t) || NUMWORD_SET.has(t) ? m : `<span class="oob" title="Этого слова нет в вашем пузыре">${m}</span>`;
+  });
+}
+const FORM_IDX = new Map();
+for (const w of W) { for (const f of [w.d, ...(w.f || [])]) for (const t of tokenize(f)) { if (!FORM_IDX.has(t)) FORM_IDX.set(t, []); FORM_IDX.get(t).push(w.i); } }
+function idsInText(text) { const out = []; for (const t of tokenize(text)) { const ids = (FORM_IDX.get(t) || []).filter(id => CONTENT_T.has(BYID.get(id).t)); if (ids.length) out.push(ids[0]); } return out; }
+function idsForLemmas(list) { const out = []; for (const l of list || []) { const s = String(l).trim().replace(/^(der|die|das)\s+/i, ""); const hit = (IDX.get(s) || W.filter(w => w.d.toLowerCase() === s.toLowerCase()))[0]; if (hit) out.push(hit.i); else out.push(...idsInText(s)); } return out; }
+
+/* ---------- normalisation for answer checking ---------- */
+const NUMWORDS = { 0: "null", 1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht", 9: "neun", 10: "zehn", 11: "elf", 12: "zwölf", 13: "dreizehn", 14: "vierzehn", 15: "fünfzehn", 16: "sechzehn", 17: "siebzehn", 18: "achtzehn", 19: "neunzehn", 20: "zwanzig", 30: "dreißig", 40: "vierzig", 50: "fünfzig", 100: "hundert" };
+const NUMWORD_SET = new Set(Object.values(NUMWORDS));
+function norm(s) {
+  return String(s).toLowerCase().replace(/\d+/g, d => NUMWORDS[+d] || d).replace(/[.,!?;:«»"„“()]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/* ---------- grammar engine ---------- */
+const DEF = { nom: { m: "der", f: "die", n: "das", pl: "die" }, acc: { m: "den", f: "die", n: "das", pl: "die" }, dat: { m: "dem", f: "der", n: "dem", pl: "den" } };
+const IND_END = { nom: { m: "", f: "e", n: "" }, acc: { m: "en", f: "e", n: "" }, dat: { m: "em", f: "er", n: "em" } };
+function detWord(kind, cas, g) {
+  if (kind === "def") return DEF[cas][g];
+  if (kind === "none") return null;
+  let stem = kind === "indef" ? "ein" : kind === "kein" ? "kein" : kind.slice(5);
+  if (g === "pl") { if (kind === "indef") return null; const end = cas === "dat" ? "en" : "e"; return stem === "euer" ? "eur" + end : stem + end; }
+  const end = IND_END[cas][g];
+  return stem === "euer" && end ? "eur" + end : stem + end;
+}
+function adjEnding(kind, cas, g) {
+  if (kind === "def") return cas === "nom" ? (g === "pl" ? "en" : "e") : cas === "acc" ? (g === "m" || g === "pl" ? "en" : "e") : "en";
+  if (kind === "none") { if (g === "pl") return cas === "dat" ? "en" : "e"; return { nom: { m: "er", f: "e", n: "es" }, acc: { m: "en", f: "e", n: "es" }, dat: { m: "em", f: "er", n: "em" } }[cas][g]; }
+  if (g === "pl") return "en";
+  return { nom: { m: "er", f: "e", n: "es" }, acc: { m: "en", f: "e", n: "es" }, dat: { m: "en", f: "en", n: "en" } }[cas][g];
+}
+function adjStem(a) { if (a === "dunkel") return "dunkl"; if (a === "teuer") return "teur"; if (a.endsWith("e")) return a.slice(0, -1); return a; }
+const T = (w, role, extra = {}) => ({ w, role, ...extra });
+
+function np(e, cas, kind, adj, plural) {
+  let g = e.t, noun = e.d;
+  if (plural && e.p && g !== "pl") { g = "pl"; noun = e.p; }
+  if (kind === "indef" && g === "pl") kind = "none";
+  const toks = [];
+  const a = detWord(kind, cas, g);
+  if (a) toks.push(T(a, "art", { g, cas, kind, noun: e }));
+  if (adj) toks.push(T(adjStem(adj.d) + adjEnding(kind, cas, g), "adj", { g, cas, kind, base: adj.d, ids: [adj.i], noun: e }));
+  toks.push(T(noun, "noun", { ids: [e.i], g }));
+  return toks;
+}
+
+/* verbs */
+const PERSONS = ["ich", "du", "er", "wir", "ihr", "sie"];
+const STEM_CHANGERS = new Set(["essen", "nehmen", "sehen", "lesen", "sprechen", "fahren", "schlafen", "laufen", "tragen", "waschen", "geben", "helfen", "treffen", "fangen", "laden", "gefallen"]);
+function finite(v, p) { const c = v.c; if (!c) return v.d; const f = c.length === 1 ? c[0] : c[p]; return v.t === "vs" ? f.split(" ")[0] : f; }
+function baseInf(v) { return v.t === "vs" ? v.d.slice(v.x.length) : v.d; }
+function regularForm(inf, p) {
+  let stem = inf.endsWith("en") ? inf.slice(0, -2) : inf.slice(0, -1);
+  const ends = [/(t|d)$/.test(stem) ? "e" : "", ""];
+  if (p === 1) return stem + (/(s|ß|z|x)$/.test(stem) ? "t" : ends[0] + "st");
+  if (p === 2) return stem + ends[0] + "t";
+  return null;
+}
+
+/* subjects */
+function S(txt, p, pron, ids = []) { return { txt, p, pron, ids }; }
+function subjects(withAnimals) {
+  const out = [S("ich", 0, "ich"), S("du", 1, "du"), S("er", 2, "er"), S("sie", 2, "sie"), S("wir", 3, "wir"), S("ihr", 4, "ihr"), S("Sie", 5, "Sie")];
+  const nounSubj = [["Mann", "der", 2, "er"], ["Frau", "die", 2, "sie"], ["Kind", "das", 2, "es"], ["Mädchen", "das", 2, "es"], ["Junge", "der", 2, "er"], ["Lehrer", "der", 2, "er"], ["Ärztin", "die", 2, "sie"], ["Student", "der", 2, "er"]];
+  for (const [de, art, p, pron] of nounSubj) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, p, pron, [e.i])); }
+  const poss = [["Bruder", "mein", 2, "er"], ["Schwester", "meine", 2, "sie"], ["Mutter", "meine", 2, "sie"], ["Vater", "mein", 2, "er"], ["Eltern", "meine", 5, "sie"], ["Freund", "mein", 2, "er"], ["Freundin", "meine", 2, "sie"], ["Oma", "meine", 2, "sie"]];
+  for (const [de, art, p, pron] of poss) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, p, pron, [e.i])); }
+  if (withAnimals) for (const [de, art] of [["Hund", "der"], ["Katze", "die"], ["Ente", "die"], ["Bär", "der"], ["Pferd", "das"], ["Maus", "die"]]) { const e = N(de); if (inBubble(e)) out.push(S(`${art} ${de}`, 2, art === "der" ? "er" : art === "die" ? "sie" : "es", [e.i])); }
+  return out;
+}
+function subjToks(s) { return s.txt.split(" ").map((w, k, arr) => T(w, k === arr.length - 1 ? "subj" : "subjdet", { ids: s.ids })); }
+
+/* categories */
+const L = arr => arr.map(x => N(x)).filter(inBubble);
+const CAT = {};
+function buildCats() {
+  CAT.food = L(["Apfel", "Brot", "Brötchen", "Kuchen", "Salat", "Suppe", "Pizza", "Fisch", "Wurst", "Ei", "Banane", "Orange", "Tomate", "Sandwich", "Kartoffel"]);
+  CAT.mass = L(["Käse", "Reis", "Fleisch", "Gemüse", "Obst", "Schokolade", "Nudeln", "Zucker", "Butter"]);
+  CAT.drink = L(["Kaffee", "Tee", "Wasser", "Milch", "Saft", "Bier", "Wein"]);
+  CAT.clothes = L(["Hemd", "Hose", "Kleid", "Rock", "Jacke", "Mantel", "Hut", "Mütze", "Pullover", "T-Shirt", "Brille"]);
+  CAT.things = L(["Buch", "Handy", "Computer", "Ticket", "Koffer", "Schlüssel", "Fahrrad", "Auto", "Tasche", "Regenschirm", "Lampe", "Stuhl", "Tisch", "Uhr", "Fahrkarte", "Karte", "Geschenk"]);
+  CAT.read = L(["Buch", "Zeitung", "Brief", "E-Mail", "Speisekarte"]);
+  CAT.animals = L(["Hund", "Katze", "Ente", "Pferd", "Maus", "Vogel", "Bär", "Elefant", "Kuh", "Löwe", "Affe", "Schildkröte", "Kaninchen"]);
+  CAT.places = L(["Küche", "Park", "Büro", "Supermarkt", "Bahnhof", "Hotel", "Restaurant", "Café", "Kino", "Museum", "Garten", "Stadt", "Apotheke", "Krankenhaus", "Bibliothek", "Bäckerei", "Wohnzimmer", "Schlafzimmer", "Bad", "Zoo", "Schule"]);
+  CAT.people = L(["Mutter", "Vater", "Bruder", "Schwester", "Oma", "Opa", "Freund", "Freundin", "Tante", "Onkel", "Kollege", "Kollegin", "Arzt", "Nachbar"]);
+  CAT.rooms = L(["Zimmer", "Küche", "Wohnung", "Bad", "Wohnzimmer"]);
+  CAT.openable = L(["Fenster", "Tür", "Koffer", "Flasche", "Buch"]);
+  CAT.play = L(["Fußball", "Tennis", "Gitarre", "Klavier"]);
+  const A_ = arr => arr.map(A).filter(inBubble);
+  CAT.adj = {
+    food: A_(["frisch", "lecker", "groß", "klein", "süß", "warm", "kalt"]),
+    drink: A_(["heiß", "kalt", "warm", "frisch", "gut"]),
+    clothes: A_(["rot", "blau", "grün", "gelb", "schwarz", "weiß", "grau", "braun", "neu", "alt", "schön", "teuer", "billig", "lang", "kurz", "bequem"]),
+    things: A_(["neu", "alt", "groß", "klein", "teuer", "billig", "schön", "schwarz", "rot", "blau"]),
+    animals: A_(["groß", "klein", "alt", "jung", "süß", "schwarz", "weiß", "braun", "lustig", "dick"]),
+    places: A_(["groß", "klein", "neu", "alt", "schön", "ruhig", "laut", "sauber", "voll", "leer", "gemütlich"]),
+  };
+}
+function catOf(e) { for (const k of ["food", "mass", "drink", "clothes", "things", "read", "animals", "places"]) if (CAT[k].includes(e)) return k === "mass" ? "food" : k === "read" ? "things" : k; return "things"; }
+
+/* frames: verb + which objects */
+function frames() {
+  const f = [
+    ["essen", [...CAT.food, ...CAT.mass]], ["trinken", CAT.drink], ["kaufen", [...CAT.food, ...CAT.clothes, ...CAT.things]],
+    ["brauchen", [...CAT.clothes, ...CAT.things]], ["suchen", CAT.things], ["haben", [...CAT.things, ...CAT.animals]],
+    ["möchten", [...CAT.food, ...CAT.drink]], ["nehmen", [...CAT.food, ...CAT.drink]], ["bestellen", [...CAT.food, ...CAT.drink]],
+    ["lesen", CAT.read], ["tragen", CAT.clothes], ["sehen", CAT.animals], ["finden", CAT.things], ["mögen", [...CAT.animals, ...CAT.drink]],
+    ["kochen", L(["Suppe", "Reis", "Kaffee", "Tee", "Fisch", "Nudeln", "Kartoffel"])], ["besuchen", [...CAT.people, ...L(["Museum", "Zoo", "Park"])]],
+    ["verkaufen", [...CAT.things, ...CAT.clothes]], ["zeigen", CAT.things],
+  ];
+  return f.map(([v, objs]) => ({ v: V(v), objs })).filter(x => inBubble(x.v) && x.objs.length);
+}
+const MASS = new Set(["Käse", "Reis", "Fleisch", "Gemüse", "Obst", "Schokolade", "Zucker", "Butter", "Wasser", "Milch", "Nudeln"]);
+const DRINKISH = new Set(["Kaffee", "Tee", "Saft", "Bier", "Wein"]);
+function objectNP(e, opts = {}) {
+  const isPerson = CAT.people.includes(e);
+  let kind, plural = false;
+  if (isPerson) kind = rnd(["poss:mein", "poss:mein", "poss:unser", "poss:dein", "def"]);
+  else if (MASS.has(e.d)) kind = rnd(["none", "def", "none"]);
+  else if (DRINKISH.has(e.d)) kind = rnd(["indef", "def", "none"]);
+  else { kind = rnd(["indef", "indef", "def", "poss:mein", "poss:dein"]); if (e.p && e.t !== "pl" && chance(0.18)) { plural = true; kind = rnd(["def", "none"]); } }
+  if (opts.kind) kind = opts.kind;
+  if (e.t === "pl" && kind === "indef") kind = "none";
+  const adjs = CAT.adj[catOf(e)] || [];
+  const adj = !isPerson && opts.adj !== false && adjs.length && chance(0.4) ? pickW(adjs) : null;
+  return { toks: np(e, "acc", kind, adj, plural), e, adj, kind };
+}
+const TIME_FRONT = () => [["heute"], ["morgen"], ["jetzt"], ["manchmal"], ["oft"], ["am", "Abend"], ["am", "Wochenende"], ["am", "Montag"], ["am", "Samstag"]]
+  .filter(ws => ws.every(w => ALLOWED.has(w.toLowerCase())));
+
+/* ---------- sentence templates ---------- */
+// each returns { toks, alts:[toks], ops:[() => {toks, type, ru, ids}], ids:[], topic }
+function capFirst(toks) { if (!toks.length) return toks; const c = toks.slice(); c[0] = { ...c[0], w: c[0].w[0].toUpperCase() + c[0].w.slice(1) }; return c; }
+function render(toks, end = ".") { let s = ""; for (const t of toks) { if (t.w === ",") s += ","; else s += (s ? " " : "") + t.w; } return capFirst([{ w: s }])[0].w + end; }
+function verbTok(v, p, subj) { return T(finite(v, p), "verb", { v, p, subj, ids: [v.i] }); }
+function idsOf(toks) { return toks.flatMap(t => t.ids || []); }
+
+function tObject() {
+  const fr = pickW(frames().map(x => ({ ...x, i: x.v.i }))); if (!fr) return null;
+  const subj = rnd(subjects(fr.v.d === "essen" || fr.v.d === "trinken"));
+  const obj = objectNP(pickW(fr.objs));
+  const vt = verbTok(fr.v, subj.p, subj.txt);
+  const st = subjToks(subj);
+  const times = TIME_FRONT();
+  const time = times.length && chance(0.35) ? rnd(times).map(w => T(w, "time")) : null;
+  let toks, alts = [], ops = [];
+  if (time) {
+    toks = [...time, vt, ...st, ...obj.toks];
+    alts.push([...st, vt, ...time, ...obj.toks]);
+    ops.push(() => ({ toks: [...time, ...st, vt, ...obj.toks], type: "Порядок слов", ru: `Глагол стоит на втором месте. Если предложение начинается с «${time.map(t => t.w).join(" ")}», подлежащее идёт после глагола: «${render([...time, vt, ...st]).slice(0, -1)} …».`, ids: [fr.v.i] }));
+  } else toks = [...st, vt, ...obj.toks];
+  return { toks, alts, ops, ids: [...idsOf(toks), ...subj.ids], topic: "Действие и объект (Akkusativ)" };
+}
+
+function tModal() {
+  const modals = ["können", "müssen", "wollen", "möchten", "sollen"].map(V).filter(inBubble);
+  const fr = pickW(frames().filter(x => !["möchten", "mögen", "haben"].includes(x.v.d)).map(x => ({ ...x, i: x.v.i })));
+  if (!modals.length || !fr) return null;
+  const m = rnd(modals), subj = rnd(subjects(false));
+  const obj = objectNP(pickW(fr.objs));
+  const mt = verbTok(m, subj.p, subj.txt);
+  const inf = T(fr.v.d, "inf", { ids: [fr.v.i] });
+  const st = subjToks(subj);
+  const toks = [...st, mt, ...obj.toks, inf];
+  const ops = [
+    () => ({ toks: [...st, mt, inf, ...obj.toks], type: "Порядок слов", ru: `С модальным глаголом «${m.d}» второй глагол (инфинитив «${fr.v.d}») уходит в самый конец предложения.`, ids: [fr.v.i, m.i] }),
+    () => { const wrongInf = finite(fr.v, subj.p); if (wrongInf === fr.v.d) return null; return { toks: [...st, mt, ...obj.toks, T(wrongInf, "inf")], type: "Форма глагола", ru: `После модального глагола второй глагол не спрягается — он стоит в инфинитиве: «${fr.v.d}».`, ids: [fr.v.i] }; },
+  ];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Модальные глаголы" };
+}
+
+function tSeparable() {
+  const nums = ["sechs", "sieben", "acht", "neun", "zehn"].filter(w => ALLOWED.has(w));
+  const um = () => nums.length && ALLOWED.has("uhr") ? [T("um", "x"), T(rnd(nums), "x"), T("Uhr", "x", { ids: [N("Uhr")?.i].filter(Boolean) })] : [T("früh", "x")];
+  const pa = (list, fb) => { const ok = list.filter(w => ALLOWED.has(w)); return ok.length ? rnd(ok) : fb; };
+  const options = [
+    ["aufstehen", () => chance(0.5) ? um() : [T(pa(["früh", "spät"], "früh"), "x")]],
+    ["einkaufen", () => [T(pa(["heute", "morgen", "oft"], "heute"), "x")]],
+    ["anrufen", () => objectNP(pickW(CAT.people), { adj: false }).toks],
+    ["fernsehen", () => (ALLOWED.has("abend") ? [T("am", "x"), T("Abend", "x")] : [T("heute", "x")])],
+    ["aufräumen", () => objectNP(pickW(CAT.rooms), { kind: rnd(["def", "poss:mein"]), adj: false }).toks],
+    ["anziehen", () => objectNP(pickW(CAT.clothes), { kind: rnd(["indef", "def", "poss:mein"]) }).toks],
+    ["einladen", () => objectNP(pickW(CAT.people), { adj: false }).toks],
+    ["aufmachen", () => objectNP(pickW(CAT.openable), { kind: "def", adj: false }).toks],
+    ["zumachen", () => objectNP(pickW(CAT.openable), { kind: "def", adj: false }).toks],
+    ["mitkommen", () => [T(pa(["heute", "morgen", "jetzt"], "heute"), "x")]],
+  ].map(([de, compl]) => ({ v: V(de), compl })).filter(o => inBubble(o.v));
+  const o = pickW(options.map(x => ({ ...x, i: x.v.i }))); if (!o) return null;
+  const subj = rnd(subjects(false));
+  const compl = o.compl().map(t => ({ ...t }));
+  const vt = verbTok(o.v, subj.p, subj.txt);
+  const pre = T(o.v.x, "prefix", { ids: [o.v.i] });
+  const st = subjToks(subj);
+  const toks = [...st, vt, ...compl, pre];
+  const ops = [
+    () => ({ toks: [...st, T(o.v.x + vt.w, "verb"), ...compl], type: "Отделяемая приставка", ru: `«${o.v.d}» — отделяемый глагол: приставка «${o.v.x}» отрывается и уходит в конец: «${render(toks).slice(0, -1)}».`, ids: [o.v.i] }),
+    () => ({ toks: [...st, vt, pre, ...compl], type: "Отделяемая приставка", ru: `Приставка «${o.v.x}» стоит в самом конце предложения, после всех дополнений.`, ids: [o.v.i] }),
+  ];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Отделяемые глаголы" };
+}
+
+function tLocation() {
+  const sein = V("sein"); const place = pickW(CAT.places); if (!place) return null;
+  const subj = rnd(subjects(true));
+  const vt = verbTok(sein, subj.p, subj.txt);
+  const st = subjToks(subj);
+  const g = place.t;
+  const adjs = CAT.adj.places; const adj = adjs.length && chance(0.25) ? pickW(adjs) : null;
+  const ptoks = g === "f" ? [T("in", "prep"), ...np(place, "dat", "def", adj)] : [T("im", "prep", { g, cas: "dat", noun: place }), ...(adj ? [T(adjStem(adj.d) + "en", "adj", { g, cas: "dat", kind: "def", base: adj.d, ids: [adj.i], noun: place })] : []), T(place.d, "noun", { ids: [place.i] })];
+  const toks = [...st, vt, ...ptoks];
+  const wrongPlace = g === "f" ? [T("in", "prep"), T("die", "art"), ...ptoks.slice(2)] : [T(g === "n" ? "ins" : "in den", "prep"), ...ptoks.slice(1)];
+  const ops = [() => ({ toks: [...st, vt, ...wrongPlace], type: "Падеж (Dativ)", ru: `На вопрос «где?» (wo?) после «in» нужен Dativ: ${g === "f" ? "in der " + place.d : "im " + place.d + " (= in dem)"}. «${g === "f" ? "in die" : g === "n" ? "ins" : "in den"}» отвечает на вопрос «куда?».`, ids: [place.i] })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Где? — Dativ" };
+}
+
+function tGo() {
+  const gehen = V("gehen"); const place = pickW(CAT.places.filter(p => !["Küche", "Wohnzimmer", "Schlafzimmer", "Bad", "Bahnhof"].includes(p.d))); if (!inBubble(gehen) || !place) return null;
+  const subj = rnd(subjects(false));
+  const vt = verbTok(gehen, subj.p, subj.txt); const st = subjToks(subj);
+  const g = place.t;
+  const ptoks = g === "n" ? [T("ins", "prep"), T(place.d, "noun", { ids: [place.i] })] : [T("in", "prep"), T(g === "m" ? "den" : "die", "art"), T(place.d, "noun", { ids: [place.i] })];
+  const times = TIME_FRONT(); const time = times.length && chance(0.4) ? rnd(times).map(w => T(w, "time")) : null;
+  const toks = time ? [...time, vt, ...st, ...ptoks] : [...st, vt, ...ptoks];
+  const alts = time ? [[...st, vt, ...time, ...ptoks]] : [];
+  const wrongP = g === "f" ? [T("in", "prep"), T("der", "art"), ptoks[2]] : [T("im", "prep"), ptoks[ptoks.length - 1]];
+  const ops = [() => ({ toks: time ? [...time, vt, ...st, ...wrongP] : [...st, vt, ...wrongP], type: "Падеж (Akkusativ)", ru: `На вопрос «куда?» (wohin?) после «in» нужен Akkusativ: ${g === "n" ? "ins " + place.d + " (= in das)" : (g === "m" ? "in den " : "in die ") + place.d}.`, ids: [place.i] })];
+  if (time) ops.push(() => ({ toks: [...time, ...st, vt, ...ptoks], type: "Порядок слов", ru: `Глагол всегда на втором месте: «${time.map(t => t.w).join(" ")} ${vt.w} ${subj.txt} …».`, ids: [gehen.i] }));
+  return { toks, alts, ops, ids: [...idsOf(toks), ...subj.ids], topic: "Куда? — Akkusativ" };
+}
+
+function tPredicate() {
+  const pools = [["food", CAT.food], ["drink", CAT.drink], ["clothes", CAT.clothes], ["things", CAT.things], ["animals", CAT.animals], ["places", CAT.places]].filter(([k, l]) => l.length && CAT.adj[k].length);
+  if (!pools.length) return null;
+  const [k, list] = rnd(pools); const e = pickW(list); const adj = pickW(CAT.adj[k]);
+  const plural = e.p && e.t !== "pl" && chance(0.2);
+  const subjNP = np(e, "nom", rnd(["def", "def", "poss:mein", "poss:dein"]), null, plural);
+  const isPl = plural || e.t === "pl";
+  const sein = V("sein"); const vt = verbTok(sein, isPl ? 5 : 2, subjNP.map(t => t.w).join(" "));
+  const deg = ["sehr", "zu", "ziemlich", "nicht", "wirklich"].filter(w => ALLOWED.has(w));
+  const degTok = deg.length && chance(0.5) ? [T(rnd(deg), "adv")] : [];
+  const toks = [...subjNP, vt, ...degTok, T(adj.d, "pred", { ids: [adj.i] })];
+  const ops = [];
+  ops.push(() => ({ toks: [...subjNP, T(isPl ? "ist" : "sind", "verb"), ...degTok, T(adj.d, "pred")], type: "Спряжение", ru: `Подлежащее «${subjNP.map(t => t.w).join(" ")}» — ${isPl ? "множественное число, поэтому «sind»" : "единственное число, поэтому «ist»"}.`, ids: [e.i] }));
+  return { toks, alts: [], ops, ids: idsOf(toks), topic: "Описание: sein + прилагательное" };
+}
+
+function tNegation() {
+  const fr = pickW(frames().filter(x => ["haben", "trinken", "essen", "brauchen", "kaufen", "möchten"].includes(x.v.d)).map(x => ({ ...x, i: x.v.i })));
+  if (!fr || !ALLOWED.has("kein")) return null;
+  const e = pickW(fr.objs.filter(o => !MASS.has(o.d) || o.t === "pl"));
+  if (!e) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(fr.v, subj.p, subj.txt); const st = subjToks(subj);
+  const ntoks = np(e, "acc", "kein", null);
+  const toks = [...st, vt, ...ntoks];
+  const ops = [];
+  if (e.t !== "pl") ops.push(() => ({ toks: [...st, vt, T("nicht", "neg"), ...np(e, "acc", "indef", null)], type: "Отрицание", ru: `Существительное с неопределённым артиклем отрицают словом «kein»: «${ntoks.map(t => t.w).join(" ")}», а не «nicht ${np(e, "acc", "indef", null).map(t => t.w).join(" ")}».`, ids: [e.i] }));
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Отрицание kein" };
+}
+
+function tWeil() {
+  const reasons = [];
+  const haben = V("haben"), sein = V("sein");
+  if (inBubble(N("Hunger")) && CAT.food.length) reasons.push({ v: V("essen"), objs: CAT.food, why: s => [T(s.pron, "x"), T("Hunger", "x", { ids: [N("Hunger").i] }), T(finite(haben, pronP(s)), "fin", { v: haben })] });
+  if (inBubble(N("Durst")) && CAT.drink.length) reasons.push({ v: V("trinken"), objs: CAT.drink, why: s => [T(s.pron, "x"), T("Durst", "x", { ids: [N("Durst").i] }), T(finite(haben, pronP(s)), "fin", { v: haben })] });
+  if (inBubble(A("müde"))) reasons.push({ v: V("schlafen"), objs: null, why: s => [T(s.pron, "x"), T("müde", "x", { ids: [A("müde").i] }), T(finite(sein, pronP(s)), "fin", { v: sein })] });
+  if (inBubble(A("krank"))) reasons.push({ v: V("bleiben"), objs: null, extra: [T("im", "x"), T("Bett", "x", { ids: [N("Bett")?.i].filter(Boolean) })], why: s => [T(s.pron, "x"), T("krank", "x", { ids: [A("krank").i] }), T(finite(sein, pronP(s)), "fin", { v: sein })] });
+  const r = rnd(reasons.filter(x => inBubble(x.v))); if (!r || !ALLOWED.has("weil")) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(r.v, subj.p, subj.txt); const st = subjToks(subj);
+  const objT = r.objs ? objectNP(pickW(r.objs), { adj: false }).toks : (r.extra || []);
+  const why = r.why(subj);
+  const toks = [...st, vt, ...objT, T(",", "punct"), T("weil", "conj"), ...why];
+  const ops = [() => ({ toks: [...st, vt, ...objT, T(",", "punct"), T("weil", "conj"), why[0], why[2], why[1]], type: "Порядок слов (weil)", ru: `После «weil» спрягаемый глагол уходит в конец придаточного: «…, weil ${why.map(t => t.w).join(" ")}».`, ids: [r.v.i] })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], topic: "Придаточное с weil" };
+}
+function pronP(s) { return { ich: 0, du: 1, er: 2, sie: s.p === 5 ? 5 : 2, es: 2, wir: 3, ihr: 4, Sie: 5 }[s.pron] ?? s.p; }
+
+function tQuestion() {
+  const fr = pickW(frames().map(x => ({ ...x, i: x.v.i }))); if (!fr) return null;
+  const subj = rnd(subjects(false).filter(s => ["du", "ihr", "Sie", "er", "sie"].includes(s.txt)));
+  const obj = objectNP(pickW(fr.objs));
+  const vt = verbTok(fr.v, subj.p, subj.txt); const st = subjToks(subj);
+  const toks = [vt, ...st, ...obj.toks];
+  const ops = [() => ({ toks: [...st, vt, ...obj.toks], type: "Порядок слов (вопрос)", ru: `В вопросе без вопросительного слова глагол стоит на первом месте: «${vt.w[0].toUpperCase() + vt.w.slice(1)} ${subj.txt} …?».`, ids: [fr.v.i], end: "?" })];
+  return { toks, alts: [], ops, ids: [...idsOf(toks), ...subj.ids], end: "?", topic: "Вопрос да/нет" };
+}
+
+function tPlay() {
+  const spielen = V("spielen"); const thing = pickW(CAT.play); if (!inBubble(spielen) || !thing) return null;
+  const subj = rnd(subjects(false)); const vt = verbTok(spielen, subj.p, subj.txt); const st = subjToks(subj);
+  const extra = ALLOWED.has("gern") && chance(0.6) ? [T("gern", "adv")] : [];
+  const toks = [...st, vt, ...extra, T(thing.d, "noun", { ids: [thing.i] })];
+  return { toks, alts: [], ops: [], ids: [...idsOf(toks), ...subj.ids], topic: "Хобби" };
+}
+
+function tFrom() {
+  const places = [["Deutschland", null], ["Österreich", null], ["Berlin", null], ["Hamburg", null], ["München", null], ["Wien", null], ["Schweiz", "der"]].filter(([p]) => ALLOWED.has(p.toLowerCase()));
+  if (!places.length) return null;
+  const [pl, art] = rnd(places);
+  const useWohnen = chance(0.5) && inBubble(V("wohnen"));
+  const v = useWohnen ? V("wohnen") : V("kommen");
+  const subj = rnd(subjects(false)); const vt = verbTok(v, subj.p, subj.txt); const st = subjToks(subj);
+  const ptoks = [T(useWohnen ? "in" : "aus", "prep"), ...(art ? [T(art, "art")] : []), T(pl, "noun", { ids: [ANY(pl === "Schweiz" ? "die Schweiz" : pl)?.i].filter(Boolean) })];
+  const toks = [...st, vt, ...ptoks];
+  return { toks, alts: [], ops: [], ids: [...idsOf(toks), ...subj.ids], topic: useWohnen ? "Где живёшь?" : "Откуда ты?" };
+}
+
+const TEMPLATES = [[tObject, 5], [tModal, 3], [tSeparable, 3], [tLocation, 3], [tGo, 3], [tPredicate, 3], [tNegation, 2], [tWeil, 2], [tQuestion, 2], [tPlay, 1], [tFrom, 1]];
+
+/* generic token-level distortions */
+function tokenDistortions(sent) {
+  const out = [];
+  sent.toks.forEach((t, k) => {
+    if (t.role === "verb" && t.v && t.v.c && t.v.c.length > 1) {
+      const correct = t.w;
+      const inf = baseInf(t.v);
+      if (STEM_CHANGERS.has(inf) && (t.p === 1 || t.p === 2)) {
+        const reg = regularForm(inf, t.p);
+        if (reg && reg !== correct) out.push(() => ({ toks: replaceAt(sent.toks, k, reg), type: "Смена корневой гласной", ru: `«${t.v.d}» меняет корень с du и er/sie/es: du ${finite(t.v, 1)}, er ${finite(t.v, 2)}.`, ids: [t.v.i] }));
+      }
+      const ambiguous = /^sie$/i.test(t.subj || "") ? [finite(t.v, 2), finite(t.v, 5)] : [];
+      const others = [...new Set(t.v.c.map((_, p) => finite(t.v, p)))].filter(f => f !== correct && !ambiguous.includes(f));
+      if (others.length) out.push(() => ({ toks: replaceAt(sent.toks, k, rnd(others)), type: "Спряжение", ru: `С «${t.subj}» глагол «${t.v.d}» имеет форму «${correct}».`, ids: [t.v.i] }));
+    }
+    if (t.role === "art" && t.noun && t.g !== "pl") {
+      if (t.cas === "acc" && t.g === "m" && t.kind !== "none") {
+        const nomW = detWord(t.kind, "nom", "m");
+        if (nomW !== t.w) out.push(() => ({ toks: replaceAt(sent.toks, k, nomW), type: "Падеж (Akkusativ)", ru: `Это дополнение (кого? что?) — нужен Akkusativ. У мужского рода артикль меняется: ${nomW} → ${t.w} ${t.noun.d}.`, ids: [t.noun.i] }));
+      }
+      const g2 = rnd(["m", "f", "n"].filter(g => g !== t.g));
+      const w2 = detWord(t.kind, t.cas, g2);
+      if (w2 && w2 !== t.w) out.push(() => ({ toks: replaceAt(sent.toks, k, w2), type: "Род существительного", ru: `«${t.noun.d}» — ${GENDER_RU[t.g]}: ${ART_OF[t.g]} ${t.noun.d}. Поэтому здесь «${t.w}».`, ids: [t.noun.i] }));
+    }
+    if (t.role === "adj" && t.base) {
+      const stem = adjStem(t.base); const cur = t.w.slice(stem.length);
+      const wrong = rnd(["e", "en", "er", "es"].filter(x => x !== cur));
+      out.push(() => ({ toks: replaceAt(sent.toks, k, stem + wrong), type: "Окончание прилагательного", ru: `${CASE_RU[t.cas]}, ${GENDER_RU[t.g]}, ${t.kind === "def" ? "после определённого артикля" : t.kind === "none" ? "без артикля" : "после ein/kein/mein"} → «${t.w}».`, ids: [t.ids[0], t.noun?.i].filter(Boolean) }));
+    }
+  });
+  return out;
+}
+function replaceAt(toks, k, w) { const c = toks.slice(); c[k] = { ...c[k], w }; return c; }
+
+function makeSentence() {
+  for (let tries = 0; tries < 30; tries++) {
+    const total = TEMPLATES.reduce((a, [, w]) => a + w, 0); let r = Math.random() * total, fn = TEMPLATES[0][0];
+    for (const [f, w] of TEMPLATES) { r -= w; if (r <= 0) { fn = f; break; } }
+    let s = null; try { s = fn(); } catch (e) { console.warn(e); }
+    if (!s) continue;
+    const text = render(s.toks, s.end || ".");
+    if (outOfBubble(text).length) continue;
+    s.text = text; s.end = s.end || ".";
+    return s;
+  }
+  return null;
+}
+function distort(s) {
+  const ops = [...s.ops, ...tokenDistortions(s)];
+  for (const op of shuffle(ops)) { const d = op(); if (d && norm(render(d.toks, s.end)) !== norm(s.text)) { d.text = render(d.toks, d.end || s.end); return d; } }
+  return null;
+}
+function acceptable(s) { return [s.text, ...s.alts.map(a => render(a, s.end))].map(norm); }
+
+function diffHtml(correct, wrongText) {
+  const wt = new Set(tokenize(wrongText));
+  return esc(correct).replace(/[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*/g, m => wt.has(m.toLowerCase()) ? m : `<mark class="good">${m}</mark>`);
+}
+function glossHtml(ids) {
+  const seen = new Set(); const parts = [];
+  for (const id of ids) { if (seen.has(id)) continue; seen.add(id); const w = BYID.get(id); if (!w || !CONTENT_T.has(w.t) || w.t === "num") continue; parts.push(`<span>${artHtml(w)} <i>— ${esc(w.r)}</i></span>`); }
+  return parts.length ? `<div class="gloss">${parts.join("")}</div>` : "";
+}
+
+/* ---------- voice: speech-to-text & text-to-speech ---------- */
+let api = { dict: null, tts: null, sample: null, sampleKnown: false };
+async function use(name) { try { return window.claude && window.claude.use ? await window.claude.use(name) : null; } catch (e) { return null; } }
+let mic = { target: null, state: "idle", sr: null };
+const micTargets = [];
+function registerMic(btn, input, onDone) { const t = { btn, input, onDone, base: "" }; btn.innerHTML = ICON.mic; btn.addEventListener("click", () => micClick(t)); micTargets.push(t); return t; }
+function paintMics() { for (const t of micTargets) { const on = mic.target === t && mic.state !== "idle"; t.btn.classList.toggle("on", on); t.btn.innerHTML = on ? ICON.stop : ICON.mic; t.btn.setAttribute("aria-label", on ? "Остановить" : "Говорить по-немецки"); } }
+function micClick(t) {
+  if (mic.target === t && mic.state !== "idle") { if (api.dict) api.dict.stop().catch(() => {}); else if (mic.sr) mic.sr.stop(); return; }
+  stopSpeaking();
+  mic.target = t; t.final_ = ""; t.base = t.input.value.trim() ? t.input.value.trim() + " " : "";
+  if (api.dict) {
+    mic.state = "starting"; paintMics();
+    api.dict.start({ language: "de" }).catch(e => {
+      const code = e && e.code;
+      if (code === "not_granted") note("Микрофон не разрешён для этой страницы. Включите его в меню «Разрешения» артефакта или пишите текстом.");
+      else if (code === "unavailable") note("Немецкий голосовой ввод сейчас недоступен. Пишите текстом.");
+      else if (code === "rate_limited") note("Слишком много запросов к распознаванию речи. Подождите немного.");
+      else if (code && code !== "stopped" && code !== "dismissed") note("Не удалось включить микрофон: " + code);
+    });
+  } else if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    try {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const sr = new SR();
+      sr.lang = "de-DE"; sr.interimResults = true; sr.continuous = true; mic.sr = sr;
+      let finalText = "";
+      sr.onresult = ev => { let interim = ""; for (let k = ev.resultIndex; k < ev.results.length; k++) { const r = ev.results[k]; if (r.isFinal) finalText += r[0].transcript; else interim += r[0].transcript; } t.input.value = (t.base + finalText + interim).trimStart(); };
+      sr.onerror = ev => { if (ev.error === "not-allowed") { note("Браузер не дал доступ к микрофону."); document.body.classList.add("no-mic"); } };
+      sr.onend = () => { mic.state = "idle"; const tt = mic.target; mic.target = null; paintMics(); if (tt) tt.onDone && tt.onDone(); };
+      sr.start(); mic.state = "listening"; paintMics();
+    } catch (e) { note("Голосовой ввод недоступен в этом браузере."); }
+  }
+}
+function note(msg) { flash(msg); }
+function flash(msg) { for (const id of ["talkNote", "fixMeta", "orderMeta", "cardResult", "trResult"]) { const el = document.getElementById(id); if (el && !el.closest("[hidden]")) { el.textContent = msg; el.classList.add("warn"); setTimeout(() => el.classList.remove("warn"), 6000); return; } } }
+
+function initDictation(d) {
+  api.dict = d;
+  d.onPartial(({ text }) => { const t = mic.target; if (t) t.input.value = (t.base + t.final_ + text).trimStart(); });
+  d.onFinal(({ text }) => { const t = mic.target; if (!t) return; t.final_ = (t.final_ || "") + (t.base || t.final_ ? text : text.trimStart()); t.input.value = (t.base + t.final_).trimStart(); });
+  d.onState(({ state: s, reason }) => {
+    mic.state = s;
+    if (s === "starting" && mic.target) mic.target.final_ = "";
+    if (s === "idle") { const t = mic.target; mic.target = null; paintMics(); if (t) { t.final_ = ""; if (reason === "unavailable") { document.body.classList.add("no-mic"); flash("Голосовой ввод недоступен для этого аккаунта или языка."); } if (["stopped", "viewer_stopped"].includes(reason) && t.onDone) t.onDone(); } return; }
+    paintMics();
+  });
+}
+
+let speakingAvailable = false;
+function say(text) {
+  if (!text) return;
+  const rate = +state.settings.rate || 0.9;
+  if (api.tts) { api.tts.speak(text, { language: "de", rate }).catch(e => { if (e && e.code === "not_granted") { api.tts = null; checkSayAvailable(); } }); return; }
+  if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "de-DE"; u.rate = rate; speechSynthesis.speak(u); } catch (e) {} }
+}
+function stopSpeaking() { try { if (api.tts) api.tts.stop(); else if ("speechSynthesis" in window) speechSynthesis.cancel(); } catch (e) {} }
+function checkSayAvailable() { speakingAvailable = !!api.tts || "speechSynthesis" in window; document.body.classList.toggle("no-say", !speakingAvailable); }
+function sayBtn(text) { const b = document.createElement("button"); b.className = "btn ghost icon-btn say"; b.innerHTML = ICON.say; b.setAttribute("aria-label", "Прослушать"); b.onclick = () => say(text); return b; }
+
+/* ---------- Claude (sample) ---------- */
+function claudeErr(e) {
+  const c = e && e.code;
+  return ({ not_granted: "Вы не разрешили странице обращаться к Claude. Разрешение включается в меню «Разрешения» артефакта.", rate_limited: "Слишком много запросов. Подождите минуту и попробуйте снова.", invalid_json: "Claude ответил в неожиданном формате. Нажмите ещё раз.", sampling_disabled: "Запросы к Claude отключены для этого аккаунта.", session_expired: "Сессия истекла. Обновите страницу.", cancelled: "" })[c] ?? `Не удалось получить ответ от Claude (${c || "ошибка"}).`;
+}
+function vocabForPrompt() {
+  const groups = {};
+  for (const w of W) { if (!inBubble(w) || w.t === "art") continue; const k = NOUN_T.has(w.t) ? "Существительные" : w.t === "v" || w.t === "vs" || w.t === "vpast" ? "Глаголы" : w.t === "adj" ? "Прилагательные" : "Прочие слова"; (groups[k] = groups[k] || []).push(displayDe(w)); }
+  return Object.entries(groups).map(([k, l]) => `${k}: ${l.join(", ")}`).join("\n");
+}
+function weakForPrompt(n = 25) { return W.filter(w => inBubble(w) && isWeak(w.i)).sort((a, b) => stat(b.i)[1] - stat(a.i)[1]).slice(0, n).map(displayDe); }
+
+/* ---------- TALK ---------- */
+const talk = { turns: [], busy: false, ctl: null };
+function talkRules(topic) {
+  const weak = weakForPrompt();
+  return `Ты — собеседник для разговорной практики немецкого (уровень A1). Ученик говорит по-русски, учит немецкий в Duolingo.
+ГЛАВНОЕ ПРАВИЛО: в поле "reply" пиши только по-немецки и используй ИСКЛЮЧИТЕЛЬНО слова из СЛОВАРЯ ниже и их грамматические формы (спряжение в настоящем времени, артикли der/die/das/den/dem/ein/einen/kein…, падежные окончания, множественное число). Ни одного слова вне списка. Если нужное слово отсутствует — перефразируй тем, что есть. Имена людей — только Anna, Max, Lisa, Paul.
+Грамматика: Präsens, модальные глаголы, отделяемые глаголы, war/hatte, придаточные с weil/dass/wenn. Без Perfekt, без Futur, без сложных конструкций.
+Стиль: 1–3 коротких простых предложения. Почти всегда заканчивай вопросом к ученику, чтобы разговор шёл дальше. Реагируй на смысл того, что сказал ученик.
+Проверка ученика: если в его последней реплике есть ошибки (грамматика, артикль, порядок слов, неверное слово), запиши исправленный вариант в "user_fixed" и коротко объясни по-русски в "explain_ru" (1–2 предложения). Если ошибок нет — "user_fixed": "" и "explain_ru": "". В "mistake_words" перечисли немецкие слова (в словарной форме), в которых ученик ошибся.
+${weak.length ? "Слабые слова ученика — вплетай их в разговор чаще: " + weak.join(", ") + "." : ""}
+${topic ? "Тема разговора: " + topic + "." : "Тема: свободная, бытовая."}
+Отвечай ТОЛЬКО JSON-объектом: {"reply": "немецкий текст", "reply_ru": "перевод reply на русский", "user_fixed": "", "explain_ru": "", "mistake_words": []}
+
+СЛОВАРЬ:
+${vocabForPrompt()}`;
+}
+function talkTopicLabel() { const v = $("talkTopic").value; if (!v) return ""; if (v.startsWith("sc:")) return v.slice(3); const t = TOPICS.find(t => `${t.s}-${t.u}` === v); return t ? `${t.ru}` : ""; }
+function $(id) { return document.getElementById(id); }
+function addMsg(kind, html) { const d = document.createElement("div"); d.className = "msg " + kind; d.innerHTML = html; $("chat").append(d); $("chat").scrollTop = $("chat").scrollHeight; return d; }
+function botMsg(obj) {
+  const d = addMsg("bot", "");
+  const de = document.createElement("div"); de.className = "de"; de.innerHTML = highlightOob(obj.reply || ""); d.append(de);
+  const tools = document.createElement("div"); tools.className = "tools"; tools.append(sayBtn(obj.reply || ""));
+  const tr = document.createElement("div"); tr.className = "tr"; tr.textContent = obj.reply_ru || ""; tr.hidden = !state.settings.showRu;
+  const tb = document.createElement("button"); tb.className = "linkish"; tb.textContent = tr.hidden ? "Показать перевод" : "Скрыть перевод"; tb.onclick = () => { tr.hidden = !tr.hidden; tb.textContent = tr.hidden ? "Показать перевод" : "Скрыть перевод"; };
+  if (obj.reply_ru) tools.append(tb);
+  d.append(tools, tr);
+  $("chat").scrollTop = $("chat").scrollHeight;
+  if (state.settings.speak) say(obj.reply || "");
+}
+async function talkCall(extraUser) {
+  if (!api.sample) return;
+  talk.busy = true; $("talkSend").disabled = true; $("talkStart").disabled = true;
+  const thinking = addMsg("bot", '<span class="thinking">Claude думает…</span>');
+  const rules = talkRules(talkTopicLabel());
+  const history = talk.turns.slice(-14);
+  const input = [{ role: "user", content: rules + "\n\n" + (history.length ? "Начало разговора ниже." : "Начни разговор: поздоровайся и задай первый вопрос по теме.") }];
+  if (history.length) { input.push({ role: "assistant", content: '{"reply":"Okay."}' }); input.push(...history); }
+  if (extraUser) input.push({ role: "user", content: extraUser });
+  if (input[input.length - 1].role !== "user") input.push({ role: "user", content: "Продолжай." });
+  const merged = []; for (const m of input) { if (merged.length && merged[merged.length - 1].role === m.role) merged[merged.length - 1].content += "\n\n" + m.content; else merged.push({ ...m }); }
+  talk.ctl = new AbortController();
+  try {
+    let obj = await api.sample.json(merged, { cache: false, signal: talk.ctl.signal });
+    if (!obj || typeof obj.reply !== "string") throw { code: "invalid_json" };
+    let oob = outOfBubble(obj.reply);
+    if (oob.length) {
+      const fix = [...merged, { role: "assistant", content: JSON.stringify(obj) }, { role: "user", content: `В "reply" есть слова вне словаря: ${oob.join(", ")}. Перепиши "reply" (и "reply_ru") только словами из СЛОВАРЯ. Остальные поля оставь. Тот же JSON.` }];
+      try { const obj2 = await api.sample.json(fix, { cache: false, signal: talk.ctl.signal }); if (obj2 && typeof obj2.reply === "string" && outOfBubble(obj2.reply).length <= oob.length) obj = { ...obj, ...obj2, user_fixed: obj.user_fixed, explain_ru: obj.explain_ru, mistake_words: obj.mistake_words }; } catch (e) {}
+    }
+    thinking.remove();
+    return obj;
+  } catch (e) {
+    thinking.remove();
+    const m = claudeErr(e); if (m) { $("talkNote").textContent = m; $("talkNote").classList.add("warn"); }
+    return null;
+  } finally { talk.busy = false; $("talkSend").disabled = false; $("talkStart").disabled = false; }
+}
+async function talkStart() {
+  if (talk.busy) return;
+  $("chat").innerHTML = ""; talk.turns = []; $("talkNote").textContent = "";
+  const obj = await talkCall(null);
+  if (!obj) return;
+  talk.turns.push({ role: "assistant", content: JSON.stringify({ reply: obj.reply }) });
+  botMsg(obj);
+}
+async function talkSend() {
+  const text = $("talkInput").value.trim(); if (!text || talk.busy) return;
+  if (!api.sample) { $("talkNote").textContent = "Разговор работает, когда страница открыта на claude.ai."; return; }
+  if (!talk.turns.length) { await talkStart(); }
+  $("talkInput").value = "";
+  const me = addMsg("me", `<div class="de">${highlightOob(text)}</div>`);
+  const oob = outOfBubble(text);
+  if (oob.length) { const n = document.createElement("div"); n.className = "tr"; n.textContent = `Вне пузыря: ${oob.join(", ")}`; me.append(n); }
+  talk.turns.push({ role: "user", content: text });
+  const obj = await talkCall(null);
+  if (!obj) { talk.turns.pop(); return; }
+  talk.turns.push({ role: "assistant", content: JSON.stringify({ reply: obj.reply }) });
+  const fixed = (obj.user_fixed || "").trim();
+  const userIds = idsInText(text);
+  if (fixed && norm(fixed) !== norm(text)) {
+    const f = document.createElement("div"); f.className = "fix"; f.innerHTML = `<b>Правильно:</b> ${diffHtml(fixed, text)}${obj.explain_ru ? `<div class="tr">${esc(obj.explain_ru)}</div>` : ""}`;
+    me.append(f);
+    const bad = idsForLemmas(obj.mistake_words);
+    mark(bad.length ? bad : idsInText(fixed).filter(id => !userIds.includes(id)), false);
+    mark(userIds.filter(id => !bad.includes(id)), true);
+  } else mark(userIds, true);
+  countToday();
+  botMsg(obj);
+}
+
+/* ---------- FIX ---------- */
+const fix = { cur: null, wrong: null, done: false };
+function fixNew() {
+  const s = makeSentence(); if (!s) { $("fixSentence").textContent = "В пузыре слишком мало слов для упражнения."; return; }
+  fix.cur = s; fix.done = false;
+  fix.wrong = chance(0.25) ? null : distort(s);
+  $("fixSentence").textContent = fix.wrong ? fix.wrong.text : s.text;
+  $("fixMeta").textContent = s.topic; $("fixMeta").classList.remove("warn");
+  $("fixInput").value = ""; $("fixResult").innerHTML = "";
+  $("fixInput").focus({ preventScroll: true });
+}
+function fixCheck(noneClaim) {
+  if (!fix.cur || fix.done) return;
+  const s = fix.cur, wr = fix.wrong;
+  const answer = noneClaim ? (wr ? "__" : s.text) : $("fixInput").value;
+  if (!noneClaim && !answer.trim()) { $("fixInput").focus(); return; }
+  const ok = acceptable(s).includes(norm(answer)) && !(noneClaim && wr);
+  fix.done = true;
+  let html;
+  if (ok) {
+    html = `<div class="result ok"><div class="head">${wr ? "Верно, ошибка найдена" : "Верно, ошибки не было"}</div>${wr ? `<div>${esc(wr.type)}: ${esc(wr.ru)}</div>` : ""}${glossHtml(s.ids)}</div>`;
+    mark(s.ids, true);
+  } else {
+    const shown = wr ? wr.text : s.text;
+    html = `<div class="result bad"><div class="head">${noneClaim ? "Ошибка была" : "Не совсем"}</div><div class="sentence" style="font-size:20px">${diffHtml(s.text, shown)}</div>${wr ? `<div><b>${esc(wr.type)}.</b> ${esc(wr.ru)}</div>` : `<div>В исходном предложении ошибки не было — его нужно было оставить как есть.</div>`}${!noneClaim ? `<div class="note">Ваш ответ: ${highlightOob(answer)}</div>` : ""}${glossHtml(s.ids)}</div>`;
+    mark(wr ? wr.ids : s.ids, false);
+  }
+  $("fixResult").innerHTML = html;
+  countToday();
+  say(s.text);
+}
+
+/* ---------- ORDER ---------- */
+const ord = { cur: null, pool: [], answer: [], done: false };
+function ordNew() {
+  let s = null; for (let k = 0; k < 10; k++) { s = makeSentence(); if (s && s.toks.filter(t => t.role !== "punct").length >= 4) break; }
+  if (!s) return;
+  ord.cur = s; ord.done = false;
+  const words = s.toks.filter(t => t.role !== "punct").map((t, k) => ({ w: t.w, k }));
+  let sh = shuffle(words); if (sh.map(x => x.w).join(" ") === words.map(x => x.w).join(" ")) sh = shuffle(words);
+  ord.pool = sh; ord.answer = [];
+  $("orderMeta").textContent = s.topic + (s.end === "?" ? " · вопрос" : ""); $("orderMeta").classList.remove("warn");
+  $("orderResult").innerHTML = "";
+  ordPaint();
+}
+function ordPaint() {
+  const mk = (list, from) => list.map((x, k) => { const b = document.createElement("button"); b.className = "tok"; b.textContent = x.w; b.onclick = () => { if (ord.done) return; const [it] = from.splice(k, 1); (from === ord.pool ? ord.answer : ord.pool).push(it); ordPaint(); }; return b; });
+  $("orderPool").replaceChildren(...mk(ord.pool, ord.pool));
+  $("orderAnswer").replaceChildren(...mk(ord.answer, ord.answer));
+  if (!ord.answer.length) $("orderAnswer").innerHTML = '<span class="note">Нажимайте на слова внизу по порядку</span>';
+}
+function ordCheck() {
+  if (!ord.cur || ord.done) return;
+  if (ord.pool.length) { $("orderResult").innerHTML = '<p class="note">Используйте все слова.</p>'; return; }
+  const s = ord.cur; const answer = ord.answer.map(x => x.w).join(" ");
+  const ok = acceptable(s).includes(norm(answer));
+  ord.done = true;
+  $("orderResult").innerHTML = ok
+    ? `<div class="result ok"><div class="head">Верно</div><div>${esc(s.text)}</div>${glossHtml(s.ids)}</div>`
+    : `<div class="result bad"><div class="head">Правильный порядок</div><div class="sentence" style="font-size:20px">${esc(s.text)}</div>${orderHint(s)}${glossHtml(s.ids)}</div>`;
+  const verbIds = s.toks.filter(t => t.role === "verb" || t.role === "prefix" || t.role === "inf").flatMap(t => t.ids || []);
+  mark(ok ? s.ids : (verbIds.length ? verbIds : s.ids), ok);
+  countToday(); say(s.text);
+}
+function orderHint(s) {
+  const r = s.toks.map(t => t.role);
+  if (r.includes("prefix")) return "<div>Отделяемая приставка стоит в самом конце.</div>";
+  if (r.includes("inf")) return "<div>После модального глагола инфинитив уходит в конец.</div>";
+  if (r.includes("conj")) return "<div>После «weil» спрягаемый глагол стоит в конце.</div>";
+  if (s.end === "?") return "<div>В вопросе без вопросительного слова глагол стоит первым.</div>";
+  if (r[0] === "time") return "<div>Глагол стоит на втором месте, подлежащее — после него.</div>";
+  return "<div>Глагол — на втором месте, дополнение — после глагола.</div>";
+}
+
+/* ---------- TRANSLATE ---------- */
+const tr = { queue: [], cur: null, done: false, ctl: null };
+async function trNew() {
+  const body = $("transBody");
+  if (!api.sample) { body.innerHTML = `<p class="note">${api.sampleKnown ? "Этот режим работает, когда страница открыта на claude.ai: фразы придумывает Claude." : "Подключаю Claude…"}</p>`; return; }
+  body.innerHTML = '<p class="thinking">Claude придумывает фразы из ваших слов…</p>'; $("transNew").disabled = true;
+  const topic = $("transTopic").value ? (TOPICS.find(t => `${t.s}-${t.u}` === $("transTopic").value) || {}).ru : "";
+  const weak = weakForPrompt(20);
+  const prompt = `Составь 6 коротких немецких предложений (уровень A1, 4–9 слов) для упражнения «переведи с русского на немецкий».
+Используй ИСКЛЮЧИТЕЛЬНО слова из СЛОВАРЯ ниже и их грамматические формы. Ни одного слова вне списка. Имена — только Anna, Max, Lisa, Paul.
+Грамматика разнообразная: Akkusativ, Dativ после in, модальные глаголы, отделяемые глаголы, отрицание kein/nicht, вопросы, weil. Только Präsens (и war/hatte).
+${topic ? "Тема: " + topic + "." : ""}
+${weak.length ? "Обязательно используй эти слабые слова ученика: " + weak.join(", ") + "." : ""}
+Для каждого предложения дай естественный русский перевод и 1–3 правильных немецких варианта (первый — основной; другие — допустимый другой порядок слов или синоним из словаря).
+Ответ — ТОЛЬКО JSON-массив: [{"ru": "Я пью кофе.", "de": ["Ich trinke Kaffee."]}]
+
+СЛОВАРЬ:
+${vocabForPrompt()}`;
+  tr.ctl = new AbortController();
+  try {
+    const arr = await api.sample.json(prompt, { cache: false, signal: tr.ctl.signal });
+    const good = (Array.isArray(arr) ? arr : []).filter(x => x && typeof x.ru === "string" && Array.isArray(x.de) && x.de.length && typeof x.de[0] === "string").map(x => ({ ru: x.ru, de: x.de.filter(d => typeof d === "string") })).filter(x => outOfBubble(x.de[0]).length === 0);
+    if (!good.length) { body.innerHTML = '<p class="note warn">Claude не смог уложиться в ваш словарь. Попробуйте ещё раз или другую тему.</p>'; return; }
+    tr.queue = good; trNext();
+  } catch (e) { body.innerHTML = `<p class="note warn">${esc(claudeErr(e))}</p>`; }
+  finally { $("transNew").disabled = false; }
+}
+function trNext() {
+  const body = $("transBody");
+  if (!tr.queue.length) { body.innerHTML = '<p class="note">Фразы закончились. Нажмите «Новые фразы».</p>'; return; }
+  tr.cur = tr.queue.shift(); tr.done = false;
+  body.innerHTML = `<div class="note">Осталось: ${tr.queue.length}</div><div class="ru-big">${esc(tr.cur.ru)}</div>
+  <div class="composer"><button class="btn mic" id="trMic">MIC</button><input type="text" id="trInput" placeholder="По-немецки…" autocomplete="off"></div>
+  <div class="row"><button class="btn primary" id="trCheck">Проверить</button><button class="btn" id="trShow">Показать ответ</button><span class="grow"></span><button class="btn ghost" id="trNextBtn">Дальше</button></div><div id="trResult"></div>`;
+  registerMicOnce($("trMic"), $("trInput"), () => trCheck());
+  $("trCheck").onclick = () => trCheck(); $("trShow").onclick = () => trShow(); $("trNextBtn").onclick = trNext;
+  $("trInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); tr.done ? trNext() : trCheck(); } });
+}
+function registerMicOnce(btn, input, onDone) { for (let k = micTargets.length - 1; k >= 0; k--) if (!document.body.contains(micTargets[k].btn)) micTargets.splice(k, 1); registerMic(btn, input, onDone); }
+function trShow() { if (!tr.cur) return; tr.done = true; $("trResult").innerHTML = `<div class="result bad"><div class="head">Ответ</div><div class="sentence" style="font-size:20px">${esc(tr.cur.de[0])}</div>${glossHtml(idsInText(tr.cur.de[0]))}</div>`; mark(idsInText(tr.cur.de[0]), false); say(tr.cur.de[0]); }
+async function trCheck() {
+  if (!tr.cur || tr.done) return;
+  const ans = $("trInput").value.trim(); if (!ans) return;
+  const ok = tr.cur.de.map(norm).includes(norm(ans));
+  const ids = idsInText(tr.cur.de[0]);
+  if (ok) { tr.done = true; $("trResult").innerHTML = `<div class="result ok"><div class="head">Верно</div>${glossHtml(ids)}</div>`; mark(ids, true); countToday(); say(tr.cur.de[0]); return; }
+  $("trResult").innerHTML = `<div class="result bad"><div class="head">Не совпало с эталоном</div><div>Эталон: ${esc(tr.cur.de[0])}</div><div class="row"><button class="btn" id="trAsk">Проверить с Claude</button><span class="note">Ваш вариант может быть тоже верным</span></div></div>`;
+  $("trAsk").onclick = () => trAsk(ans);
+}
+async function trAsk(ans) {
+  if (!api.sample) return;
+  $("trResult").innerHTML = '<p class="thinking">Claude проверяет…</p>';
+  try {
+    const j = await api.sample.json(`Ученик (уровень A1) переводил на немецкий фразу: «${tr.cur.ru}». Эталон: «${tr.cur.de[0]}». Ответ ученика: «${ans}».
+Оцени, правильно ли по смыслу и грамматике (другой порядок слов или синоним допустимы). Ответ ТОЛЬКО JSON: {"ok": true|false, "fixed": "исправленный вариант ответа ученика", "explain_ru": "1–2 предложения по-русски, что не так", "mistake_words": ["немецкие слова в словарной форме, где ошибка"]}`, { cache: false, modelTier: "quick" });
+    tr.done = true;
+    const ids = idsInText(tr.cur.de[0]);
+    if (j && j.ok) { $("trResult").innerHTML = `<div class="result ok"><div class="head">Claude: ваш вариант верный</div>${j.explain_ru ? `<div>${esc(j.explain_ru)}</div>` : ""}${glossHtml(ids)}</div>`; mark(ids, true); }
+    else { $("trResult").innerHTML = `<div class="result bad"><div class="head">Нужно так</div><div class="sentence" style="font-size:20px">${diffHtml(j?.fixed || tr.cur.de[0], ans)}</div><div>${esc(j?.explain_ru || "")}</div>${glossHtml(ids)}</div>`; const bad = idsForLemmas(j?.mistake_words); mark(bad.length ? bad : ids, false); }
+    countToday(); say(tr.cur.de[0]);
+  } catch (e) { $("trResult").innerHTML = `<p class="note warn">${esc(claudeErr(e))}</p>`; }
+}
+
+/* ---------- CARDS ---------- */
+const card = { mode: "say", cur: null, done: false };
+function cardPool() {
+  let pool = W.filter(w => inBubble(w) && CONTENT_T.has(w.t) && !["num", "phr", "name", "vpast"].includes(w.t));
+  if ($("cardWeakOnly").checked) { const weak = pool.filter(w => isWeak(w.i)); if (weak.length) pool = weak; }
+  return pool;
+}
+function cardNew() {
+  const w = pickW(cardPool()); const body = $("cardBody"); if (!w) { body.innerHTML = '<p class="note">Нет слов для карточек.</p>'; return; }
+  card.cur = w; card.done = false;
+  if (card.mode === "say") {
+    body.innerHTML = `<div class="flash"><div class="kind">${esc(TYPE_RU[w.t] || "")}</div><div class="ru-big" style="font-size:26px">${esc(w.r)}</div><div class="note">${esc(w.e)}</div></div>
+    <div class="composer"><button class="btn mic" id="cardMic">MIC</button><input type="text" id="cardInput" placeholder="${NOUN_T.has(w.t) ? "der / die / das + слово" : "по-немецки"}" autocomplete="off"></div>
+    <div class="row"><button class="btn primary" id="cardCheck">Проверить</button><button class="btn" id="cardSkip">Не помню</button><span class="grow"></span><button class="btn ghost" id="cardNext">Дальше</button></div><div id="cardResult"></div>`;
+    registerMicOnce($("cardMic"), $("cardInput"), () => cardCheck(false));
+    $("cardCheck").onclick = () => cardCheck(false); $("cardSkip").onclick = () => cardCheck(true); $("cardNext").onclick = cardNew;
+    $("cardInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); card.done ? cardNew() : cardCheck(false); } });
+    $("cardInput").focus({ preventScroll: true });
+  } else {
+    const others = shuffle(W.filter(x => x !== w && inBubble(x) && x.t === w.t && x.r !== w.r)).slice(0, 3);
+    const opts = shuffle([w, ...others]);
+    body.innerHTML = `<div class="flash"><div class="kind">Послушайте и выберите перевод</div><button class="btn primary" id="cardPlay">${ICON.say} Прослушать ещё раз</button></div><div class="choices" id="cardChoices"></div><div class="row"><span class="grow"></span><button class="btn ghost" id="cardNext">Дальше</button></div><div id="cardResult"></div>`;
+    $("cardPlay").onclick = () => say(displayDe(w)); $("cardNext").onclick = cardNew;
+    const box = $("cardChoices");
+    for (const o of opts) { const b = document.createElement("button"); b.className = "btn"; b.textContent = o.r; b.onclick = () => { if (card.done) return; card.done = true; const ok = o === w; b.classList.add(ok ? "ok" : "bad"); [...box.children][opts.indexOf(w)].classList.add("ok"); $("cardResult").innerHTML = `<div class="result ${ok ? "ok" : "bad"}"><div class="head">${artHtml(w)} — ${esc(w.r)}</div></div>`; mark([w.i], ok); countToday(); }; box.append(b); }
+    if (!speakingAvailable) $("cardResult").innerHTML = `<p class="note warn">Озвучка недоступна в этом браузере. Слово: ${esc(displayDe(w))}</p>`;
+    say(displayDe(w));
+  }
+}
+function cardCheck(skip) {
+  if (!card.cur || card.done) return;
+  const w = card.cur; const expected = displayDe(w); const ans = skip ? "" : $("cardInput").value;
+  if (!skip && !ans.trim()) return;
+  card.done = true;
+  const a = norm(ans), e = norm(expected);
+  let ok = a === e, head;
+  if (!ok && NOUN_T.has(w.t) && a === norm(w.d)) head = `Почти: нужен артикль — ${artHtml(w)}`;
+  else if (!ok && NOUN_T.has(w.t) && a.split(" ").slice(1).join(" ") === norm(w.d)) head = `Артикль другой: ${artHtml(w)} (${GENDER_RU[w.t]})`;
+  else head = ok ? `Верно: ${artHtml(w)}` : `Правильно: ${artHtml(w)}`;
+  const forms = w.c && w.c.length > 1 ? `<div class="note art">${esc(w.c.join(" · "))}</div>` : w.p ? `<div class="note">мн. ч.: ${esc(w.p)}</div>` : "";
+  $("cardResult").innerHTML = `<div class="result ${ok ? "ok" : "bad"}"><div class="head">${head}</div>${forms}</div>`;
+  mark([w.i], ok); countToday(); say(expected);
+}
+
+/* ---------- DICTIONARY ---------- */
+function renderDict() {
+  const q = $("dictSearch").value.trim().toLowerCase(); const sec = $("dictSection").value; const f = $("dictFilter").value;
+  const rows = []; let shown = 0, lastTopic = null;
+  for (const w of W) {
+    if (sec && String(w.s) !== sec) continue;
+    if (f === "weak" && !isWeak(w.i)) continue;
+    if (f === "off" && !excluded.has(w.i)) continue;
+    if (q && !(w.d.toLowerCase().includes(q) || w.r.toLowerCase().includes(q) || w.e.toLowerCase().includes(q) || (w.f || []).some(x => x.toLowerCase().includes(q)))) continue;
+    const tk = `${w.s}-${w.u}`;
+    if (tk !== lastTopic) { lastTopic = tk; const t = TOPICS.find(t => t.s === w.s && t.u === w.u); rows.push(`<tr class="topic-row"><td colspan="5">Раздел ${w.s} · ${esc(t ? t.ru : "")}<button class="linkish" data-topic-on="${tk}">все в пузырь</button><button class="linkish" data-topic-off="${tk}">убрать тему</button></td></tr>`); }
+    const [r, wr] = stat(w.i);
+    const forms = w.c ? (w.c.length > 1 ? w.c.join(", ") : w.c[0]) : w.p ? "мн.: " + w.p : (w.f || []).slice(1).join(", ");
+    rows.push(`<tr class="${excluded.has(w.i) ? "off" : ""}"><td><input type="checkbox" data-id="${w.i}" ${excluded.has(w.i) ? "" : "checked"} aria-label="В пузыре: ${esc(w.d)}"></td><td class="de">${artHtml(w)} <button class="btn ghost icon-btn say" data-say="${esc(displayDe(w))}" aria-label="Прослушать" style="width:28px;height:28px">${ICON.say}</button></td><td>${esc(w.r)}<div class="note">${esc(TYPE_RU[w.t] || "")}</div></td><td class="forms">${esc(forms)}</td><td><span class="bar"><span class="r">+${r}</span><span class="w">−${wr}</span></span></td></tr>`);
+    shown++;
+  }
+  $("dictBody").innerHTML = rows.join("") || '<tr><td colspan="5" class="note">Ничего не найдено.</td></tr>';
+  $("dictCount").textContent = `Показано: ${shown} из ${W.length}`;
+}
+function setTopic(tk, on) { for (const w of W) if (`${w.s}-${w.u}` === tk) { if (on) excluded.delete(w.i); else excluded.add(w.i); } bubbleChanged(); }
+function bubbleChanged() { rebuildAllowed(); buildCats(); scheduleSave(); renderStats(); renderDict(); }
+
+/* ---------- header stats ---------- */
+function renderStats() {
+  $("statWords").textContent = W.filter(inBubble).length;
+  $("statWeak").textContent = W.filter(w => inBubble(w) && isWeak(w.i)).length;
+  $("statToday").textContent = state.daily[today()] || 0;
+}
+
+/* ---------- tabs & wiring ---------- */
+const started = {};
+function showTab(name) {
+  for (const b of document.querySelectorAll("nav.tabs button")) b.setAttribute("aria-selected", String(b.dataset.tab === name));
+  for (const p of document.querySelectorAll("section.panel")) p.hidden = p.id !== "tab-" + name;
+  if (!started[name]) { started[name] = true; ({ fix: fixNew, order: ordNew, cards: cardNew, dict: renderDict, trans: () => trIntro() })[name]?.(); }
+}
+function trIntro() { $("transBody").innerHTML = `<p class="note">${api.sample ? "Выберите тему и нажмите «Новые фразы»." : api.sampleKnown ? "Этот режим работает, когда страница открыта на claude.ai." : "Подключаю Claude…"}</p>`; }
+
+function fillTopics(sel, withScenes) {
+  const o = ['<option value="">Свободная тема</option>'];
+  if (withScenes) for (const sc of ["Ты официант в кафе, я заказываю", "Я турист и ищу дорогу", "Мы знакомимся", "Я рассказываю о своей семье", "Мы обсуждаем выходные", "Я покупаю одежду в магазине", "Я у врача"]) o.push(`<option value="sc:${esc(sc)}">Сценка: ${esc(sc)}</option>`);
+  for (const t of TOPICS) o.push(`<option value="${t.s}-${t.u}">Раздел ${t.s} · ${esc(t.ru)}</option>`);
+  sel.innerHTML = o.join("");
+}
+
+function wire() {
+  for (const b of document.querySelectorAll("nav.tabs button")) b.onclick = () => showTab(b.dataset.tab);
+  for (const b of document.querySelectorAll("button.say")) if (b.textContent === "SAY") b.innerHTML = ICON.say;
+  fillTopics($("talkTopic"), true); fillTopics($("transTopic"), false);
+  $("optSpeak").checked = state.settings.speak; $("optShowRu").checked = state.settings.showRu; $("optAutoSend").checked = state.settings.autoSend; $("optRate").value = state.settings.rate;
+  $("optSpeak").onchange = e => { state.settings.speak = e.target.checked; if (!e.target.checked) stopSpeaking(); scheduleSave(); };
+  $("optShowRu").onchange = e => { state.settings.showRu = e.target.checked; scheduleSave(); };
+  $("optAutoSend").onchange = e => { state.settings.autoSend = e.target.checked; scheduleSave(); };
+  $("optRate").onchange = e => { state.settings.rate = +e.target.value; scheduleSave(); };
+  $("talkStart").onclick = () => { if (!api.sample) { $("talkNote").textContent = api.sampleKnown ? "Разговор работает, когда страница открыта на claude.ai (отвечает Claude). Остальные режимы работают и без него." : "Подключаю Claude…"; return; } talkStart(); };
+  $("talkSend").onclick = talkSend;
+  $("talkInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); talkSend(); } });
+  registerMic($("talkMic"), $("talkInput"), () => { if (state.settings.autoSend) talkSend(); });
+  registerMic($("fixMic"), $("fixInput"), () => fixCheck(false));
+  $("fixSay").onclick = () => say($("fixSentence").textContent);
+  $("fixCheck").onclick = () => fixCheck(false); $("fixNone").onclick = () => fixCheck(true); $("fixNext").onclick = fixNew;
+  $("fixInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); fix.done ? fixNew() : fixCheck(false); } });
+  $("orderSay").onclick = () => { if (ord.done && ord.cur) say(ord.cur.text); else flash("Озвучка будет после проверки — чтобы не подсказывать."); };
+  $("orderCheck").onclick = ordCheck; $("orderNext").onclick = ordNew; $("orderReset").onclick = () => { if (ord.done) return; ord.pool.push(...ord.answer); ord.answer = []; ordPaint(); };
+  $("transNew").onclick = trNew;
+  $("cardModeSay").onclick = () => { card.mode = "say"; $("cardModeSay").setAttribute("aria-pressed", "true"); $("cardModeHear").setAttribute("aria-pressed", "false"); cardNew(); };
+  $("cardModeHear").onclick = () => { card.mode = "hear"; $("cardModeHear").setAttribute("aria-pressed", "true"); $("cardModeSay").setAttribute("aria-pressed", "false"); cardNew(); };
+  $("cardWeakOnly").onchange = cardNew;
+  let dt; $("dictSearch").oninput = () => { clearTimeout(dt); dt = setTimeout(renderDict, 150); };
+  $("dictSection").onchange = renderDict; $("dictFilter").onchange = renderDict;
+  $("dictBody").addEventListener("change", e => { const id = +e.target.dataset.id; if (!id) return; if (e.target.checked) excluded.delete(id); else excluded.add(id); e.target.closest("tr").classList.toggle("off", !e.target.checked); rebuildAllowed(); buildCats(); scheduleSave(); renderStats(); });
+  $("dictBody").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.say) say(b.dataset.say); if (b.dataset.topicOn) setTopic(b.dataset.topicOn, true); if (b.dataset.topicOff) setTopic(b.dataset.topicOff, false); });
+  $("resetProgress").onclick = () => { $("resetConfirm").hidden = false; };
+  $("resetNo").onclick = () => { $("resetConfirm").hidden = true; };
+  $("resetYes").onclick = () => { state.stats = {}; state.daily = {}; $("resetConfirm").hidden = true; scheduleSave(); renderStats(); renderDict(); };
+  paintMics();
+}
+
+function demoChat() {
+  $("chat").innerHTML = "";
+  addMsg("bot", `<div class="de">Hallo! Wie geht's? Trinkst du gern Kaffee?</div><div class="tr">Пример. Нажмите «Начать разговор» — Claude ответит по-настоящему.</div>`);
+  addMsg("me", `<div class="de">Ja, ich trinke gern ein Kaffee.</div><div class="fix"><b>Правильно:</b> Ja, ich trinke gern <mark class="good">einen</mark> Kaffee.<div class="tr">Kaffee — мужской род, в Akkusativ «ein» становится «einen».</div></div>`);
+}
+
+/* ---------- boot ---------- */
+(function boot() {
+  applyState(loadLocal());
+  rebuildAllowed(); buildCats();
+  wire(); renderStats(); demoChat(); checkSayAvailable();
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) document.body.classList.add("no-mic");
+  use("dictation").then(d => { if (d) { document.body.classList.remove("no-mic"); initDictation(d); } });
+  use("tts").then(t => { if (t) api.tts = t; checkSayAvailable(); });
+  use("sample").then(s => { api.sample = s; api.sampleKnown = true; if (!s) $("talkNote").textContent = "Разговор и перевод работают, когда страница открыта на claude.ai. Остальные режимы работают везде."; if (started.trans) trIntro(); });
+  Promise.all([use("db"), use("user")]).then(async ([db, user]) => {
+    if (!db || !user) return;
+    try {
+      const id = await user.id(); if (!id) return;
+      const ref = db.doc(`data/users/${id}/progress`);
+      const timer = new Promise(res => setTimeout(() => res(null), 10000));
+      const snap = await Promise.race([ref.get(), timer]);
+      dbRef = ref;
+      if (snap && snap.exists) { applyState(snap.data()); rebuildAllowed(); buildCats(); renderStats(); if (started.dict) renderDict(); $("optSpeak").checked = state.settings.speak; $("optShowRu").checked = state.settings.showRu; $("optAutoSend").checked = state.settings.autoSend; $("optRate").value = state.settings.rate; }
+      else scheduleSave();
+    } catch (e) { console.warn("db", e); }
+  });
+})();
+</script>

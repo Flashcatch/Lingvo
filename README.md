@@ -12,3 +12,16 @@
 ```bash
 python3 build_dictionary.py
 ```
+
+## Тренажёр Wortblase
+
+`trainer/app.html` — исходник страницы, `trainer/build_trainer.py` встраивает в неё `dictionary.json`
+и собирает `trainer/Wortblase.html` (один файл). Режимы: голосовой разговор с Claude, «Найди ошибку»,
+«Собери фразу», «Перевод», карточки и редактор словаря (галочка «в пузыре»).
+
+```bash
+python3 build_dictionary.py && python3 trainer/build_trainer.py
+```
+
+Без claude.ai файл тоже работает: упражнения, карточки и словарь — офлайн; голос — через встроенное
+распознавание речи Chrome/Edge. Разговор и перевод требуют Claude (открывать на claude.ai).
