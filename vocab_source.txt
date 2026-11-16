@@ -1,0 +1,825 @@
+# Словарь: Duolingo, немецкий для англоговорящих, разделы 1–2
+#
+# Формат строки:  тип | немецкий | доп. | english | русский
+#   m / f / n / pl — существительное (род), «доп.» = форма множественного числа («-» = нет мн. ч.)
+#   vpast          — прошедшее время (Präteritum), «доп.» = формы
+#   v              — глагол (спряжение генерируется в build_dictionary.py)
+#   vs             — отделяемый глагол, приставка через «|»: auf|stehen
+#   adj, adv, pron, prep, conj, num, art, q (вопросительное слово), phr (фраза), name (имя собственное), part (частица)
+# Заголовок блока:  ## раздел | номер блока | тема (рус) | тема (eng)
+
+## 1 | 1 | Приветствия и вежливость | Greetings & politeness
+phr | hallo | | hello | привет
+phr | tschüss | | bye | пока
+phr | danke | | thank you | спасибо
+phr | bitte | | please / you're welcome | пожалуйста
+phr | ja | | yes | да
+phr | nein | | no | нет
+phr | Entschuldigung | | excuse me / sorry | извините
+phr | Willkommen | | welcome | добро пожаловать
+phr | auf Wiedersehen | | goodbye | до свидания
+phr | bis später | | see you later | до скорого
+phr | bis morgen | | see you tomorrow | до завтра
+phr | wie geht's | | how are you | как дела
+phr | genau | | exactly | точно
+phr | okay | | okay | хорошо, окей
+adj | gut | | good | хороший
+adj | schlecht | | bad | плохой
+n | Morgen | Morgen | morning | утро
+m | Tag | Tage | day | день
+m | Abend | Abende | evening | вечер
+f | Nacht | Nächte | night | ночь
+m | Herr | Herren | Mr. / gentleman | господин
+f | Frau | Frauen | Mrs. / woman / wife | госпожа; женщина; жена
+m | Name | Namen | name | имя
+v | heißen | | to be called | зваться
+v | kommen | | to come | приходить, приезжать
+v | wohnen | | to live (reside) | жить (проживать)
+prep | aus | | from / out of | из
+prep | in | | in | в
+conj | und | | and | и
+conj | oder | | or | или
+conj | aber | | but | но
+adv | auch | | also, too | тоже
+adv | sehr | | very | очень
+part | nicht | | not | не
+adv | gern | | gladly, like to | охотно, с удовольствием
+adv | hier | | here | здесь
+adv | da | | there | там, тут
+adv | dort | | there | там
+
+## 1 | 2 | Местоимения, sein и haben | Pronouns, to be, to have
+pron | ich | mich, mir | I | я
+pron | du | dich, dir | you (informal) | ты
+pron | er | ihn, ihm | he / it | он
+pron | sie | ihr | she / they | она / они
+pron | es | | it | оно
+pron | wir | uns | we | мы
+pron | ihr | euch | you (plural) | вы (мн.)
+pron | Sie | Ihnen | you (formal) | Вы
+pron | man | | one, people | (безличн.) «говорят, нужно»
+v | sein | | to be | быть
+v | haben | | to have | иметь
+pron | mein | meine, meinen, meinem, meiner, meines | my | мой
+pron | dein | deine, deinen, deinem, deiner | your | твой
+pron | sein | seine, seinen, seinem, seiner | his | его
+pron | ihr | ihre, ihren, ihrem, ihrer | her / their | её / их
+pron | unser | unsere, unseren, unserem | our | наш
+pron | euer | eure, euren, eurem | your (pl.) | ваш
+pron | Ihr | Ihre, Ihren, Ihrem | your (formal) | Ваш
+pron | dieser | diese, dieses, diesen, diesem | this | этот
+pron | alle | | all, everyone | все
+pron | alles | | everything | всё
+pron | etwas | | something | что-то
+pron | nichts | | nothing | ничего
+pron | jemand | | somebody | кто-то
+pron | niemand | | nobody | никто
+
+## 1 | 3 | Артикли | Articles
+art | der | | the (m.) | определённый артикль м. р.
+art | die | | the (f., pl.) | определённый артикль ж. р. и мн. ч.
+art | das | | the (n.) / that | определённый артикль ср. р.; это
+art | den | | the (acc. m. / dat. pl.) | артикль (вин. м. р.; дат. мн.)
+art | dem | | the (dat. m./n.) | артикль (дат. м./ср. р.)
+art | des | | the (gen. m./n.) | артикль (род. п.)
+art | ein | | a (m./n.) | неопределённый артикль м./ср. р.
+art | eine | | a (f.) | неопределённый артикль ж. р.
+art | einen | | a (acc. m.) | неопр. артикль (вин. м. р.)
+art | einem | | a (dat. m./n.) | неопр. артикль (дат. м./ср. р.)
+art | einer | | a (dat. f.) | неопр. артикль (дат. ж. р.)
+art | kein | keine, keinen, keinem, keiner | no, not a | никакой, не (отрицание сущ.)
+
+## 1 | 4 | Кафе: еда и напитки | Café: food & drinks
+m | Kaffee | Kaffees | coffee | кофе
+m | Tee | Tees | tea | чай
+n | Wasser | - | water | вода
+f | Milch | - | milk | молоко
+m | Saft | Säfte | juice | сок
+n | Bier | Biere | beer | пиво
+m | Wein | Weine | wine | вино
+n | Brot | Brote | bread | хлеб
+n | Brötchen | Brötchen | bread roll | булочка
+m | Käse | - | cheese | сыр
+m | Apfel | Äpfel | apple | яблоко
+n | Ei | Eier | egg | яйцо
+m | Kuchen | Kuchen | cake | пирог, торт
+m | Zucker | - | sugar | сахар
+m | Salat | Salate | salad | салат
+f | Suppe | Suppen | soup | суп
+f | Pizza | Pizzas | pizza | пицца
+pl | Nudeln | Nudeln | pasta, noodles | макароны
+m | Reis | - | rice | рис
+n | Fleisch | - | meat | мясо
+m | Fisch | Fische | fish | рыба
+f | Wurst | Würste | sausage | колбаса, сосиска
+n | Hähnchen | Hähnchen | chicken (food) | курица (блюдо)
+n | Gemüse | - | vegetables | овощи
+n | Obst | - | fruit | фрукты
+f | Banane | Bananen | banana | банан
+f | Orange | Orangen | orange | апельсин
+f | Tomate | Tomaten | tomato | помидор
+f | Kartoffel | Kartoffeln | potato | картофель
+f | Butter | - | butter | масло (сливочное)
+n | Sandwich | Sandwiches | sandwich | сэндвич
+f | Schokolade | Schokoladen | chocolate | шоколад
+n | Eis | - | ice cream / ice | мороженое; лёд
+n | Salz | - | salt | соль
+m | Pfeffer | - | pepper | перец
+f | Erdbeere | Erdbeeren | strawberry | клубника
+f | Zitrone | Zitronen | lemon | лимон
+n | Essen | - | food / meal | еда
+n | Getränk | Getränke | drink | напиток
+n | Frühstück | Frühstücke | breakfast | завтрак
+n | Mittagessen | Mittagessen | lunch | обед
+n | Abendessen | Abendessen | dinner | ужин
+m | Hunger | - | hunger | голод
+m | Durst | - | thirst | жажда
+n | Glas | Gläser | glass | стакан, бокал
+f | Tasse | Tassen | cup | чашка
+f | Flasche | Flaschen | bottle | бутылка
+m | Teller | Teller | plate | тарелка
+m | Löffel | Löffel | spoon | ложка
+f | Gabel | Gabeln | fork | вилка
+n | Messer | Messer | knife | нож
+f | Speisekarte | Speisekarten | menu | меню
+f | Rechnung | Rechnungen | bill, check | счёт
+m | Kellner | Kellner | waiter | официант
+f | Kellnerin | Kellnerinnen | waitress | официантка
+n | Café | Cafés | café | кафе
+n | Restaurant | Restaurants | restaurant | ресторан
+v | essen | | to eat | есть
+v | trinken | | to drink | пить
+v | möchten | | would like | хотел бы
+v | nehmen | | to take, to have (order) | брать
+v | bezahlen | | to pay | платить
+v | kosten | | to cost | стоить
+v | bestellen | | to order | заказывать
+v | kochen | | to cook | готовить
+v | backen | | to bake | печь
+adj | lecker | | tasty | вкусный
+adj | süß | | sweet / cute | сладкий; милый
+adj | salzig | | salty | солёный
+adj | frisch | | fresh | свежий
+adj | warm | | warm | тёплый
+adj | kalt | | cold | холодный
+adj | heiß | | hot | горячий, жаркий
+adj | vegetarisch | | vegetarian | вегетарианский
+m | Euro | Euro | euro | евро
+m | Cent | Cent | cent | цент
+
+## 1 | 5 | Семья и люди | Family & people
+f | Familie | Familien | family | семья
+f | Mutter | Mütter | mother | мать
+m | Vater | Väter | father | отец
+pl | Eltern | Eltern | parents | родители
+m | Bruder | Brüder | brother | брат
+f | Schwester | Schwestern | sister | сестра
+pl | Geschwister | Geschwister | siblings | братья и сёстры
+m | Sohn | Söhne | son | сын
+f | Tochter | Töchter | daughter | дочь
+n | Kind | Kinder | child | ребёнок
+n | Baby | Babys | baby | малыш
+f | Oma | Omas | grandma | бабушка
+m | Opa | Opas | grandpa | дедушка
+f | Großmutter | Großmütter | grandmother | бабушка
+m | Großvater | Großväter | grandfather | дедушка
+pl | Großeltern | Großeltern | grandparents | бабушка и дедушка
+m | Onkel | Onkel | uncle | дядя
+f | Tante | Tanten | aunt | тётя
+m | Cousin | Cousins | cousin (m.) | двоюродный брат
+f | Cousine | Cousinen | cousin (f.) | двоюродная сестра
+f | Mama | Mamas | mom | мама
+m | Papa | Papas | dad | папа
+m | Mann | Männer | man / husband | мужчина; муж
+m | Junge | Jungen | boy | мальчик
+n | Mädchen | Mädchen | girl | девочка
+m | Freund | Freunde | friend / boyfriend | друг; парень
+f | Freundin | Freundinnen | friend (f.) / girlfriend | подруга; девушка
+m | Partner | Partner | partner | партнёр
+f | Partnerin | Partnerinnen | partner (f.) | партнёрша
+m | Mensch | Menschen | person, human | человек
+pl | Leute | Leute | people | люди
+m | Nachbar | Nachbarn | neighbor | сосед
+f | Nachbarin | Nachbarinnen | neighbor (f.) | соседка
+n | Jahr | Jahre | year | год
+v | lieben | | to love | любить
+v | heiraten | | to marry | жениться, выходить замуж
+v | leben | | to live | жить
+adj | alt | | old | старый
+adj | jung | | young | молодой
+adj | groß | | big, tall | большой, высокий
+adj | klein | | small, short | маленький
+adj | verheiratet | | married | женатый, замужем
+adj | ledig | | single | холост, не замужем
+adj | nett | | nice | милый, приятный
+adj | freundlich | | friendly | дружелюбный
+adj | lustig | | funny | весёлый, смешной
+adj | ernst | | serious | серьёзный
+adj | intelligent | | intelligent | умный
+adj | schön | | beautiful, nice | красивый, прекрасный
+adj | hübsch | | pretty | симпатичный
+adj | glücklich | | happy | счастливый
+adj | traurig | | sad | грустный
+adj | froh | | glad | радостный
+adj | müde | | tired | уставший
+adv | zusammen | | together | вместе
+adv | allein | | alone | один, одна
+
+## 1 | 6 | Животные | Animals
+n | Tier | Tiere | animal | животное
+m | Hund | Hunde | dog | собака
+f | Katze | Katzen | cat | кошка
+f | Ente | Enten | duck | утка
+n | Pferd | Pferde | horse | лошадь
+f | Maus | Mäuse | mouse | мышь
+m | Vogel | Vögel | bird | птица
+m | Bär | Bären | bear | медведь
+m | Elefant | Elefanten | elephant | слон
+f | Kuh | Kühe | cow | корова
+n | Schwein | Schweine | pig | свинья
+n | Huhn | Hühner | hen | курица
+m | Löwe | Löwen | lion | лев
+m | Affe | Affen | monkey | обезьяна
+f | Spinne | Spinnen | spider | паук
+f | Schildkröte | Schildkröten | turtle | черепаха
+f | Schlange | Schlangen | snake | змея
+n | Kaninchen | Kaninchen | rabbit | кролик
+m | Tiger | Tiger | tiger | тигр
+m | Pinguin | Pinguine | penguin | пингвин
+m | Zoo | Zoos | zoo | зоопарк
+
+## 1 | 7 | Числа | Numbers
+num | null | | zero | ноль
+num | eins | | one | один
+num | zwei | | two | два
+num | drei | | three | три
+num | vier | | four | четыре
+num | fünf | | five | пять
+num | sechs | | six | шесть
+num | sieben | | seven | семь
+num | acht | | eight | восемь
+num | neun | | nine | девять
+num | zehn | | ten | десять
+num | elf | | eleven | одиннадцать
+num | zwölf | | twelve | двенадцать
+num | dreizehn | | thirteen | тринадцать
+num | vierzehn | | fourteen | четырнадцать
+num | fünfzehn | | fifteen | пятнадцать
+num | sechzehn | | sixteen | шестнадцать
+num | siebzehn | | seventeen | семнадцать
+num | achtzehn | | eighteen | восемнадцать
+num | neunzehn | | nineteen | девятнадцать
+num | zwanzig | | twenty | двадцать
+num | einundzwanzig | | twenty-one | двадцать один
+num | dreißig | | thirty | тридцать
+num | vierzig | | forty | сорок
+num | fünfzig | | fifty | пятьдесят
+num | sechzig | | sixty | шестьдесят
+num | siebzig | | seventy | семьдесят
+num | achtzig | | eighty | восемьдесят
+num | neunzig | | ninety | девяносто
+num | hundert | | hundred | сто
+num | tausend | | thousand | тысяча
+f | Zahl | Zahlen | number | число
+f | Nummer | Nummern | number (phone, room) | номер
+num | erste | erster, ersten | first | первый
+num | zweite | | second | второй
+num | dritte | | third | третий
+adv | viel | viele | much, many | много
+adv | wenig | wenige | little, few | мало
+adv | mehr | | more | больше
+adj | halb | | half | половина, пол-
+
+## 1 | 8 | Город и направления | City & directions
+f | Stadt | Städte | city | город
+n | Dorf | Dörfer | village | деревня
+f | Straße | Straßen | street | улица
+n | Haus | Häuser | house | дом
+f | Wohnung | Wohnungen | apartment | квартира
+m | Bahnhof | Bahnhöfe | train station | вокзал
+n | Hotel | Hotels | hotel | отель
+n | Museum | Museen | museum | музей
+m | Park | Parks | park | парк
+m | Supermarkt | Supermärkte | supermarket | супермаркет
+f | Bank | Banken | bank | банк
+f | Kirche | Kirchen | church | церковь
+f | Schule | Schulen | school | школа
+f | Universität | Universitäten | university | университет
+n | Büro | Büros | office | офис
+f | Apotheke | Apotheken | pharmacy | аптека
+n | Krankenhaus | Krankenhäuser | hospital | больница
+n | Kino | Kinos | cinema | кинотеатр
+n | Theater | Theater | theater | театр
+f | Bäckerei | Bäckereien | bakery | пекарня
+m | Markt | Märkte | market | рынок
+m | Platz | Plätze | square / seat / room | площадь; место
+f | Brücke | Brücken | bridge | мост
+n | Zentrum | Zentren | center | центр
+f | Bibliothek | Bibliotheken | library | библиотека
+f | Polizei | - | police | полиция
+f | Post | - | post office / mail | почта
+f | Toilette | Toiletten | toilet | туалет
+f | Ecke | Ecken | corner | угол
+f | Nähe | - | vicinity | близость (in der Nähe — рядом)
+n | Land | Länder | country | страна
+name | Deutschland | | Germany | Германия
+name | Österreich | | Austria | Австрия
+name | die Schweiz | | Switzerland | Швейцария
+name | Berlin | | Berlin | Берлин
+name | Hamburg | | Hamburg | Гамбург
+name | München | | Munich | Мюнхен
+name | Wien | | Vienna | Вена
+name | Europa | | Europe | Европа
+name | Amerika | | America | Америка
+adj | deutsch | | German | немецкий
+adv | links | | left | налево, слева
+adv | rechts | | right | направо, справа
+adv | geradeaus | | straight ahead | прямо
+adj | nah | | near | близкий
+adj | weit | | far | далёкий
+adv | oben | | upstairs, above | наверху
+adv | unten | | downstairs, below | внизу
+adv | draußen | | outside | снаружи, на улице
+adv | drinnen | | inside | внутри
+v | gehen | | to go (on foot) | идти
+v | finden | | to find / to think | находить; считать
+v | suchen | | to look for | искать
+v | zeigen | | to show | показывать
+v | besuchen | | to visit | посещать
+
+## 1 | 9 | Путешествия и транспорт | Travel & transport
+m | Zug | Züge | train | поезд
+m | Bus | Busse | bus | автобус
+n | Auto | Autos | car | машина
+n | Taxi | Taxis | taxi | такси
+n | Fahrrad | Fahrräder | bicycle | велосипед
+n | Flugzeug | Flugzeuge | airplane | самолёт
+m | Flughafen | Flughäfen | airport | аэропорт
+f | U-Bahn | U-Bahnen | subway | метро
+f | Haltestelle | Haltestellen | stop (bus, tram) | остановка
+n | Gleis | Gleise | platform, track | путь (платформа)
+n | Ticket | Tickets | ticket | билет
+f | Fahrkarte | Fahrkarten | ticket (transport) | проездной билет
+f | Karte | Karten | map / card / ticket | карта; билет
+m | Koffer | Koffer | suitcase | чемодан
+m | Pass | Pässe | passport | паспорт
+n | Gepäck | - | luggage | багаж
+f | Reise | Reisen | trip | поездка, путешествие
+m | Urlaub | Urlaube | vacation | отпуск
+n | Zimmer | Zimmer | room | комната, номер
+m | Schlüssel | Schlüssel | key | ключ
+m | Strand | Strände | beach | пляж
+n | Meer | Meere | sea | море
+m | Berg | Berge | mountain | гора
+m | See | Seen | lake | озеро
+m | Fluss | Flüsse | river | река
+m | Wald | Wälder | forest | лес
+f | Insel | Inseln | island | остров
+m | Tourist | Touristen | tourist | турист
+f | Touristin | Touristinnen | tourist (f.) | туристка
+v | fahren | | to drive, to go (by vehicle) | ехать
+v | fliegen | | to fly | лететь
+v | reisen | | to travel | путешествовать
+vs | an|kommen | | to arrive | прибывать
+vs | ab|fahren | | to depart | отправляться
+v | warten | | to wait | ждать
+v | bleiben | | to stay | оставаться
+v | brauchen | | to need | нуждаться, нужно
+adj | pünktlich | | on time | пунктуальный, вовремя
+adj | spät | | late | поздний
+adj | früh | | early | ранний
+adj | schnell | | fast | быстрый
+adj | langsam | | slow | медленный
+
+## 1 | 10 | Одежда и цвета | Clothes & colors
+f | Kleidung | - | clothing | одежда
+n | Hemd | Hemden | shirt | рубашка
+f | Hose | Hosen | pants | брюки
+n | Kleid | Kleider | dress | платье
+m | Rock | Röcke | skirt | юбка
+f | Jacke | Jacken | jacket | куртка
+m | Mantel | Mäntel | coat | пальто
+m | Schuh | Schuhe | shoe | ботинок, туфля
+f | Socke | Socken | sock | носок
+m | Hut | Hüte | hat | шляпа
+f | Mütze | Mützen | cap, beanie | шапка
+n | T-Shirt | T-Shirts | T-shirt | футболка
+m | Pullover | Pullover | sweater | свитер
+f | Jeans | Jeans | jeans | джинсы
+f | Tasche | Taschen | bag / pocket | сумка; карман
+f | Brille | Brillen | glasses | очки
+f | Uhr | Uhren | watch, clock / o'clock | часы; час (время)
+m | Regenschirm | Regenschirme | umbrella | зонт
+f | Farbe | Farben | color | цвет
+v | tragen | | to wear / to carry | носить
+vs | an|ziehen | | to put on | надевать
+v | kaufen | | to buy | покупать
+adj | rot | | red | красный
+adj | blau | | blue | синий
+adj | grün | | green | зелёный
+adj | gelb | | yellow | жёлтый
+adj | schwarz | | black | чёрный
+adj | weiß | | white | белый
+adj | grau | | gray | серый
+adj | braun | | brown | коричневый
+adj | rosa | | pink | розовый
+adj | lila | | purple | фиолетовый
+adj | orange | | orange | оранжевый
+adj | bunt | | colorful | разноцветный
+adj | neu | | new | новый
+adj | hässlich | | ugly | некрасивый
+adj | teuer | | expensive | дорогой
+adj | billig | | cheap | дешёвый
+adj | günstig | | inexpensive | недорогой, выгодный
+adj | lang | | long | длинный
+adj | kurz | | short | короткий
+adj | eng | | tight | узкий, тесный
+adj | bequem | | comfortable | удобный
+
+## 1 | 11 | Вопросы | Questions
+q | was | | what | что
+q | wer | wen, wem | who | кто
+q | wo | | where | где
+q | woher | | where from | откуда
+q | wohin | | where to | куда
+q | wie | | how | как
+q | wann | | when | когда
+q | warum | | why | почему
+q | wie viel | | how much | сколько
+q | wie viele | | how many | сколько (исчисл.)
+q | welcher | welche, welches, welchen | which | какой, который
+f | Frage | Fragen | question | вопрос
+f | Antwort | Antworten | answer | ответ
+v | fragen | | to ask | спрашивать
+v | antworten | | to answer | отвечать
+
+## 2 | 12 | Время и распорядок | Time & schedule
+f | Zeit | Zeiten | time | время
+f | Stunde | Stunden | hour / lesson | час; урок
+f | Minute | Minuten | minute | минута
+f | Sekunde | Sekunden | second | секунда
+f | Woche | Wochen | week | неделя
+m | Monat | Monate | month | месяц
+n | Wochenende | Wochenenden | weekend | выходные
+m | Vormittag | Vormittage | late morning | первая половина дня
+m | Mittag | Mittage | noon | полдень
+m | Nachmittag | Nachmittage | afternoon | вторая половина дня
+m | Montag | Montage | Monday | понедельник
+m | Dienstag | Dienstage | Tuesday | вторник
+m | Mittwoch | Mittwoche | Wednesday | среда
+m | Donnerstag | Donnerstage | Thursday | четверг
+m | Freitag | Freitage | Friday | пятница
+m | Samstag | Samstage | Saturday | суббота
+m | Sonntag | Sonntage | Sunday | воскресенье
+m | Januar | - | January | январь
+m | Februar | - | February | февраль
+m | März | - | March | март
+m | April | - | April | апрель
+m | Mai | - | May | май
+m | Juni | - | June | июнь
+m | Juli | - | July | июль
+m | August | - | August | август
+m | September | - | September | сентябрь
+m | Oktober | - | October | октябрь
+m | November | - | November | ноябрь
+m | Dezember | - | December | декабрь
+adv | heute | | today | сегодня
+adv | morgen | | tomorrow | завтра
+adv | gestern | | yesterday | вчера
+adv | jetzt | | now | сейчас
+adv | später | | later | позже
+adv | bald | | soon | скоро
+adv | immer | | always | всегда
+adv | oft | | often | часто
+adv | manchmal | | sometimes | иногда
+adv | selten | | rarely | редко
+adv | nie | | never | никогда
+adv | jeden Tag | | every day | каждый день
+adv | morgens | | in the mornings | по утрам
+adv | abends | | in the evenings | по вечерам
+adv | zuerst | | first | сначала
+adv | dann | | then | потом
+adv | danach | | afterwards | после этого
+adv | schon | | already | уже
+adv | noch | | still, yet | ещё
+prep | um | | at (time) / around | в (о времени)
+prep | vor | | before / in front of / ago | перед; до; назад
+prep | nach | | after / to (cities, countries) | после; в (город, страну)
+n | Viertel | Viertel | quarter | четверть
+v | beginnen | | to begin | начинать
+vs | an|fangen | | to start | начинать
+v | dauern | | to last | длиться
+m | Termin | Termine | appointment | встреча, запись (к врачу)
+
+## 2 | 13 | Распорядок дня | Daily routine
+vs | auf|stehen | | to get up | вставать
+v | duschen | | to shower | принимать душ
+v | frühstücken | | to have breakfast | завтракать
+vs | ein|kaufen | | to shop | делать покупки
+vs | an|rufen | | to call | звонить
+vs | fern|sehen | | to watch TV | смотреть телевизор
+vs | auf|räumen | | to tidy up | убираться
+v | putzen | | to clean | чистить, убирать
+v | waschen | | to wash | мыть, стирать
+v | schlafen | | to sleep | спать
+v | machen | | to do, to make | делать
+vs | mit|kommen | | to come along | идти вместе
+vs | auf|machen | | to open | открывать
+vs | zu|machen | | to close | закрывать
+v | öffnen | | to open | открывать
+v | schließen | | to close | закрывать
+f | Dusche | Duschen | shower | душ
+n | Bett | Betten | bed | кровать
+m | Wecker | Wecker | alarm clock | будильник
+m | Feierabend | Feierabende | end of workday | конец рабочего дня
+f | Pause | Pausen | break | перерыв
+
+## 2 | 14 | Дом и квартира | Home
+f | Küche | Küchen | kitchen | кухня
+n | Bad | Bäder | bathroom | ванная
+n | Badezimmer | Badezimmer | bathroom | ванная комната
+n | Schlafzimmer | Schlafzimmer | bedroom | спальня
+n | Wohnzimmer | Wohnzimmer | living room | гостиная
+m | Garten | Gärten | garden | сад
+m | Balkon | Balkone | balcony | балкон
+f | Tür | Türen | door | дверь
+n | Fenster | Fenster | window | окно
+m | Tisch | Tische | table | стол
+m | Stuhl | Stühle | chair | стул
+n | Sofa | Sofas | sofa | диван
+f | Lampe | Lampen | lamp | лампа
+m | Schrank | Schränke | closet, cabinet | шкаф
+m | Kühlschrank | Kühlschränke | fridge | холодильник
+f | Wand | Wände | wall | стена
+m | Boden | Böden | floor | пол
+f | Treppe | Treppen | stairs | лестница
+f | Miete | Mieten | rent | аренда, квартплата
+n | Bild | Bilder | picture | картина, изображение
+m | Teppich | Teppiche | carpet | ковёр
+v | sitzen | | to sit | сидеть
+v | stehen | | to stand | стоять
+v | liegen | | to lie | лежать
+v | legen | | to lay, to put | класть
+v | stellen | | to put (upright) | ставить
+v | hängen | | to hang | висеть, вешать
+v | mieten | | to rent | снимать (жильё)
+adj | sauber | | clean | чистый
+adj | schmutzig | | dirty | грязный
+adj | hell | | bright | светлый
+adj | dunkel | | dark | тёмный
+adj | gemütlich | | cozy | уютный
+adj | ruhig | | quiet, calm | тихий, спокойный
+adj | laut | | loud | громкий
+adj | leise | | quiet | тихий (о звуке)
+adj | leer | | empty | пустой
+adj | voll | | full | полный
+
+## 2 | 15 | Работа и профессии | Work & professions
+f | Arbeit | Arbeiten | work | работа
+m | Beruf | Berufe | profession | профессия
+m | Job | Jobs | job | работа (подработка)
+m | Lehrer | Lehrer | teacher | учитель
+f | Lehrerin | Lehrerinnen | teacher (f.) | учительница
+m | Arzt | Ärzte | doctor | врач
+f | Ärztin | Ärztinnen | doctor (f.) | врач (ж.)
+m | Student | Studenten | student | студент
+f | Studentin | Studentinnen | student (f.) | студентка
+m | Ingenieur | Ingenieure | engineer | инженер
+f | Ingenieurin | Ingenieurinnen | engineer (f.) | инженер (ж.)
+m | Koch | Köche | cook | повар
+f | Köchin | Köchinnen | cook (f.) | повариха
+m | Polizist | Polizisten | police officer | полицейский
+f | Polizistin | Polizistinnen | police officer (f.) | полицейская
+m | Verkäufer | Verkäufer | salesperson | продавец
+f | Verkäuferin | Verkäuferinnen | saleswoman | продавщица
+m | Krankenpfleger | Krankenpfleger | nurse (m.) | медбрат
+f | Krankenpflegerin | Krankenpflegerinnen | nurse (f.) | медсестра
+m | Chef | Chefs | boss | начальник
+f | Chefin | Chefinnen | boss (f.) | начальница
+m | Kollege | Kollegen | colleague | коллега
+f | Kollegin | Kolleginnen | colleague (f.) | коллега (ж.)
+f | Firma | Firmen | company | фирма
+m | Computer | Computer | computer | компьютер
+n | Telefon | Telefone | telephone | телефон
+n | Handy | Handys | cell phone | мобильный телефон
+f | E-Mail | E-Mails | email | электронное письмо
+m | Brief | Briefe | letter | письмо
+f | Zeitung | Zeitungen | newspaper | газета
+n | Geld | - | money | деньги
+v | arbeiten | | to work | работать
+v | verdienen | | to earn | зарабатывать
+v | schreiben | | to write | писать
+v | lesen | | to read | читать
+v | helfen | | to help | помогать
+v | treffen | | to meet | встречать
+adj | beschäftigt | | busy | занятый
+adj | wichtig | | important | важный
+adj | fertig | | done, ready | готовый, законченный
+adj | frei | | free | свободный
+
+## 2 | 16 | Школа, учёба, языки | School & languages
+f | Klasse | Klassen | class / grade | класс
+m | Schüler | Schüler | pupil | ученик
+f | Schülerin | Schülerinnen | pupil (f.) | ученица
+pl | Hausaufgaben | Hausaufgaben | homework | домашнее задание
+f | Prüfung | Prüfungen | exam | экзамен
+f | Sprache | Sprachen | language | язык
+n | Deutsch | - | German (language) | немецкий язык
+n | Englisch | - | English | английский язык
+n | Spanisch | - | Spanish | испанский язык
+n | Französisch | - | French | французский язык
+n | Wort | Wörter | word | слово
+m | Satz | Sätze | sentence | предложение
+n | Buch | Bücher | book | книга
+n | Heft | Hefte | notebook | тетрадь
+m | Stift | Stifte | pen, pencil | ручка, карандаш
+n | Papier | Papiere | paper | бумага
+f | Mathe | - | math | математика
+m | Kurs | Kurse | course | курс
+f | Lektion | Lektionen | lesson | урок
+v | lernen | | to learn | учить, учиться
+v | studieren | | to study (at univ.) | учиться в вузе
+v | verstehen | | to understand | понимать
+v | sprechen | | to speak | говорить
+v | sagen | | to say | сказать, говорить
+v | wiederholen | | to repeat | повторять
+v | erklären | | to explain | объяснять
+v | wissen | | to know (a fact) | знать
+v | kennen | | to know (be familiar) | знать (быть знакомым)
+v | denken | | to think | думать
+v | glauben | | to believe, to think | верить, полагать
+adj | richtig | | correct | правильный
+adj | falsch | | wrong | неправильный
+adj | einfach | | easy, simple | простой
+adj | schwer | | difficult / heavy | трудный; тяжёлый
+adj | leicht | | easy / light | лёгкий
+adj | interessant | | interesting | интересный
+adj | langweilig | | boring | скучный
+
+## 2 | 17 | Хобби и свободное время | Hobbies & free time
+n | Hobby | Hobbys | hobby | хобби
+f | Freizeit | - | free time | свободное время
+m | Sport | - | sport | спорт
+m | Fußball | Fußbälle | soccer / soccer ball | футбол; мяч
+n | Tennis | - | tennis | теннис
+f | Musik | - | music | музыка
+m | Film | Filme | movie | фильм
+n | Spiel | Spiele | game | игра
+n | Videospiel | Videospiele | video game | видеоигра
+n | Konzert | Konzerte | concert | концерт
+f | Party | Partys | party | вечеринка
+f | Gitarre | Gitarren | guitar | гитара
+n | Klavier | Klaviere | piano | пианино
+n | Lied | Lieder | song | песня
+n | Foto | Fotos | photo | фотография
+m | Fernseher | Fernseher | TV set | телевизор
+v | spielen | | to play | играть
+v | schwimmen | | to swim | плавать
+v | tanzen | | to dance | танцевать
+v | singen | | to sing | петь
+v | laufen | | to run, to walk | бегать; идти
+v | joggen | | to jog | бегать трусцой
+v | wandern | | to hike | ходить в походы
+v | malen | | to paint | рисовать красками
+v | fotografieren | | to take photos | фотографировать
+v | hören | | to hear, to listen | слышать, слушать
+v | sehen | | to see | видеть
+v | mögen | | to like | любить, нравиться
+v | gefallen | | to please (like) | нравиться
+v | feiern | | to celebrate | праздновать
+vs | ein|laden | | to invite | приглашать
+m | Geburtstag | Geburtstage | birthday | день рождения
+n | Geschenk | Geschenke | gift | подарок
+phr | Herzlichen Glückwunsch | | congratulations | поздравляю
+adj | toll | | great | отличный
+adj | super | | super | супер
+adj | cool | | cool | классный
+adj | perfekt | | perfect | идеальный
+adv | lieber | | rather, prefer | лучше, охотнее
+adv | am liebsten | | most of all (like) | больше всего (люблю)
+
+## 2 | 18 | Погода и времена года | Weather & seasons
+n | Wetter | - | weather | погода
+f | Sonne | Sonnen | sun | солнце
+m | Regen | - | rain | дождь
+m | Schnee | - | snow | снег
+m | Wind | Winde | wind | ветер
+f | Wolke | Wolken | cloud | облако
+m | Himmel | - | sky | небо
+n | Grad | Grad | degree | градус
+f | Jahreszeit | Jahreszeiten | season | время года
+m | Frühling | Frühlinge | spring | весна
+m | Sommer | Sommer | summer | лето
+m | Herbst | Herbste | autumn | осень
+m | Winter | Winter | winter | зима
+v | regnen | | to rain | идёт дождь
+v | schneien | | to snow | идёт снег
+v | scheinen | | to shine | светить
+adj | sonnig | | sunny | солнечный
+adj | windig | | windy | ветреный
+adj | bewölkt | | cloudy | облачный
+adj | nass | | wet | мокрый
+adj | trocken | | dry | сухой
+
+## 2 | 19 | Здоровье и тело | Health & body
+m | Körper | Körper | body | тело
+m | Kopf | Köpfe | head | голова
+f | Hand | Hände | hand | рука (кисть)
+m | Fuß | Füße | foot | нога (ступня)
+n | Bein | Beine | leg | нога
+m | Arm | Arme | arm | рука
+n | Auge | Augen | eye | глаз
+n | Ohr | Ohren | ear | ухо
+f | Nase | Nasen | nose | нос
+m | Mund | Münder | mouth | рот
+m | Zahn | Zähne | tooth | зуб
+m | Bauch | Bäuche | belly | живот
+m | Rücken | Rücken | back | спина
+pl | Haare | Haare | hair | волосы
+pl | Schmerzen | Schmerzen | pain | боль
+n | Medikament | Medikamente | medicine | лекарство
+f | Tablette | Tabletten | pill | таблетка
+n | Fieber | - | fever | температура, жар
+f | Erkältung | Erkältungen | cold | простуда
+vs | weh|tun | | to hurt | болеть
+v | fühlen | | to feel | чувствовать
+vs | sich aus|ruhen | | to rest | отдыхать
+adj | krank | | sick | больной
+adj | gesund | | healthy | здоровый
+adj | stark | | strong | сильный
+adj | schwach | | weak | слабый
+adj | fit | | fit | в форме
+
+## 2 | 20 | Покупки | Shopping
+n | Geschäft | Geschäfte | shop / business | магазин; дело
+m | Laden | Läden | store | лавка, магазин
+m | Preis | Preise | price | цена
+f | Kasse | Kassen | checkout | касса
+f | Größe | Größen | size | размер
+n | Angebot | Angebote | offer | предложение, акция
+v | verkaufen | | to sell | продавать
+v | passen | | to fit | подходить (по размеру)
+v | geben | | to give | давать
+v | bringen | | to bring | приносить
+v | holen | | to fetch | приносить, забирать
+adv | bar | | in cash | наличными
+adv | zu | | too / closed | слишком; закрыто
+adv | genug | | enough | достаточно
+
+## 2 | 21 | Модальные глаголы | Modal verbs
+v | können | | can | мочь, уметь
+v | müssen | | must, have to | должен
+v | wollen | | to want | хотеть
+v | sollen | | should | следует, должен
+v | dürfen | | may, to be allowed | можно, разрешено
+v | werden | | to become / will | становиться; будет
+vpast | war | warst, waren, wart | was (past of sein) | был
+vpast | hatte | hattest, hatten, hattet | had (past of haben) | имел
+
+## 2 | 22 | Предлоги и связки | Prepositions & connectors
+prep | auf | | on | на
+prep | an | | at, on (vertical) | на, у
+prep | im | | in the (in dem) | в (in dem)
+prep | am | | at the / on (an dem) | у; в (о днях)
+prep | mit | | with | с
+prep | ohne | | without | без
+prep | für | | for | для
+prep | von | | from, of | от, из
+prep | zu | | to | к
+prep | zum | | to the (zu dem) | к (zu dem)
+prep | zur | | to the (zu der) | к (zu der)
+prep | bei | | at, near, with | у, при
+prep | über | | over, about | над; о
+prep | unter | | under | под
+prep | neben | | next to | рядом с
+prep | hinter | | behind | за, позади
+prep | zwischen | | between | между
+prep | gegenüber | | opposite | напротив
+prep | ins | | into the (in das) | в (in das)
+conj | weil | | because | потому что
+conj | dass | | that | что (союз)
+conj | wenn | | if, when | если, когда
+conj | denn | | because, for | ведь, так как
+conj | also | | so, therefore | итак, значит
+adv | nur | | only | только
+adv | wirklich | | really | действительно
+adv | ganz | | quite, whole | вполне, целый
+adv | ziemlich | | fairly | довольно
+adv | so | | so | так
+adv | vielleicht | | maybe | может быть
+adv | natürlich | | of course | конечно
+adv | leider | | unfortunately | к сожалению
+adv | wieder | | again | снова
+adv | sofort | | immediately | сразу
+adv | gleich | | right away / same | сейчас же; одинаковый
+adv | zurück | | back | назад, обратно
+adv | wahrscheinlich | | probably | вероятно
+adv | eigentlich | | actually | вообще-то
+part | doch | | yes (contradicting) / though | же; да (возражение)
+part | mal | | just, once | -ка (смягчение)
+adj | andere | anderen, anderer | other | другой
+adj | möglich | | possible | возможный
+adj | sicher | | sure, safe | уверенный; безопасный
+adj | klar | | clear | ясный
+adj | besser | | better | лучше
+adj | best | | best | лучший
